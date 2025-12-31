@@ -1,25 +1,41 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { kv } from "@vercel/kv";
 
 const blogsFilePath = path.join(process.cwd(), "public", "data", "blogs.json");
 
-// Helper to read blogs
-function readBlogs() {
-    const fileContents = fs.readFileSync(blogsFilePath, "utf8");
-    return JSON.parse(fileContents);
-}
+// Helper to get blogs (from KV or fallback to file)
+async function getBlogs() {
+    try {
+        // Try to get from KV
+        let blogs = await kv.get("blogs");
 
-// Helper to write blogs
-function writeBlogs(data: any) {
-    fs.writeFileSync(blogsFilePath, JSON.stringify(data, null, 2));
+        // If KV is empty, seed it from the local JSON file
+        if (!blogs) {
+            console.log("KV is empty, seeding from blogs.json...");
+            const fileContents = fs.readFileSync(blogsFilePath, "utf8");
+            const data = JSON.parse(fileContents);
+            blogs = data.blogs || [];
+
+            // Save to KV for next time
+            await kv.set("blogs", blogs);
+        }
+
+        return blogs as any[];
+    } catch (error) {
+        console.error("KV Error:", error);
+        // Fallback to file if KV fails (e.g. missing env vars locally)
+        const fileContents = fs.readFileSync(blogsFilePath, "utf8");
+        return JSON.parse(fileContents).blogs;
+    }
 }
 
 // GET all blogs
 export async function GET() {
     try {
-        const data = readBlogs();
-        return NextResponse.json(data.blogs);
+        const blogs = await getBlogs();
+        return NextResponse.json(blogs);
     } catch (error) {
         return NextResponse.json({ error: "Failed to fetch blogs" }, { status: 500 });
     }
@@ -29,7 +45,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const data = readBlogs();
+        const blogs = await getBlogs();
 
         const newBlog = {
             id: Date.now().toString(),
@@ -39,11 +55,14 @@ export async function POST(request: NextRequest) {
             updatedAt: new Date().toISOString(),
         };
 
-        data.blogs.push(newBlog);
-        writeBlogs(data);
+        blogs.push(newBlog);
+
+        // Save to KV
+        await kv.set("blogs", blogs);
 
         return NextResponse.json(newBlog, { status: 201 });
     } catch (error) {
+        console.error("Create Blob Error:", error);
         return NextResponse.json({ error: "Failed to create blog" }, { status: 500 });
     }
 }

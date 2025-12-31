@@ -1,16 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { kv } from "@vercel/kv";
 
 const blogsFilePath = path.join(process.cwd(), "public", "data", "blogs.json");
 
-function readBlogs() {
-    const fileContents = fs.readFileSync(blogsFilePath, "utf8");
-    return JSON.parse(fileContents);
-}
-
-function writeBlogs(data: any) {
-    fs.writeFileSync(blogsFilePath, JSON.stringify(data, null, 2));
+// Helper to get blogs (from KV or fallback to file)
+async function getBlogs() {
+    try {
+        let blogs = await kv.get("blogs");
+        if (!blogs) {
+            const fileContents = fs.readFileSync(blogsFilePath, "utf8");
+            const data = JSON.parse(fileContents);
+            blogs = data.blogs || [];
+            await kv.set("blogs", blogs);
+        }
+        return blogs as any[];
+    } catch (error) {
+        // Fallback
+        const fileContents = fs.readFileSync(blogsFilePath, "utf8");
+        return JSON.parse(fileContents).blogs;
+    }
 }
 
 // GET single blog
@@ -20,8 +30,8 @@ export async function GET(
 ) {
     try {
         const { id } = await params;
-        const data = readBlogs();
-        const blog = data.blogs.find((b: any) => b.id === id);
+        const blogs = await getBlogs();
+        const blog = blogs.find((b: any) => b.id === id);
 
         if (!blog) {
             return NextResponse.json({ error: "Blog not found" }, { status: 404 });
@@ -41,21 +51,21 @@ export async function PUT(
     try {
         const { id } = await params;
         const body = await request.json();
-        const data = readBlogs();
-        const index = data.blogs.findIndex((b: any) => b.id === id);
+        const blogs = await getBlogs();
+        const index = blogs.findIndex((b: any) => b.id === id);
 
         if (index === -1) {
             return NextResponse.json({ error: "Blog not found" }, { status: 404 });
         }
 
-        data.blogs[index] = {
-            ...data.blogs[index],
+        blogs[index] = {
+            ...blogs[index],
             ...body,
             updatedAt: new Date().toISOString(),
         };
 
-        writeBlogs(data);
-        return NextResponse.json(data.blogs[index]);
+        await kv.set("blogs", blogs);
+        return NextResponse.json(blogs[index]);
     } catch (error) {
         return NextResponse.json({ error: "Failed to update blog" }, { status: 500 });
     }
@@ -68,15 +78,14 @@ export async function DELETE(
 ) {
     try {
         const { id } = await params;
-        const data = readBlogs();
-        const filteredBlogs = data.blogs.filter((b: any) => b.id !== id);
+        const blogs = await getBlogs();
+        const filteredBlogs = blogs.filter((b: any) => b.id !== id);
 
-        if (filteredBlogs.length === data.blogs.length) {
+        if (filteredBlogs.length === blogs.length) {
             return NextResponse.json({ error: "Blog not found" }, { status: 404 });
         }
 
-        data.blogs = filteredBlogs;
-        writeBlogs(data);
+        await kv.set("blogs", filteredBlogs);
 
         return NextResponse.json({ message: "Blog deleted successfully" });
     } catch (error) {
