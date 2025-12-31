@@ -25,7 +25,7 @@ export default async function BlogPage() {
     return (
         <main className="min-h-screen">
             {/* Hero Section */}
-            <section className="bg-navy relative overflow-hidden py-24 px-6 lg:px-8">
+            <section className="bg-navy relative overflow-hidden pt-32 pb-24 px-6 lg:px-8 min-h-[40vh] flex items-center justify-center">
                 <div className="absolute inset-0 bg-gradient-to-br from-royal-blue/20 to-sky-blue/20"></div>
                 <div className="max-w-7xl mx-auto relative z-10 text-center">
                     <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
