@@ -1,0 +1,17 @@
+{
+  "blogs": [
+    {
+      "id": "1767205582267",
+      "title": "Test",
+      "excerpt": "Test",
+      "content": "testtt",
+      "coverImage": "https://bwmc.ae/wp-content/uploads/2024/11/about-recruitment-02-1.jpg",
+      "category": "Business",
+      "author": "BWMC Team",
+      "published": true,
+      "slug": "test",
+      "createdAt": "2025-12-31T18:26:22.268Z",
+      "updatedAt": "2025-12-31T18:26:22.268Z"
+    }
+  ]
+}
