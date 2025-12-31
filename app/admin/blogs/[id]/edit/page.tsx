@@ -6,7 +6,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowLeft, Save } from "lucide-react";
 
-export default function EditBlog({ params }: { params: { id: string } }) {
+export default async function EditBlog({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
