@@ -133,7 +133,7 @@ export default function ServiceBentoGrid() {
                                     </motion.div>
 
                                     {/* CTA */}
-                                    <Link href="/services" className="text-sky-blue font-semibold flex items-center gap-2 group-hover:gap-3 transition-all duration-300">
+                                    <Link href={`/services/${service.title.toLowerCase().replace(/ & /g, "-").replace(/ /g, "-")}`} className="text-sky-blue font-semibold flex items-center gap-2 group-hover:gap-3 transition-all duration-300">
                                         Explore Services
                                         <ChevronRight className="w-5 h-5" />
                                     </Link>
