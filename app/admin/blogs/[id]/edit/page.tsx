@@ -27,7 +27,7 @@ export default async function EditBlog({ params }: { params: Promise<{ id: strin
 
     const fetchBlog = async () => {
         try {
-            const res = await fetch(`/api/blogs/${params.id}`);
+            const res = await fetch(`/api/blogs/${id}`);
             const data = await res.json();
             setFormData(data);
         } catch (error) {
@@ -42,7 +42,7 @@ export default async function EditBlog({ params }: { params: Promise<{ id: strin
         setSaving(true);
 
         try {
-            const res = await fetch(`/api/blogs/${params.id}`, {
+            const res = await fetch(`/api/blogs/${id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),

@@ -16,11 +16,12 @@ function writeBlogs(data: any) {
 // GET single blog
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { id } = await params;
         const data = readBlogs();
-        const blog = data.blogs.find((b: any) => b.id === params.id);
+        const blog = data.blogs.find((b: any) => b.id === id);
 
         if (!blog) {
             return NextResponse.json({ error: "Blog not found" }, { status: 404 });
@@ -35,12 +36,13 @@ export async function GET(
 // PUT update blog
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { id } = await params;
         const body = await request.json();
         const data = readBlogs();
-        const index = data.blogs.findIndex((b: any) => b.id === params.id);
+        const index = data.blogs.findIndex((b: any) => b.id === id);
 
         if (index === -1) {
             return NextResponse.json({ error: "Blog not found" }, { status: 404 });
@@ -62,11 +64,12 @@ export async function PUT(
 // DELETE blog
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { id } = await params;
         const data = readBlogs();
-        const filteredBlogs = data.blogs.filter((b: any) => b.id !== params.id);
+        const filteredBlogs = data.blogs.filter((b: any) => b.id !== id);
 
         if (filteredBlogs.length === data.blogs.length) {
             return NextResponse.json({ error: "Blog not found" }, { status: 404 });
