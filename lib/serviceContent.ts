@@ -1,6 +1,7 @@
 
 import { FileText, CheckCircle, BarChart, Settings, Shield, Globe } from "lucide-react";
 
+// Service content definitions
 export const serviceContent: Record<string, any> = {
     "accounting-bookkeeping": {
         title: "Professional Accounting & Bookkeeping Services",
