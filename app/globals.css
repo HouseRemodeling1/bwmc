@@ -58,6 +58,14 @@ h6 {
   }
 }
 
+
 .animate-infinite-scroll {
   animation: infinite-scroll 25s linear infinite;
+}
+
+/* Zoom out 25% on laptop screens as requested */
+@media (min-width: 1024px) and (max-width: 1600px) {
+  body {
+    zoom: 75%;
+  }
 }
