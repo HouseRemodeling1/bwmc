@@ -180,7 +180,7 @@ export function getPrice(
                 const shamsPackage = shamsData.find(p => p.visas === visaCount);
                 if (!shamsPackage) return null;
                 const discount = MULTI_YEAR_DISCOUNTS[contractYears] || 0;
-                return shamsPackage.price * (1 - discount);
+                return shamsPackage.price * contractYears * (1 - discount);
 
             case FREEZONES.SPC:
                 const spcData = licenseType === "Publishing License" ? SPC_PUBLISHING : SPC_BUSINESS;
