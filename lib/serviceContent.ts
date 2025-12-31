@@ -28,30 +28,7 @@ export const serviceContent: Record<string, any> = {
             { q: "Is bookkeeping mandatory for small businesses?", a: "Yes, under the Corporate Tax Law, all businesses must maintain financial records to justify their tax returns." }
         ]
     },
-    "corporate-tax": {
-        title: "Corporate Tax Advisory",
-        subtitle: "Strategic tax planning for the new UAE Corporate Tax regime.",
-        description: "Navigating the 9% Corporate Tax landscape requires expert guidance. We help you structure your business efficiently while ensuring full compliance with FTA regulations.",
-        context: "With the implementation of Corporate Tax in June 2023, UAE businesses face a new compliance burden. Determining taxable income, exempt income, and qualifying free zone person status is critical.",
-        scope: [
-            "Corporate Tax Impact Assessment",
-            "Tax Grouping & Structuring Strategy",
-            "Registration with Federal Tax Authority (FTA)",
-            "Preparation & Filing of Tax Returns",
-            "Free Zone Exemption Analysis",
-            "Transfer Pricing Documentation Support"
-        ],
-        methodology: [
-            { phase: "Assessment", desc: "Analyze business activities and financial structure." },
-            { phase: "Strategy", desc: "Identify tax optimization opportunities and relief applicability." },
-            { phase: "Implementation", desc: "Register for CT and configure accounting systems for tax tracking." },
-            { phase: "Compliance", desc: "Annual filing and ongoing advisory support." }
-        ],
-        faq: [
-            { q: "What is the tax rate?", a: "The standard rate is 9% on taxable income exceeding AED 375,000. 0% applies to income up to that threshold." },
-            { q: "Are Free Zone companies exempt?", a: "Only 'Qualifying Free Zone Persons' deriving 'Qualifying Income' benefit from the 0% rate. We help determine your status." }
-        ]
-    },
+
     "auditing-assurance": {
         title: "Audit & Assurance Services",
         subtitle: "Clarity, Confidence, and Compliance for Your Business",
