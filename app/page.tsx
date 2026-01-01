@@ -4,6 +4,7 @@ import ServiceBentoGrid from "@/components/ServiceBentoGrid";
 import PricingPackages from "@/components/PricingPackages";
 import ClientTrust from "@/components/ClientTrust";
 import TrustedBy from "@/components/TrustedBy";
+import OurExpertise from "@/components/OurExpertise";
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
       <WhoWeAre />
       <ServiceBentoGrid />
       <PricingPackages />
+      <OurExpertise />
       <ClientTrust />
     </main>
   );
