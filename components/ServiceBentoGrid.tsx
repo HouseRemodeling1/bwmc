@@ -93,7 +93,7 @@ export default function ServiceBentoGrid() {
                                 {/* Glassmorphism Card */}
                                 <div className="relative bg-white/5 backdrop-blur-lg rounded-[4px] p-8 border border-white/10 hover:border-sky-blue/50 transition-all duration-500 h-full overflow-hidden">
                                     {/* Gradient Background on Hover */}
-                                    <div className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
+                                    <div className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none`} />
 
                                     {/* Icon */}
                                     <div className="relative mb-6">
