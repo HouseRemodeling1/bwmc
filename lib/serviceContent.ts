@@ -4,6 +4,7 @@ import { FileText, CheckCircle, BarChart, Settings, Shield, Globe } from "lucide
 // Service content definitions
 export const serviceContent: Record<string, any> = {
     "accounting-bookkeeping": {
+        category: "accounting",
         title: "Professional Accounting & Bookkeeping Services",
         subtitle: "Bookkeeping and Accounting Services for Every Stage of Your Business",
         description: "We provide comprehensive accounting and bookkeeping solutions designed to streamline your financial operations. Whether you are a startup needing basic ledgers or an established enterprise requiring complex financial reporting, our expert team ensures your books are accurate, compliant, and insightful. We let you focus on growing your business while we handle the numbers.",
@@ -31,6 +32,7 @@ export const serviceContent: Record<string, any> = {
     },
 
     "auditing-assurance": {
+        category: "accounting",
         title: "Audit & Assurance Services",
         subtitle: "Clarity, Confidence, and Compliance for Your Business",
         description: "In an era of complex regulatory frameworks, financial transparency is not just a legal requirement but a strategic asset. Our Audit & Assurance services go beyond statutory compliance to deliver actionable insights into your business performance. Whether you operate in Dubai, Abu Dhabi, or Free Zones like DMCC, JAFZA, and ADGM, we ensure your financial statements are accurate, defensible, and aligned with global standards.\n\nWe leverage advanced digital audit tools and data analytics to provide a faster, more accurate audit process. Our approach is risk-based, focusing on the areas that matter most to your business continuity and growth.",
@@ -64,6 +66,7 @@ export const serviceContent: Record<string, any> = {
         ]
     },
     "internal-audit": {
+        category: "accounting",
         title: "Internal Audit & Risk Advisory",
         subtitle: "Enhance Governance, Mitigate Risks, and Optimize Operations",
         description: "Internal Auditing is an independent, objective assurance and consulting activity designed to add value and improve an organization's operations. We help you accomplish your objectives by bringing a systematic, disciplined approach to evaluate and improve the effectiveness of risk management, control, and governance processes. Unlike external audits which focus on financial accuracy for stakeholders, our internal audit service focuses on operational efficiency, process optimization, and asset protection.",
@@ -92,6 +95,7 @@ export const serviceContent: Record<string, any> = {
         ]
     },
     "external-audit": {
+        category: "accounting",
         title: "External Audit & Financial Reporting",
         subtitle: "Independent Verification for Global Credibility",
         description: "External Audit is the cornerstone of financial trust. It is an independent examination of your company's financial statements to ensure they differ materially from reality and comply with International Financial Reporting Standards (IFRS) and UAE laws. Beyond a statutory obligation, an external audit enhances your credibility with banks, investors, and government authorities, facilitating license renewals, loan approvals, and strategic partnerships.",
@@ -120,6 +124,7 @@ export const serviceContent: Record<string, any> = {
         ]
     },
     "liquidation-report": {
+        category: "other",
         title: "Company Liquidation Report Services",
         subtitle: "Simplifying Business Closure & Deregistration",
         description: "Closing a business in the UAE involves a formal liquidation process to settle liabilities, clear debts, and distribute assets. A certified Liquidator's Report is a mandatory requirement for cancelling your trade license and removing the company from the commercial register. We handle the entire process with precision, ensuring full legal compliance and a hassle-free exit strategy.",
@@ -148,6 +153,7 @@ export const serviceContent: Record<string, any> = {
         ]
     },
     "statutory-audit": {
+        category: "accounting",
         title: "Statutory Audit Services",
         subtitle: "Ensuring Financial Transparency & Regulatory Compliance",
         description: "A Statutory Audit is a legally required examination of your company's financial records to verify accuracy and compliance with UAE Federal Law No. 2 of 2015 (Company Law). Beyond fulfilling a legal obligation, our statutory audits build trust with shareholders, investors, and regulatory bodies like the Ministry of Economy. We provide an unbiased opinion on your financial health, identifying risks and ensuring your statements reflect a true and fair view.",
@@ -176,6 +182,7 @@ export const serviceContent: Record<string, any> = {
         ]
     },
     "due-diligence-audit": {
+        category: "accounting",
         title: "Due Diligence Audit Services",
         subtitle: "Comprehensive Risk Assessment for Smart Business Decisions",
         description: "Due Diligence is a critical investigation performed before entering into a business agreement or financial transaction. It goes beyond a standard audit to evaluate the history, performance, capability, and goodwill of a potential investment. Whether you are acquiring a company, merging with another entity, or planning a major investment, our Due Diligence Audit provides the deep insights needed to uncover hidden risks, validate financial claims, and negotiate the best deal.",
@@ -204,6 +211,7 @@ export const serviceContent: Record<string, any> = {
         ]
     },
     "vat-accounting": {
+        category: "taxation",
         title: "VAT Accounting & Consultancy",
         subtitle: "Ensure 100% Compliance & Optimize Your Tax Position",
         description: "Value Added Tax (VAT) management is a critical aspect of doing business in the UAE. Our specialized VAT accounting services ensure that your business remains fully compliant with Federal Tax Authority (FTA) regulations while optimizing your tax position. From initial registration to accurate return filing and refund processing, we handle the complexities of VAT so you can focus on your core business operations.",
@@ -232,6 +240,7 @@ export const serviceContent: Record<string, any> = {
         ]
     },
     "corporate-tax": {
+        category: "taxation",
         title: "Corporate Tax Advisory",
         subtitle: "Strategic Planning for the New Tax Era",
         description: "The introduction of Corporate Tax in the UAE marks a significant shift in the business landscape. We provide comprehensive advisory services to help businesses navigate this new regime, ensuring full compliance while optimizing tax efficiency. From analyzing the impact on your bottom line to restructuring operations for tax benefits, our experts guide you through every step of the Corporate Tax lifecycle.",
@@ -260,6 +269,7 @@ export const serviceContent: Record<string, any> = {
         ]
     },
     "excise-tax": {
+        category: "taxation",
         title: "Excise Tax Services",
         subtitle: "Managing Compliance for Excisable Goods",
         description: "Excise Tax is a specialized tax levied on specific goods detrimental to human health or the environment, such as tobacco, energy drinks, and carbonated beverages. Our Excise Tax services are designed for importers, producers, and stockpilers to ensure strict adherence to FTA regulations, from product registration to monthly filing and warehouse management.",
@@ -288,6 +298,7 @@ export const serviceContent: Record<string, any> = {
         ]
     },
     "tax-agency": {
+        category: "taxation",
         title: "Tax Agency Services",
         subtitle: "FTA-Approved Representation for Peace of Mind",
         description: "As your appointed Tax Agency, we act as your official representative before the Federal Tax Authority (FTA). We take on the responsibility of managing your tax affairs, ensuring correct filings, handling correspondence, and representing you in all tax-related matters. This service is ideal for businesses seeking a professional buffer between their operations and regulatory bodies to ensure precision and compliance.",
@@ -316,6 +327,7 @@ export const serviceContent: Record<string, any> = {
         ]
     },
     "tax-audit": {
+        category: "taxation",
         title: "Tax Audit Services",
         subtitle: "Audit Readiness & Defense Strategies",
         description: "A Tax Audit by the FTA can be a rigorous process. our Tax Audit services are designed to prepare your business for such scrutiny. We conduct pre-audit health checks (Mock Audits) to identify vulnerabilities and rectify them before the authorities do. If you are selected for an official audit, we provide full support, managing the process and defending your position to minimize penalties.",
@@ -344,6 +356,7 @@ export const serviceContent: Record<string, any> = {
         ]
     },
     "vat-consultancy": {
+        category: "taxation",
         title: "VAT Consultancy Services",
         subtitle: "Strategic VAT Advice for Complex Business Scenarios",
         description: "While VAT Accounting focuses on routine filing, our VAT Consultancy service provides high-level strategic advice for complex challenges. We help businesses navigate intricate VAT rules related to cross-border trade, mixed-use developments, and free zone operations. Our consultants serve as your technical backbone, ensuring your business structure and transactions are optimized for VAT efficiency.",
@@ -372,6 +385,7 @@ export const serviceContent: Record<string, any> = {
         ]
     },
     "goaml-compliance": {
+        category: "other",
         title: "GoAML Compliance Services",
         subtitle: "Combating Financial Crime with Robust Reporting",
         description: "The UAE utilizes the 'goAML' system to prevent money laundering and terrorism financing. Compliance is mandatory for Designated Non-Financial Businesses and Professions (DNFBPs) such as Real Estate Agents, Dealers in Precious Metals, Auditors, and Corporate Service Providers. We assist you in registering on the portal, setting up your compliance framework, and filing necessary reports to avoid hefty fines.",
@@ -400,6 +414,7 @@ export const serviceContent: Record<string, any> = {
         ]
     },
     "kyc-due-diligence": {
+        category: "other",
         title: "Manage KYC & Due Diligence",
         subtitle: "Know Your Customer: The First Line of Defense",
         description: "Know Your Customer (KYC) and Customer Due Diligence (CDD) are foundational elements of any compliance framework. We provide managed services to verify the identity of your clients, assess their risk profiles, and screen them against global sanctions lists. This protects your business from being used for illicit activities and ensures compliance with UAE Central Bank and Ministry of Economy regulations.",
@@ -428,6 +443,7 @@ export const serviceContent: Record<string, any> = {
         ]
     },
     "business-setup": {
+        category: "other",
         title: "Business Setup Services",
         subtitle: "Launch Your Business in the UAE with Confidence",
         description: "Setting up a business in the UAE requires navigating a choice of jurisdictions: Mainland, Free Zone, or Offshore. Each offering distinct advantages in terms of ownership, scope of activity, and tax benefits. We provide end-to-end support, from selecting the right legal structure to obtaining trade licenses and visa processing, ensuring a seamless entry into the market.",
@@ -456,6 +472,7 @@ export const serviceContent: Record<string, any> = {
         ]
     },
     "compliance-advisory": {
+        category: "other",
         title: "Compliance Advisory",
         subtitle: "Navigating the Regulatory Landscape",
         description: "The UAE's regulatory environment is evolving rapidly with new laws on Economic Substance (ESR), Ultimate Beneficial Ownership (UBO), and Consumer Protection. Our Compliance Advisory services help businesses stay ahead of these changes. We conduct gap analyses, draft internal policies, and provide ongoing monitoring to ensure your operations remain within the legal framework.",
@@ -484,6 +501,7 @@ export const serviceContent: Record<string, any> = {
         ]
     },
     "corporate-finance": {
+        category: "other",
         title: "Corporate Finance Services",
         subtitle: "Driving Value Through Financial Strategy",
         description: "Whether you are looking to raise capital, acquire a competitor, or value your business, our Corporate Finance team provides expert guidance. We specialize in Mergers & Acquisitions (M&A), financial modeling, and business valuation. We help stakeholders make informed decisions by providing rigorous financial analysis and strategic advice tailored to the UAE market.",
@@ -512,6 +530,7 @@ export const serviceContent: Record<string, any> = {
         ]
     },
     "hr-services": {
+        category: "other",
         title: "Human Resource Services",
         subtitle: "Streamlined Payroll & Recruitment Solutions",
         description: "Our HR Services allow businesses to outsource complex and time-consuming administrative tasks. From ensuring compliance with the UAE's Wage Protection System (WPS) to recruiting top talent and managing visas, we act as your extended HR department. This enables you to focus on strategy and culture while we handle the operational details and legal compliance.",
@@ -540,6 +559,7 @@ export const serviceContent: Record<string, any> = {
         ]
     },
     "trade-finance": {
+        category: "other",
         title: "Trade Finance Services",
         subtitle: "Securing Your Global & Local Transactions",
         description: "In international trade, trust and liquidity are paramount. Our Trade Finance services act as a bridge between buyers and sellers, mitigating payment risks and optimizing working capital. We assist in structuring and securing various financial instruments like Letters of Credit (LCs) and Bank Guarantees to facilitate smooth trade flows.",
@@ -568,6 +588,7 @@ export const serviceContent: Record<string, any> = {
         ]
     },
     "trademark-registration": {
+        category: "other",
         title: "Trademark Registration",
         subtitle: "Protect Your Brand Identity & IP Assets",
         description: "Your brand is one of your most valuable assets. Registering your trademark in the UAE grants you legal ownership and protection against counterfeiting or abuse. We manage the entire registration process with the Ministry of Economy, from validity search to final certification, ensuring your intellectual property is secure.",
@@ -596,6 +617,7 @@ export const serviceContent: Record<string, any> = {
         ]
     },
     "digital-growth": {
+        category: "other",
         title: "Digital Growth Performance",
         subtitle: "Data-Driven Marketing for Measurable ROI",
         description: "In the digital age, visibility equates to viability. Our Digital Growth services rely on data, not guesswork. We implement high-performance marketing strategies inclusive of SEO, PPC, and Social Media to drive qualified traffic and convert leads. We focus on measurable outcomes - Sales, Leads, and ROI - rather than just vanity metrics like 'likes'.",
@@ -625,6 +647,7 @@ export const serviceContent: Record<string, any> = {
     },
     // Default fallback for other services to ensure pages work immediately
     "default": {
+        category: "other",
         title: "Professional Consultancy Services",
         subtitle: "Expert guidance customized for your business success.",
         description: "We provide specialized consultancy services designed to meet the unique challenges of the UAE market. Our team delivers actionable insights and compliant solutions.",
