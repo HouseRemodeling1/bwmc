@@ -23,6 +23,7 @@ export default function ChatBot() {
         },
     ]);
     const [inputValue, setInputValue] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Auto-open after 10 seconds
@@ -40,148 +41,62 @@ export default function ChatBot() {
     // Auto-scroll to bottom
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [messages]);
+    }, [messages, isLoading]);
 
-    const [lastQuestion, setLastQuestion] = useState<string | null>(null);
+    const handleSendMessage = async () => {
+        if (!inputValue.trim() || isLoading) return;
 
-    const handleSendMessage = () => {
-        if (!inputValue.trim()) return;
+        const userText = inputValue;
+        setInputValue('');
 
         const userMessage: Message = {
             id: Date.now().toString(),
-            text: inputValue,
+            text: userText,
             sender: 'user',
         };
 
         setMessages((prev) => [...prev, userMessage]);
-        setInputValue('');
+        setIsLoading(true);
 
-        // Process response after a small delay
-        setTimeout(() => {
-            const lowerInput = userMessage.text.toLowerCase();
-            let botResponse: Message = {
+        try {
+            // Prepare messages format for API: { role: 'user' | 'assistant', content: string }
+            const apiMessages = messages.concat(userMessage).map(msg => ({
+                role: msg.sender === 'user' ? 'user' : 'assistant',
+                content: msg.text
+            }));
+
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ messages: apiMessages }),
+            });
+
+            const data = await response.json();
+
+            if (data.error) throw new Error(data.error);
+
+            const botMessage: Message = {
                 id: (Date.now() + 1).toString(),
-                text: '',
+                text: data.response,
                 sender: 'bot',
+                isSystem: false // AI responses are generic text usually, but we can parse for specific structure if needed later
             };
 
-            // 0. Handle Follow-up Answers (Context Awareness)
-            if (lastQuestion === 'ask_whatsapp_redirect') {
-                if (['yes', 'yeah', 'sure', 'yep', 'ok', 'okay', 'please', 'do it'].some(w => lowerInput.includes(w))) {
-                    botResponse.text = "Great! You can click the button below to start the chat directly on WhatsApp. 👇";
-                    botResponse.isSystem = true; // Renders WhatsApp button
-                    setLastQuestion(null); // Reset context
-                } else if (['no', 'nop', 'nah', 'later'].some(w => lowerInput.includes(w))) {
-                    botResponse.text = "No problem! accessing our services page might be helpful then. Is there anything else I can clarify?";
-                    setLastQuestion(null);
-                } else {
-                    // If answer doesn't match yes/no, fall through to normal logic, but reset context
-                    setLastQuestion(null);
-                }
-            }
+            setMessages((prev) => [...prev, botMessage]);
 
-            // If context didn't handle it, proceed to normal logic
-            if (!botResponse.text) {
-                // 1. Greetings
-                const greetings = ['hi', 'hello', 'hey', 'greetings', 'morning', 'afternoon', 'evening', 'ssup', 'yo'];
-                const isGreeting = greetings.some(greeting => lowerInput.includes(greeting));
-
-                if (isGreeting && lowerInput.length < 20) {
-                    botResponse.text = "Hello! 👋 I'm Zoe. I'm here to assist you with anything related to BWMC—whether it's business setup, financial services, or just a general question. How can I help?";
-                }
-                // 2. Pricing Guardrails (Strict)
-                else if (
-                    lowerInput.includes('price') ||
-                    lowerInput.includes('cost') ||
-                    lowerInput.includes('much') ||
-                    lowerInput.includes('quote') ||
-                    lowerInput.includes('fee') ||
-                    lowerInput.includes('charges') ||
-                    lowerInput.includes('pricing') ||
-                    lowerInput.includes('rates')
-                ) {
-                    botResponse.text = "I'd love to give you a quick number, but pricing depends heavily on your specific business activity, visa requirements, and license type. \n\nFor an accurate quote, please chat with our senior consultants on WhatsApp or leave a message. We'll give you a detailed breakdown!";
-                    botResponse.isSystem = true;
-                }
-                // 3. Business Setup & Licenses (Expanded)
-                else if (
-                    lowerInput.includes('setup') ||
-                    lowerInput.includes('start') ||
-                    lowerInput.includes('license') ||
-                    lowerInput.includes('company') ||
-                    lowerInput.includes('business') ||
-                    lowerInput.includes('freezone') ||
-                    lowerInput.includes('mainland') ||
-                    lowerInput.includes('offshore') ||
-                    lowerInput.includes('dubai') ||
-                    lowerInput.includes('uae') ||
-                    lowerInput.includes('ecommerce') ||
-                    lowerInput.includes('trading') ||
-                    lowerInput.includes('consulting') ||
-                    lowerInput.includes('marketing') ||
-                    lowerInput.includes('it') ||
-                    lowerInput.includes('agency') ||
-                    lowerInput.includes('shop')
-                ) {
-                    botResponse.text = "That is a great industry! 🚀 \n\nWhether it's " + (lowerInput.includes('mainland') ? "Mainland" : "Freezone") + ", we can help you navigate the regulations. \n\nI can get a senior consultant to guide you on the exact costs and requirements. Would you like to connect with them on WhatsApp?";
-                    setLastQuestion('ask_whatsapp_redirect'); // Set context for next reply
-                }
-                // 4. Financial Services (Audit, Tax, Accounts)
-                else if (
-                    lowerInput.includes('audit') ||
-                    lowerInput.includes('tax') ||
-                    lowerInput.includes('vat') ||
-                    lowerInput.includes('accounting') ||
-                    lowerInput.includes('bookkeeping') ||
-                    lowerInput.includes('compliance') ||
-                    lowerInput.includes('finance')
-                ) {
-                    botResponse.text = "We have a dedicated team for Audit, Tax, and Accounting compliance. \n\nWe handle everything from VAT filing to statutory audits. Would you like to speak to a finance expert?";
-                    botResponse.isSystem = true;
-                }
-                // 5. Contact / Location / Hours
-                else if (
-                    lowerInput.includes('contact') ||
-                    lowerInput.includes('whatsapp') ||
-                    lowerInput.includes('phone') ||
-                    lowerInput.includes('call') ||
-                    lowerInput.includes('number') ||
-                    lowerInput.includes('email') ||
-                    lowerInput.includes('reach')
-                ) {
-                    botResponse.text = "You can reach our team instantly via WhatsApp below. We are very responsive! 👇";
-                    botResponse.isSystem = true;
-                }
-                else if (
-                    lowerInput.includes('location') ||
-                    lowerInput.includes('address') ||
-                    lowerInput.includes('office') ||
-                    lowerInput.includes('where')
-                ) {
-                    botResponse.text = "We are located in Dubai, UAE. You can find our full address and location map on our Contact page.";
-                    botResponse.isSystem = true;
-                }
-                // 6. About / General / Team
-                else if (
-                    lowerInput.includes('who are you') ||
-                    lowerInput.includes('what is bwmc') ||
-                    lowerInput.includes('about') ||
-                    lowerInput.includes('team') ||
-                    lowerInput.includes('ceo')
-                ) {
-                    botResponse.text = "BWMC (Bridge Water Management Consultancies) is a premier corporate service provider in the UAE. We help businesses start, grow, and stay compliant. Our team consists of seasoned experts in law, finance, and business strategy.";
-                }
-                // 7. General Helper / Catch-all
-                else {
-                    botResponse.text = "That's a good question! While I handle the basics, our senior consultants are best equipped to give you a specific answer for that. \n\nWould you like to chat with them on WhatsApp directly?";
-                    setLastQuestion('ask_whatsapp_redirect'); // Set context for next reply
-                }
-            }
-
-            setMessages((prev) => [...prev, botResponse]);
-        }, 800); // Slightly longer delay for natural feel
+        } catch (error) {
+            console.error('Chat error:', error);
+            const errorMessage: Message = {
+                id: (Date.now() + 1).toString(),
+                text: "I'm having a little trouble connecting to my brain right now. 🧠💥 Please try again or check your internet!",
+                sender: 'bot',
+                isSystem: true
+            };
+            setMessages((prev) => [...prev, errorMessage]);
+        } finally {
+            setIsLoading(false);
+        }
     };
-
 
     const handleKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
@@ -210,8 +125,8 @@ export default function ChatBot() {
                                     <div>
                                         <h3 className="font-semibold text-sm">Zoe</h3>
                                         <p className="text-xs text-emerald-100 flex items-center gap-1">
-                                            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                                            Online
+                                            <span className={`w-2 h-2 bg-green-400 rounded-full ${isLoading ? 'animate-ping' : 'animate-pulse'}`}></span>
+                                            {isLoading ? 'Typing...' : 'Online'}
                                         </p>
                                     </div>
                                 </div>
@@ -236,33 +151,19 @@ export default function ChatBot() {
                                                 : 'bg-white text-gray-800 shadow-sm border border-gray-100 rounded-tl-none'
                                                 }`}
                                         >
-                                            {msg.text}
-
-                                            {msg.isSystem && (
-                                                <div className="mt-3 flex flex-col gap-2">
-                                                    {msg.text.includes("pricing") || msg.text.includes("contact") ? (
-                                                        <>
-                                                            <Link
-                                                                href="/contact"
-                                                                className="flex items-center justify-center gap-2 text-xs bg-emerald-50 text-emerald-700 py-2 px-3 rounded-lg border border-emerald-100 hover:bg-emerald-100 transition-colors"
-                                                            >
-                                                                <MessageCircle size={14} /> Contact Page
-                                                            </Link>
-                                                            <a
-                                                                href="https://wa.me/971501234567" /* Replace with actual number */
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="flex items-center justify-center gap-2 text-xs bg-green-50 text-green-700 py-2 px-3 rounded-lg border border-green-100 hover:bg-green-100 transition-colors"
-                                                            >
-                                                                <Phone size={14} /> WhatsApp Senior Team
-                                                            </a>
-                                                        </>
-                                                    ) : null}
-                                                </div>
-                                            )}
+                                            <div className="whitespace-pre-wrap">{msg.text}</div>
                                         </div>
                                     </div>
                                 ))}
+                                {isLoading && (
+                                    <div className="flex justify-start">
+                                        <div className="bg-white text-gray-400 p-3 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 text-xs flex gap-1">
+                                            <span className="animate-bounce">●</span>
+                                            <span className="animate-bounce delay-100">●</span>
+                                            <span className="animate-bounce delay-200">●</span>
+                                        </div>
+                                    </div>
+                                )}
                                 <div ref={messagesEndRef} />
                             </div>
 
@@ -275,18 +176,19 @@ export default function ChatBot() {
                                         onChange={(e) => setInputValue(e.target.value)}
                                         onKeyDown={handleKeyPress}
                                         placeholder="Type a message..."
-                                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-gray-800 placeholder:text-gray-400"
+                                        disabled={isLoading}
+                                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-gray-800 placeholder:text-gray-400 disabled:opacity-50"
                                     />
                                     <button
                                         onClick={handleSendMessage}
-                                        disabled={!inputValue.trim()}
+                                        disabled={!inputValue.trim() || isLoading}
                                         className="bg-emerald-600 text-white p-2.5 rounded-xl hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm hover:shadow-md active:scale-95 transform duration-100 flex items-center justify-center"
                                     >
                                         <Send size={18} />
                                     </button>
                                 </div>
                                 <div className="text-center mt-2">
-                                    <p className="text-[10px] text-gray-400">Powered by BWMC</p>
+                                    <p className="text-[10px] text-gray-400">Powered by BWMC AI</p>
                                 </div>
                             </div>
                         </motion.div>
