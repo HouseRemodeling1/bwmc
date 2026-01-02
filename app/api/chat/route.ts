@@ -7,8 +7,9 @@ export async function POST(req: Request) {
         const apiKey = process.env.GEMINI_API_KEY;
 
         if (!apiKey) {
+            console.error("API Key is missing in server environment");
             return NextResponse.json(
-                { error: "API Key is missing. Please add GEMINI_API_KEY to .env.local" },
+                { error: "API Key is missing. Please add GEMINI_API_KEY to .env.local and RESTART the server." },
                 { status: 500 }
             );
         }
@@ -54,8 +55,14 @@ FORMATTING:
         const response = result.response.text();
 
         return NextResponse.json({ response });
-    } catch (error) {
-        console.error("Chat API Error:", error);
-        return NextResponse.json({ error: "Failed to process chat" }, { status: 500 });
+    } catch (error: any) {
+        console.error("=== CHAT API ERROR ===");
+        console.error("Error message:", error?.message);
+        console.error("Error details:", error);
+        console.error("API Key present:", !!process.env.GEMINI_API_KEY);
+        console.error("======================");
+        return NextResponse.json({
+            error: `Failed to process chat: ${error?.message || 'Unknown error'}`
+        }, { status: 500 });
     }
 }
