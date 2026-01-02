@@ -16,7 +16,7 @@ export async function POST(req: Request) {
 
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({
-            model: "gemini-pro",
+            model: "gemini-1.5-flash-latest",
             systemInstruction: `You are Zoe, a friendly and professional AI consultant for BWMC (Bridge Water Management Consultancies) based in Dubai.
 Your goal is to assist users with Business Setup (Mainland/Freezone), Financial Services (Audit/Tax/VAT), and general inquiries.
 
