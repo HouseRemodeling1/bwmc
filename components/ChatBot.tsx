@@ -42,6 +42,8 @@ export default function ChatBot() {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+    const [lastQuestion, setLastQuestion] = useState<string | null>(null);
+
     const handleSendMessage = () => {
         if (!inputValue.trim()) return;
 
@@ -63,92 +65,117 @@ export default function ChatBot() {
                 sender: 'bot',
             };
 
-            // 1. Greetings
-            const greetings = ['hi', 'hello', 'hey', 'greetings', 'morning', 'afternoon', 'evening', 'ssup', 'yo'];
-            const isGreeting = greetings.some(greeting => lowerInput.includes(greeting));
+            // 0. Handle Follow-up Answers (Context Awareness)
+            if (lastQuestion === 'ask_whatsapp_redirect') {
+                if (['yes', 'yeah', 'sure', 'yep', 'ok', 'okay', 'please', 'do it'].some(w => lowerInput.includes(w))) {
+                    botResponse.text = "Great! You can click the button below to start the chat directly on WhatsApp. 👇";
+                    botResponse.isSystem = true; // Renders WhatsApp button
+                    setLastQuestion(null); // Reset context
+                } else if (['no', 'nop', 'nah', 'later'].some(w => lowerInput.includes(w))) {
+                    botResponse.text = "No problem! accessing our services page might be helpful then. Is there anything else I can clarify?";
+                    setLastQuestion(null);
+                } else {
+                    // If answer doesn't match yes/no, fall through to normal logic, but reset context
+                    setLastQuestion(null);
+                }
+            }
 
-            if (isGreeting && lowerInput.length < 20) {
-                botResponse.text = "Hello! 👋 I'm Zoe. I'm here to assist you with anything related to BWMC—whether it's business setup, financial services, or just a general question. How can I help?";
-            }
-            // 2. Pricing Guardrails (Strict)
-            else if (
-                lowerInput.includes('price') ||
-                lowerInput.includes('cost') ||
-                lowerInput.includes('much') ||
-                lowerInput.includes('quote') ||
-                lowerInput.includes('fee') ||
-                lowerInput.includes('charges') ||
-                lowerInput.includes('pricing') ||
-                lowerInput.includes('rates')
-            ) {
-                botResponse.text = "I'd love to give you a quick number, but pricing depends heavily on your specific business activity, visa requirements, and license type. \n\nFor an accurate quote, please chat with our senior consultants on WhatsApp or leave a message. We'll give you a detailed breakdown!";
-                botResponse.isSystem = true;
-            }
-            // 3. Business Setup & Licenses
-            else if (
-                lowerInput.includes('setup') ||
-                lowerInput.includes('start') ||
-                lowerInput.includes('license') ||
-                lowerInput.includes('company') ||
-                lowerInput.includes('business') ||
-                lowerInput.includes('freezone') ||
-                lowerInput.includes('mainland') ||
-                lowerInput.includes('offshore') ||
-                lowerInput.includes('dubai') ||
-                lowerInput.includes('uae')
-            ) {
-                botResponse.text = "Great! Starting a business in the UAE is a fantastic move. 🇦🇪 \n\nWe specialize in Mainland, Freezone, and Offshore setups. I can interpret the regulations for you. \n\nCould you tell me a bit more about your planned business activity? Or feel free to connect with an expert directly.";
-                botResponse.isSystem = true;
-            }
-            // 4. Financial Services (Audit, Tax, Accounts)
-            else if (
-                lowerInput.includes('audit') ||
-                lowerInput.includes('tax') ||
-                lowerInput.includes('vat') ||
-                lowerInput.includes('accounting') ||
-                lowerInput.includes('bookkeeping') ||
-                lowerInput.includes('compliance') ||
-                lowerInput.includes('finance')
-            ) {
-                botResponse.text = "We have a dedicated team for Audit, Tax, and Accounting compliance. \n\nWe handle everything from VAT filing to statutory audits. Would you like to speak to a finance expert?";
-                botResponse.isSystem = true;
-            }
-            // 5. Contact / Location / Hours
-            else if (
-                lowerInput.includes('contact') ||
-                lowerInput.includes('whatsapp') ||
-                lowerInput.includes('phone') ||
-                lowerInput.includes('call') ||
-                lowerInput.includes('number') ||
-                lowerInput.includes('email') ||
-                lowerInput.includes('reach')
-            ) {
-                botResponse.text = "You can reach our team instantly via WhatsApp below. We are very responsive! 👇";
-                botResponse.isSystem = true;
-            }
-            else if (
-                lowerInput.includes('location') ||
-                lowerInput.includes('address') ||
-                lowerInput.includes('office') ||
-                lowerInput.includes('where')
-            ) {
-                botResponse.text = "We are located in Dubai, UAE. You can find our full address and location map on our Contact page.";
-                botResponse.isSystem = true;
-            }
-            // 6. About / General / Team
-            else if (
-                lowerInput.includes('who are you') ||
-                lowerInput.includes('what is bwmc') ||
-                lowerInput.includes('about') ||
-                lowerInput.includes('team') ||
-                lowerInput.includes('ceo')
-            ) {
-                botResponse.text = "BWMC (Bridge Water Management Consultancies) is a premier corporate service provider in the UAE. We help businesses start, grow, and stay compliant. Our team consists of seasoned experts in law, finance, and business strategy.";
-            }
-            // 7. General Helper / Catch-all
-            else {
-                botResponse.text = "That's a good question! While I handle the basics, our senior consultants are best equipped to give you a specific answer for that. \n\nWould you like to chat with them on WhatsApp directly?";
-                botResponse.isSystem = true;
+            // If context didn't handle it, proceed to normal logic
+            if (!botResponse.text) {
+                // 1. Greetings
+                const greetings = ['hi', 'hello', 'hey', 'greetings', 'morning', 'afternoon', 'evening', 'ssup', 'yo'];
+                const isGreeting = greetings.some(greeting => lowerInput.includes(greeting));
+
+                if (isGreeting && lowerInput.length < 20) {
+                    botResponse.text = "Hello! 👋 I'm Zoe. I'm here to assist you with anything related to BWMC—whether it's business setup, financial services, or just a general question. How can I help?";
+                }
+                // 2. Pricing Guardrails (Strict)
+                else if (
+                    lowerInput.includes('price') ||
+                    lowerInput.includes('cost') ||
+                    lowerInput.includes('much') ||
+                    lowerInput.includes('quote') ||
+                    lowerInput.includes('fee') ||
+                    lowerInput.includes('charges') ||
+                    lowerInput.includes('pricing') ||
+                    lowerInput.includes('rates')
+                ) {
+                    botResponse.text = "I'd love to give you a quick number, but pricing depends heavily on your specific business activity, visa requirements, and license type. \n\nFor an accurate quote, please chat with our senior consultants on WhatsApp or leave a message. We'll give you a detailed breakdown!";
+                    botResponse.isSystem = true;
+                }
+                // 3. Business Setup & Licenses (Expanded)
+                else if (
+                    lowerInput.includes('setup') ||
+                    lowerInput.includes('start') ||
+                    lowerInput.includes('license') ||
+                    lowerInput.includes('company') ||
+                    lowerInput.includes('business') ||
+                    lowerInput.includes('freezone') ||
+                    lowerInput.includes('mainland') ||
+                    lowerInput.includes('offshore') ||
+                    lowerInput.includes('dubai') ||
+                    lowerInput.includes('uae') ||
+                    lowerInput.includes('ecommerce') ||
+                    lowerInput.includes('trading') ||
+                    lowerInput.includes('consulting') ||
+                    lowerInput.includes('marketing') ||
+                    lowerInput.includes('it') ||
+                    lowerInput.includes('agency') ||
+                    lowerInput.includes('shop')
+                ) {
+                    botResponse.text = "That is a great industry! 🚀 \n\nWhether it's " + (lowerInput.includes('mainland') ? "Mainland" : "Freezone") + ", we can help you navigate the regulations. \n\nI can get a senior consultant to guide you on the exact costs and requirements. Would you like to connect with them on WhatsApp?";
+                    setLastQuestion('ask_whatsapp_redirect'); // Set context for next reply
+                }
+                // 4. Financial Services (Audit, Tax, Accounts)
+                else if (
+                    lowerInput.includes('audit') ||
+                    lowerInput.includes('tax') ||
+                    lowerInput.includes('vat') ||
+                    lowerInput.includes('accounting') ||
+                    lowerInput.includes('bookkeeping') ||
+                    lowerInput.includes('compliance') ||
+                    lowerInput.includes('finance')
+                ) {
+                    botResponse.text = "We have a dedicated team for Audit, Tax, and Accounting compliance. \n\nWe handle everything from VAT filing to statutory audits. Would you like to speak to a finance expert?";
+                    botResponse.isSystem = true;
+                }
+                // 5. Contact / Location / Hours
+                else if (
+                    lowerInput.includes('contact') ||
+                    lowerInput.includes('whatsapp') ||
+                    lowerInput.includes('phone') ||
+                    lowerInput.includes('call') ||
+                    lowerInput.includes('number') ||
+                    lowerInput.includes('email') ||
+                    lowerInput.includes('reach')
+                ) {
+                    botResponse.text = "You can reach our team instantly via WhatsApp below. We are very responsive! 👇";
+                    botResponse.isSystem = true;
+                }
+                else if (
+                    lowerInput.includes('location') ||
+                    lowerInput.includes('address') ||
+                    lowerInput.includes('office') ||
+                    lowerInput.includes('where')
+                ) {
+                    botResponse.text = "We are located in Dubai, UAE. You can find our full address and location map on our Contact page.";
+                    botResponse.isSystem = true;
+                }
+                // 6. About / General / Team
+                else if (
+                    lowerInput.includes('who are you') ||
+                    lowerInput.includes('what is bwmc') ||
+                    lowerInput.includes('about') ||
+                    lowerInput.includes('team') ||
+                    lowerInput.includes('ceo')
+                ) {
+                    botResponse.text = "BWMC (Bridge Water Management Consultancies) is a premier corporate service provider in the UAE. We help businesses start, grow, and stay compliant. Our team consists of seasoned experts in law, finance, and business strategy.";
+                }
+                // 7. General Helper / Catch-all
+                else {
+                    botResponse.text = "That's a good question! While I handle the basics, our senior consultants are best equipped to give you a specific answer for that. \n\nWould you like to chat with them on WhatsApp directly?";
+                    setLastQuestion('ask_whatsapp_redirect'); // Set context for next reply
+                }
             }
 
             setMessages((prev) => [...prev, botResponse]);
