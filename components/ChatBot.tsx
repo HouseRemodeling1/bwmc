@@ -60,10 +60,14 @@ export default function ChatBot() {
 
         try {
             // Prepare messages format for API: { role: 'user' | 'assistant', content: string }
-            const apiMessages = messages.concat(userMessage).map(msg => ({
-                role: msg.sender === 'user' ? 'user' : 'assistant',
-                content: msg.text
-            }));
+            // Filter out the initial bot greeting (id: '1') to ensure first message is from user
+            const apiMessages = messages
+                .concat(userMessage)
+                .filter(msg => msg.id !== '1') // Remove initial greeting
+                .map(msg => ({
+                    role: msg.sender === 'user' ? 'user' : 'assistant',
+                    content: msg.text
+                }));
 
             const response = await fetch('/api/chat', {
                 method: 'POST',
