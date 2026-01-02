@@ -63,38 +63,98 @@ export default function ChatBot() {
                 sender: 'bot',
             };
 
-            if (
+            // 1. Greetings
+            const greetings = ['hi', 'hello', 'hey', 'greetings', 'morning', 'afternoon', 'evening', 'ssup', 'yo'];
+            const isGreeting = greetings.some(greeting => lowerInput.includes(greeting));
+
+            if (isGreeting && lowerInput.length < 20) {
+                botResponse.text = "Hello! 👋 I'm Zoe. I'm here to assist you with anything related to BWMC—whether it's business setup, financial services, or just a general question. How can I help?";
+            }
+            // 2. Pricing Guardrails (Strict)
+            else if (
                 lowerInput.includes('price') ||
                 lowerInput.includes('cost') ||
-                lowerInput.includes('how much') ||
+                lowerInput.includes('much') ||
                 lowerInput.includes('quote') ||
                 lowerInput.includes('fee') ||
-                lowerInput.includes('charges')
+                lowerInput.includes('charges') ||
+                lowerInput.includes('pricing') ||
+                lowerInput.includes('rates')
             ) {
-                botResponse.text = "For accurate pricing and tailored quotes specifically for your business needs, please contact our senior team directly. We can provide a detailed breakdown after understanding your requirements.";
-                botResponse.isSystem = true; // Use system flag to render special buttons
-            } else if (
+                botResponse.text = "I'd love to give you a quick number, but pricing depends heavily on your specific business activity, visa requirements, and license type. \n\nFor an accurate quote, please chat with our senior consultants on WhatsApp or leave a message. We'll give you a detailed breakdown!";
+                botResponse.isSystem = true;
+            }
+            // 3. Business Setup & Licenses
+            else if (
+                lowerInput.includes('setup') ||
+                lowerInput.includes('start') ||
+                lowerInput.includes('license') ||
+                lowerInput.includes('company') ||
+                lowerInput.includes('business') ||
+                lowerInput.includes('freezone') ||
+                lowerInput.includes('mainland') ||
+                lowerInput.includes('offshore') ||
+                lowerInput.includes('dubai') ||
+                lowerInput.includes('uae')
+            ) {
+                botResponse.text = "Great! Starting a business in the UAE is a fantastic move. 🇦🇪 \n\nWe specialize in Mainland, Freezone, and Offshore setups. I can interpret the regulations for you. \n\nCould you tell me a bit more about your planned business activity? Or feel free to connect with an expert directly.";
+                botResponse.isSystem = true;
+            }
+            // 4. Financial Services (Audit, Tax, Accounts)
+            else if (
                 lowerInput.includes('audit') ||
                 lowerInput.includes('tax') ||
+                lowerInput.includes('vat') ||
                 lowerInput.includes('accounting') ||
-                lowerInput.includes('bookkeeping')
+                lowerInput.includes('bookkeeping') ||
+                lowerInput.includes('compliance') ||
+                lowerInput.includes('finance')
             ) {
-                botResponse.text = "We specialize in Audit, Tax, and Accounting services. I can guide you to our services page for more details, or connect you with an expert.";
-                botResponse.isSystem = true; // Could trigger specific service links
-            } else if (
+                botResponse.text = "We have a dedicated team for Audit, Tax, and Accounting compliance. \n\nWe handle everything from VAT filing to statutory audits. Would you like to speak to a finance expert?";
+                botResponse.isSystem = true;
+            }
+            // 5. Contact / Location / Hours
+            else if (
                 lowerInput.includes('contact') ||
                 lowerInput.includes('whatsapp') ||
-                lowerInput.includes('phone')
+                lowerInput.includes('phone') ||
+                lowerInput.includes('call') ||
+                lowerInput.includes('number') ||
+                lowerInput.includes('email') ||
+                lowerInput.includes('reach')
             ) {
-                botResponse.text = "You can reach us directly via WhatsApp or our contact page.";
+                botResponse.text = "You can reach our team instantly via WhatsApp below. We are very responsive! 👇";
                 botResponse.isSystem = true;
-            } else {
-                botResponse.text = "I'm here to help! Feel free to ask about our services, or let me know if you'd like to speak with a senior consultant.";
+            }
+            else if (
+                lowerInput.includes('location') ||
+                lowerInput.includes('address') ||
+                lowerInput.includes('office') ||
+                lowerInput.includes('where')
+            ) {
+                botResponse.text = "We are located in Dubai, UAE. You can find our full address and location map on our Contact page.";
+                botResponse.isSystem = true;
+            }
+            // 6. About / General / Team
+            else if (
+                lowerInput.includes('who are you') ||
+                lowerInput.includes('what is bwmc') ||
+                lowerInput.includes('about') ||
+                lowerInput.includes('team') ||
+                lowerInput.includes('ceo')
+            ) {
+                botResponse.text = "BWMC (Bridge Water Management Consultancies) is a premier corporate service provider in the UAE. We help businesses start, grow, and stay compliant. Our team consists of seasoned experts in law, finance, and business strategy.";
+            }
+            // 7. General Helper / Catch-all
+            else {
+                botResponse.text = "That's a good question! While I handle the basics, our senior consultants are best equipped to give you a specific answer for that. \n\nWould you like to chat with them on WhatsApp directly?";
+                botResponse.isSystem = true;
             }
 
             setMessages((prev) => [...prev, botResponse]);
-        }, 600);
+        }, 800); // Slightly longer delay for natural feel
     };
+
 
     const handleKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
@@ -145,8 +205,8 @@ export default function ChatBot() {
                                     >
                                         <div
                                             className={`max-w-[85%] p-3 rounded-2xl text-sm ${msg.sender === 'user'
-                                                    ? 'bg-emerald-600 text-white rounded-tr-none'
-                                                    : 'bg-white text-gray-800 shadow-sm border border-gray-100 rounded-tl-none'
+                                                ? 'bg-emerald-600 text-white rounded-tr-none'
+                                                : 'bg-white text-gray-800 shadow-sm border border-gray-100 rounded-tl-none'
                                                 }`}
                                         >
                                             {msg.text}
@@ -211,19 +271,27 @@ export default function ChatBot() {
                     <motion.button
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => {
                             setIsOpen(true);
                             setHasOpened(true);
                         }}
-                        className="w-14 h-14 bg-emerald-600 rounded-full text-white shadow-lg hover:shadow-emerald-500/30 flex items-center justify-center transition-all group relative"
+                        className="relative w-16 h-16 rounded-full shadow-lg hover:shadow-emerald-500/30 flex items-center justify-center transition-all group overflow-visible"
                     >
-                        <MessageCircle size={28} className="group-hover:rotate-12 transition-transform duration-300" />
+                        {/* Character Avatar */}
+                        <div className="relative w-full h-full rounded-full border-2 border-white shadow-md overflow-hidden bg-white">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                                src="/images/chatbot-avatar.png"
+                                alt="Chat with Zoe"
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
 
                         {/* Notification Badge */}
                         {!hasOpened && (
-                            <span className="absolute -top-1 -right-1 flex h-4 w-4">
+                            <span className="absolute -top-1 -right-1 flex h-4 w-4 z-10">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-4 w-4 bg-red-500 border-2 border-white"></span>
                             </span>
