@@ -55,7 +55,7 @@ export default function TaxationLayout({ content, slug }: LayoutProps) {
                     </div>
 
                     {/* Process Timeline */}
-                    <div className="mt-16 pt-12 border-t border-gray-100">
+                    <div className="bg-white border-b border-gray-200 sticky top-20 z-40">
                         <h3 className="text-center font-bold text-navy text-xl mb-12">Compliance Workflow</h3>
                         <div className="grid gap-8 md:grid-cols-4 relative">
                             {/* Line connector for desktop */}
