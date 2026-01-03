@@ -111,8 +111,8 @@ export default function OtherLayout({ content, slug }: LayoutProps) {
                 <div className="absolute inset-0 bg-royal-blue/10 skew-y-3 transform origin-bottom-left" />
 
                 <div className="max-w-3xl mx-auto relative z-10">
-                    <div className="bg-white border-b border-gray-200 sticky top-20 z-40 bg-transparent border-none">
-                        <h2 className="text-3xl font-bold mb-12 text-center text-white">Frequently Asked Questions</h2>
+                    <div className="mb-12 text-center">
+                        <h2 className="text-3xl font-bold text-white">Frequently Asked Questions</h2>
                     </div>
                     <div className="space-y-4">
                         {content.faq.map((item: any, i: number) => (
