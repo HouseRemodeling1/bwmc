@@ -91,6 +91,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
             <article className="py-12 md:py-20 px-4 md:px-6 lg:px-8 bg-white">
                 <div className="max-w-4xl mx-auto">
                     <div
+                        style={{ color: '#000000' }}
                         className="prose prose-base md:prose-lg lg:prose-xl max-w-none
               prose-headings:text-black prose-headings:font-bold prose-headings:mb-6 prose-headings:mt-10 first:prose-headings:mt-0
               prose-p:text-black prose-p:leading-[1.8] prose-p:mb-6 prose-p:text-justify
