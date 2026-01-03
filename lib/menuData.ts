@@ -50,6 +50,7 @@ export const mainNav = [
     { name: "Accounting & Auditing", href: "#", hasDropdown: true },
     { name: "Taxation", href: "#", hasDropdown: true },
     { name: "Other Services", href: "#", hasDropdown: true },
+    { name: "Knowledge Base", href: "/vat-guide", hasDropdown: false },
     { name: "Blog", href: "/blog", hasDropdown: false },
     { name: "Contact Us", href: "/contact", hasDropdown: false },
 ];

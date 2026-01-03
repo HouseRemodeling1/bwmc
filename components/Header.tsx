@@ -15,7 +15,7 @@ export default function Header() {
     const pathname = usePathname();
 
     // Pages that have a dark hero section and need a transparent/white-text header initially
-    const isTransparentPage = pathname === "/" || pathname.startsWith("/services/");
+    const isTransparentPage = pathname === "/" || pathname.startsWith("/services/") || pathname === "/vat-guide";
 
     // Use dark header style if scrolled OR if we are on a page without a dark hero
     const isDarkHeader = scrolled || !isTransparentPage;

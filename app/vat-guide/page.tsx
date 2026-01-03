@@ -11,7 +11,7 @@ export default function VatGuidePage() {
     return (
         <main className="min-h-screen bg-neutral/30">
             {/* Hero Section */}
-            <section className="bg-navy relative overflow-hidden py-24 px-6 lg:px-8">
+            <section className="bg-navy relative overflow-hidden pt-36 pb-20 px-6 lg:px-8">
                 {/* Abstract Background patterns */}
                 <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-royal-blue/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
                 <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-sky-blue/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2" />
