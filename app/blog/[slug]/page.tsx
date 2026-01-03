@@ -88,19 +88,22 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
             )}
 
             {/* Content Section */}
-            <article className="py-12 md:py-20 px-6 lg:px-8">
-                <div className="max-w-3xl mx-auto">
+            <article className="py-12 md:py-20 px-4 md:px-6 lg:px-8 bg-white">
+                <div className="max-w-4xl mx-auto">
                     <div
-                        className="prose prose-lg md:prose-xl max-w-none
-              prose-headings:text-navy prose-headings:font-bold prose-headings:mb-6
-              prose-p:text-slate-800 prose-p:leading-relaxed prose-p:mb-6
-              prose-a:text-royal-blue prose-a:font-semibold prose-a:underline decoration-sky-blue/30 underline-offset-4 hover:decoration-royal-blue
-              prose-strong:text-navy prose-strong:font-bold
-              prose-ul:text-slate-800 prose-ul:my-8
-              prose-ol:text-slate-800 prose-ol:my-8
-              prose-li:mb-2
-              prose-hr:border-slate-200 prose-hr:my-12
-              prose-img:rounded-2xl prose-img:shadow-xl prose-img:my-12 prose-img:mx-auto"
+                        className="prose prose-base md:prose-lg lg:prose-xl max-w-none
+              prose-headings:text-black prose-headings:font-bold prose-headings:mb-6 prose-headings:mt-10 first:prose-headings:mt-0
+              prose-p:text-black prose-p:leading-[1.8] prose-p:mb-6 prose-p:text-justify
+              prose-a:text-royal-blue prose-a:font-semibold prose-a:underline prose-a:decoration-sky-blue/40 prose-a:underline-offset-4 hover:prose-a:decoration-royal-blue
+              prose-strong:text-black prose-strong:font-bold
+              prose-ul:text-black prose-ul:my-6 prose-ul:space-y-3
+              prose-ol:text-black prose-ol:my-6 prose-ol:space-y-3
+              prose-li:text-black prose-li:leading-[1.8]
+              prose-hr:border-gray-300 prose-hr:my-12
+              prose-img:rounded-2xl prose-img:shadow-xl prose-img:my-10 prose-img:mx-auto
+              prose-h1:text-3xl md:prose-h1:text-4xl
+              prose-h2:text-2xl md:prose-h2:text-3xl
+              prose-h3:text-xl md:prose-h3:text-2xl"
                         dangerouslySetInnerHTML={{ __html: blog.content }}
                     />
                 </div>

@@ -15,6 +15,7 @@ type Message = {
 export default function ChatBot() {
     const [isOpen, setIsOpen] = useState(false);
     const [hasOpened, setHasOpened] = useState(false);
+    const [userDismissed, setUserDismissed] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
         {
             id: '1',
@@ -26,17 +27,17 @@ export default function ChatBot() {
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    // Auto-open after 10 seconds
+    // Auto-open after 10 seconds (only if user hasn't dismissed it)
     useEffect(() => {
         const timer = setTimeout(() => {
-            if (!hasOpened) {
+            if (!hasOpened && !userDismissed) {
                 setIsOpen(true);
                 setHasOpened(true);
             }
         }, 10000);
 
         return () => clearTimeout(timer);
-    }, [hasOpened]);
+    }, [hasOpened, userDismissed]);
 
     // Auto-scroll to bottom
     useEffect(() => {
@@ -135,7 +136,10 @@ export default function ChatBot() {
                                     </div>
                                 </div>
                                 <button
-                                    onClick={() => setIsOpen(false)}
+                                    onClick={() => {
+                                        setIsOpen(false);
+                                        setUserDismissed(true);
+                                    }}
                                     className="p-1 hover:bg-white/20 rounded-full transition-colors"
                                 >
                                     <X size={20} />
