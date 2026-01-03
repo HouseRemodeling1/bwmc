@@ -27,6 +27,14 @@ export default function ChatBot() {
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
+    // Check localStorage on mount to see if user previously dismissed
+    useEffect(() => {
+        const dismissed = localStorage.getItem('chatbot-dismissed');
+        if (dismissed === 'true') {
+            setUserDismissed(true);
+        }
+    }, []);
+
     // Auto-open after 10 seconds (only if user hasn't dismissed it)
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -139,6 +147,7 @@ export default function ChatBot() {
                                     onClick={() => {
                                         setIsOpen(false);
                                         setUserDismissed(true);
+                                        localStorage.setItem('chatbot-dismissed', 'true');
                                     }}
                                     className="p-1 hover:bg-white/20 rounded-full transition-colors"
                                 >
