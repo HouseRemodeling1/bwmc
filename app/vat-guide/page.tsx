@@ -77,7 +77,7 @@ export default function VatGuidePage() {
                         {vatGuideData.map((item, index) => (
                             <Link
                                 key={index}
-                                href="#" // Placeholder link as specific sub-pages are not requested yet
+                                href={`/vat-guide/${item.slug}`}
                                 className="group bg-white rounded-xl p-8 shadow-sm border border-gray-100 hover:shadow-xl hover:border-sky-blue/30 transition-all duration-300 relative overflow-hidden"
                             >
                                 <div className="absolute top-0 right-0 w-24 h-24 bg-neutral rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110" />
