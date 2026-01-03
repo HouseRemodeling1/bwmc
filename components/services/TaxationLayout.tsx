@@ -1,5 +1,9 @@
 import { AlertTriangle, ArrowRight, Calendar, CheckSquare, FileText, Scale } from "lucide-react";
 import Link from "next/link";
+import ServiceSEO from "../ServiceSEO";
+import Breadcrumbs from "../Breadcrumbs";
+import RelatedContent from "../RelatedContent";
+import { serviceContent } from "@/lib/serviceContent";
 
 interface LayoutProps {
     content: any;
@@ -7,12 +11,35 @@ interface LayoutProps {
 }
 
 export default function TaxationLayout({ content, slug }: LayoutProps) {
+    // Get other services in the same category for RelatedContent
+    const relatedServices = Object.entries(serviceContent)
+        .filter(([key, val]) => val.category === content.category && key !== slug)
+        .slice(0, 3)
+        .map(([key, val]) => ({
+            title: val.title,
+            href: `/services/${key}`,
+            description: val.subtitle,
+            category: "Service"
+        }));
+
     return (
         <main className="min-h-screen bg-stone-50">
-            {/* Minimal Header */}
+            {/* Inject SEO Schemas */}
+            <ServiceSEO content={content} slug={slug} />
+
+            {/* Minimal Header with Breadcrumbs */}
             <div className="bg-navy text-white py-20 px-6 relative">
                 <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-5" />
                 <div className="max-w-4xl mx-auto text-center relative z-10">
+                    <div className="flex justify-center mb-6">
+                        <Breadcrumbs
+                            items={[
+                                { label: "Services", href: "/services" },
+                                { label: content.title, href: `/services/${slug}` }
+                            ]}
+                            className="text-white/60"
+                        />
+                    </div>
                     <span className="uppercase tracking-widest text-sm text-sky-blue mb-4 block font-semibold">Tax & Compliance Services</span>
                     <h1 className="text-4xl md:text-6xl font-serif mb-6">{content.title}</h1>
                     <p className="text-xl text-white/80 leading-relaxed font-light">{content.subtitle}</p>
@@ -55,7 +82,7 @@ export default function TaxationLayout({ content, slug }: LayoutProps) {
                     </div>
 
                     {/* Process Timeline */}
-                    <div className="bg-white border-b border-gray-200 sticky top-20 z-40">
+                    <div className="mt-12 pt-8 border-t border-gray-100">
                         <h3 className="text-center font-bold text-navy text-xl mb-12">Compliance Workflow</h3>
                         <div className="grid gap-8 md:grid-cols-4 relative">
                             {/* Line connector for desktop */}
@@ -75,6 +102,24 @@ export default function TaxationLayout({ content, slug }: LayoutProps) {
                 </div>
             </section>
 
+            {/* FAQ Section */}
+            <section className="max-w-4xl mx-auto px-6 pb-20">
+                <h3 className="text-2xl font-bold text-navy mb-8 text-center">Frequently Asked Questions</h3>
+                <div className="space-y-4">
+                    {content.faq.map((item: any, i: number) => (
+                        <details key={i} className="group bg-white rounded shadow-sm border border-gray-100 p-4 cursor-pointer">
+                            <summary className="flex items-start justify-between font-semibold text-navy cursor-pointer list-none">
+                                <span>{item.q}</span>
+                                <ArrowRight className="w-4 h-4 mt-1 text-royal-blue transition-transform group-open:rotate-90" />
+                            </summary>
+                            <div className="mt-4 text-gray-600 text-sm leading-relaxed border-t border-gray-100 pt-4">
+                                {item.a}
+                            </div>
+                        </details>
+                    ))}
+                </div>
+            </section>
+
             {/* CTA Strip */}
             <section className="bg-white py-16 border-t border-gray-200">
                 <div className="max-w-4xl mx-auto px-6 text-center">
@@ -89,6 +134,15 @@ export default function TaxationLayout({ content, slug }: LayoutProps) {
                     </div>
                 </div>
             </section>
+
+            {/* Related Services */}
+            {relatedServices.length > 0 && (
+                <RelatedContent
+                    title="Related Tax & Compliance Services"
+                    items={relatedServices}
+                    className="bg-stone-50 border-t border-gray-200"
+                />
+            )}
         </main>
     )
 }

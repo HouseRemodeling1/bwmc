@@ -1,10 +1,8 @@
 import BusinessCalculator from "@/components/BusinessCalculator";
 import { Calculator } from "lucide-react";
+import { calculatorMetadata } from "@/lib/metadata";
 
-export const metadata = {
-    title: "Business Setup Cost Calculator | BWMC",
-    description: "Calculate your UAE business setup costs across multiple freezones. Get instant pricing for licenses, visas, and office packages.",
-};
+export const metadata = calculatorMetadata;
 
 export default function CalculatorPage() {
     return (

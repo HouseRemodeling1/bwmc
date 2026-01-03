@@ -1,5 +1,9 @@
 import { CheckCircle2, ChevronRight, FileCheck, ShieldCheck, BarChart3, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import ServiceSEO from "../ServiceSEO";
+import Breadcrumbs from "../Breadcrumbs";
+import RelatedContent from "../RelatedContent";
+import { serviceContent } from "@/lib/serviceContent";
 
 interface LayoutProps {
     content: any;
@@ -7,18 +11,31 @@ interface LayoutProps {
 }
 
 export default function AccountingLayout({ content, slug }: LayoutProps) {
+    // Get other services in the same category for RelatedContent
+    const relatedServices = Object.entries(serviceContent)
+        .filter(([key, val]) => val.category === content.category && key !== slug)
+        .slice(0, 3)
+        .map(([key, val]) => ({
+            title: val.title,
+            href: `/services/${key}`,
+            description: val.subtitle,
+            category: "Service"
+        }));
+
     return (
         <main className="min-h-screen bg-slate-50">
+            {/* Inject SEO Schemas */}
+            <ServiceSEO content={content} slug={slug} />
+
             {/* Header */}
             <div className="bg-white border-b border-gray-200 sticky top-20 z-40">
-                <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
-                        <Link href="/" className="hover:text-navy">Home</Link>
-                        <ChevronRight className="w-4 h-4" />
-                        <Link href="/services" className="hover:text-navy">Services</Link>
-                        <ChevronRight className="w-4 h-4" />
-                        <span className="text-navy font-semibold capitalize">{slug.replace(/-/g, ' ')}</span>
-                    </div>
+                <div className="max-w-7xl mx-auto px-6 py-4">
+                    <Breadcrumbs
+                        items={[
+                            { label: "Services", href: "/services" },
+                            { label: content.title, href: `/services/${slug}` }
+                        ]}
+                    />
                 </div>
             </div>
 
@@ -109,13 +126,13 @@ export default function AccountingLayout({ content, slug }: LayoutProps) {
                 {/* Sidebar */}
                 <div className="space-y-8">
                     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 sticky top-24">
-                        <h3 className="font-bold text-navy mb-4">Common Questions</h3>
+                        <h3 className="font-bold text-navy mb-4 text-lg">Common Questions</h3>
                         <div className="space-y-4">
                             {content.faq.map((item: any, i: number) => (
                                 <details key={i} className="group cursor-pointer">
-                                    <summary className="flex items-center justify-between font-medium text-gray-700 text-sm hover:text-royal-blue list-none">
+                                    <summary className="flex items-start justify-between font-medium text-gray-700 text-sm hover:text-royal-blue list-none">
                                         <span>{item.q}</span>
-                                        <ChevronRight className="w-4 h-4 transition-transform group-open:rotate-90" />
+                                        <ChevronRight className="w-4 h-4 mt-0.5 transition-transform group-open:rotate-90 shrink-0" />
                                     </summary>
                                     <div className="text-sm text-gray-500 mt-2 pl-2 border-l-2 border-gray-200">
                                         {item.a}
@@ -126,6 +143,16 @@ export default function AccountingLayout({ content, slug }: LayoutProps) {
                     </div>
                 </div>
             </section>
+
+            {/* Related Services */}
+            {relatedServices.length > 0 && (
+                <RelatedContent
+                    title="You May Also Be Interested In"
+                    items={relatedServices}
+                    className="bg-white border-t border-gray-200"
+                />
+            )}
         </main>
     )
 }
+

@@ -3,11 +3,9 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Calendar, User, ArrowRight } from "lucide-react";
 import Image from "next/image";
+import { blogMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-    title: "Blog | BWMC - Insights & Updates",
-    description: "Stay updated with the latest insights on business, finance, tax, and audit from Bridgewater Management Consultancies.",
-};
+export const metadata = blogMetadata;
 
 import fs from "fs";
 import path from "path";

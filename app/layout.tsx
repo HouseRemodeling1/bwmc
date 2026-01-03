@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ChatBot from "@/components/ChatBot";
+import { generateOrganizationSchema, generateWebSiteSchema } from "@/lib/schema";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -17,9 +18,79 @@ const inter = Inter({
   weight: ["300", "400", "500", "600", "700"],
 });
 
+const SITE_URL = "https://bwmc.ae";
+
 export const metadata: Metadata = {
-  title: "BWMC | Bridge Water Management Consultancies",
-  description: "Your Strategic Partner for Financial Clarity & Compliance in the UAE. From Statutory Audits to Digital Growth, we protect and scale your enterprise.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "BWMC | Business Setup, Accounting & Tax Services in UAE",
+    template: "%s | BWMC",
+  },
+  description:
+    "Expert business setup, accounting, auditing, and tax compliance services in Dubai & UAE. Your strategic partner for financial clarity and growth.",
+  keywords: [
+    "UAE business setup",
+    "Dubai accounting services",
+    "VAT UAE",
+    "Corporate tax UAE",
+    "Business consultancy Dubai",
+    "Accounting Dubai",
+    "Auditing services UAE",
+    "Tax advisory Dubai",
+    "Company formation UAE",
+    "Free zone setup Dubai",
+  ],
+  authors: [{ name: "BWMC Team" }],
+  creator: "BWMC",
+  publisher: "BWMC",
+
+  // Open Graph
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: SITE_URL,
+    siteName: "BWMC",
+    title: "BWMC | Business Setup, Accounting & Tax Services in UAE",
+    description:
+      "Expert business setup, accounting, auditing, and tax compliance services in Dubai & UAE.",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.jpg`,
+        width: 1200,
+        height: 630,
+        alt: "BWMC - Business Management Consultancy UAE",
+      },
+    ],
+  },
+
+  // Twitter Card
+  twitter: {
+    card: "summary_large_image",
+    title: "BWMC | Business Setup, Accounting & Tax Services in UAE",
+    description:
+      "Expert business setup, accounting, auditing, and tax compliance services in Dubai & UAE.",
+    images: [`${SITE_URL}/og-image.jpg`],
+    creator: "@bwmc",
+  },
+
+  // Robots
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+
+  // Verification (add your actual codes when available)
+  verification: {
+    google: "your-google-verification-code",
+    // yandex: "your-yandex-verification-code",
+  },
 };
 
 export default function RootLayout({
@@ -27,8 +98,51 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Generate Organization Schema
+  const organizationSchema = generateOrganizationSchema({
+    name: "Bridgewater Management Consultancies",
+    alternateName: "BWMC",
+    description:
+      "Strategic Partner for Financial Clarity & Compliance in the UAE. Business Setup, Accounting, Auditing, and Tax Services.",
+    url: SITE_URL,
+    logo: `${SITE_URL}/logo.png`,
+    telephone: "+971-XX-XXX-XXXX", // TODO: Add actual phone number
+    email: "info@bwmc.ae",
+    address: {
+      streetAddress: "Your Street Address", // TODO: Add actual address
+      addressLocality: "Dubai",
+      addressRegion: "Dubai",
+      addressCountry: "AE",
+    },
+    geo: {
+      latitude: "25.2048", // TODO: Add actual coordinates
+      longitude: "55.2708",
+    },
+    socialLinks: [
+      // TODO: Add actual social media links
+      "https://www.linkedin.com/company/bwmc",
+      "https://twitter.com/bwmc",
+      "https://www.facebook.com/bwmc",
+    ],
+  });
+
+  // Generate WebSite Schema
+  const websiteSchema = generateWebSiteSchema(SITE_URL);
+
   return (
     <html lang="en">
+      <head>
+        {/* Organization Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        {/* WebSite Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
+      </head>
       <body
         className={`${montserrat.variable} ${inter.variable} antialiased selection:bg-sky-blue selection:text-white`}
       >

@@ -1,10 +1,39 @@
 import React from 'react';
 import Image from 'next/image';
 import { Mail, MapPin, Phone, Clock, ArrowRight } from 'lucide-react';
+import { contactMetadata } from '@/lib/metadata';
+import { generateLocalBusinessSchema } from '@/lib/schema';
+
+export const metadata = contactMetadata;
 
 export default function ContactPage() {
+    const localBusinessSchema = generateLocalBusinessSchema({
+        name: "Bridgewater Management Consultancies (BWMC)",
+        description: "Leading business consultancy and financial services provider in Dubai, UAE.",
+        url: "https://bwmc.ae/contact",
+        logo: "https://bwmc.ae/images/logo.png",
+        telephone: "+971 4 548 8184",
+        email: "sales@bwmc.com",
+        address: {
+            streetAddress: "Emarat Atrium 1st Floor, Unit 147, Sheikh Zayed Rd",
+            addressLocality: "Dubai",
+            addressRegion: "Dubai",
+            postalCode: "00000",
+            addressCountry: "AE"
+        },
+        geo: {
+            latitude: "25.1891339",
+            longitude: "55.2535588"
+        }
+    });
+
     return (
         <main className="min-h-screen bg-neutral-50">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+            />
+
             {/* Hero Section */}
             <section className="relative pt-32 pb-20 bg-navy text-white overflow-hidden flex items-center justify-center min-h-[40vh]">
                 <div className="absolute inset-0 bg-gradient-to-br from-navy via-royal-blue/20 to-sky-blue/10" />
@@ -109,3 +138,4 @@ export default function ContactPage() {
         </main>
     );
 }
+

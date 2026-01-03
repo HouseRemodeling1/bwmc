@@ -1,0 +1,13 @@
+# Allow all search engines
+User-agent: *
+Allow: /
+
+# Disallow admin and API routes
+Disallow: /admin/
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://bwmc.ae/sitemap.xml
+
+# Crawl delay (helps with server load)
+Crawl-delay: 1

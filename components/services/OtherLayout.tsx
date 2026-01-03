@@ -1,5 +1,9 @@
 import { ArrowRight, Check, Diamond, Zap, HelpCircle } from "lucide-react";
 import Link from "next/link";
+import ServiceSEO from "../ServiceSEO";
+import Breadcrumbs from "../Breadcrumbs";
+import RelatedContent from "../RelatedContent";
+import { serviceContent } from "@/lib/serviceContent";
 
 interface LayoutProps {
     content: any;
@@ -7,14 +11,37 @@ interface LayoutProps {
 }
 
 export default function OtherLayout({ content, slug }: LayoutProps) {
+    // Get other services in the same category for RelatedContent
+    const relatedServices = Object.entries(serviceContent)
+        .filter(([key, val]) => val.category === content.category && key !== slug)
+        .slice(0, 3)
+        .map(([key, val]) => ({
+            title: val.title,
+            href: `/services/${key}`,
+            description: val.subtitle,
+            category: "Service"
+        }));
+
     return (
         <main className="min-h-screen bg-white">
+            {/* Inject SEO Schemas */}
+            <ServiceSEO content={content} slug={slug} />
+
             {/* Vibrant Hero */}
             <section className="relative overflow-hidden bg-gradient-to-br from-royal-blue via-navy to-purple-900 py-32 px-6">
                 <div className="absolute inset-0 bg-grid-white/[0.05] bg-[length:30px_30px]" />
                 <div className="absolute -top-40 -right-40 w-96 h-96 bg-sky-blue/20 rounded-full blur-3xl rounded-full" />
 
                 <div className="max-w-6xl mx-auto relative z-10 text-center">
+                    <div className="flex justify-center mb-6">
+                        <Breadcrumbs
+                            items={[
+                                { label: "Services", href: "/services" },
+                                { label: content.title, href: `/services/${slug}` }
+                            ]}
+                            className="text-white/60"
+                        />
+                    </div>
                     <span className="bg-white/10 text-white px-4 py-1.5 rounded-full text-sm font-medium mb-6 inline-block backdrop-blur-sm border border-white/10">
                         Enterprise Solutions
                     </span>
@@ -84,8 +111,8 @@ export default function OtherLayout({ content, slug }: LayoutProps) {
                 <div className="absolute inset-0 bg-royal-blue/10 skew-y-3 transform origin-bottom-left" />
 
                 <div className="max-w-3xl mx-auto relative z-10">
-                    <div className="bg-white border-b border-gray-200 sticky top-20 z-40">
-                        <h2 className="text-3xl font-bold mb-12 text-center">Frequently Asked Questions</h2>
+                    <div className="bg-white border-b border-gray-200 sticky top-20 z-40 bg-transparent border-none">
+                        <h2 className="text-3xl font-bold mb-12 text-center text-white">Frequently Asked Questions</h2>
                     </div>
                     <div className="space-y-4">
                         {content.faq.map((item: any, i: number) => (
@@ -106,6 +133,15 @@ export default function OtherLayout({ content, slug }: LayoutProps) {
                     </div>
                 </div>
             </section>
+
+            {/* Related Services */}
+            {relatedServices.length > 0 && (
+                <RelatedContent
+                    title="Explore Other Solutions"
+                    items={relatedServices}
+                    className="bg-white border-t border-gray-200"
+                />
+            )}
         </main>
     )
 }

@@ -3,11 +3,9 @@ import VisionMission from "@/components/VisionMission";
 import Process from "@/components/Process";
 import TrustedBy from "@/components/TrustedBy";
 import ClientTrust from "@/components/ClientTrust";
+import { aboutMetadata } from "@/lib/metadata";
 
-export const metadata = {
-    title: "About Us | Bridge Water Management Consultancies",
-    description: "Discover BWMC – your trusted partner for accounting, auditing, taxation, and business setup services in the UAE.",
-};
+export const metadata = aboutMetadata;
 
 export default function AboutPage() {
     return (
