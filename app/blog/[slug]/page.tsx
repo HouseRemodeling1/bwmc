@@ -39,7 +39,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
     }
 
     return (
-        <main className="min-h-screen bg-white">
+        <main className="min-h-screen">
             {/* Hero Section */}
             <section className="bg-navy relative overflow-hidden py-16 px-6 lg:px-8">
                 <div className="absolute inset-0 bg-gradient-to-br from-royal-blue/20 to-sky-blue/20"></div>
@@ -87,17 +87,20 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                 </section>
             )}
 
-            {/* Content */}
-            <article className="py-16 px-6 lg:px-8">
-                <div className="max-w-4xl mx-auto">
+            {/* Content Section */}
+            <article className="py-12 md:py-20 px-6 lg:px-8">
+                <div className="max-w-3xl mx-auto">
                     <div
-                        className="prose prose-lg max-w-none
-              prose-headings:text-navy prose-headings:font-bold
-              prose-p:text-gray-700 prose-p:leading-relaxed
-              prose-a:text-royal-blue prose-a:no-underline hover:prose-a:underline
-              prose-strong:text-navy
-              prose-ul:text-gray-700 prose-ol:text-gray-700
-              prose-img:rounded-lg prose-img:shadow-md"
+                        className="prose prose-lg md:prose-xl max-w-none
+              prose-headings:text-navy prose-headings:font-bold prose-headings:mb-6
+              prose-p:text-slate-800 prose-p:leading-relaxed prose-p:mb-6
+              prose-a:text-royal-blue prose-a:font-semibold prose-a:underline decoration-sky-blue/30 underline-offset-4 hover:decoration-royal-blue
+              prose-strong:text-navy prose-strong:font-bold
+              prose-ul:text-slate-800 prose-ul:my-8
+              prose-ol:text-slate-800 prose-ol:my-8
+              prose-li:mb-2
+              prose-hr:border-slate-200 prose-hr:my-12
+              prose-img:rounded-2xl prose-img:shadow-xl prose-img:my-12 prose-img:mx-auto"
                         dangerouslySetInnerHTML={{ __html: blog.content }}
                     />
                 </div>
