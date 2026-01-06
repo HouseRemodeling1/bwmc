@@ -4,7 +4,16 @@ import nodemailer from "nodemailer";
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { name, email, phone, quoteDetails } = body;
+        const {
+            businessName,
+            contactName,
+            mobile,
+            email,
+            businessActivity,
+            jurisdiction,
+            freezone,
+            mainland
+        } = body;
 
         // Create a transporter using SMTP
         // For production, these should be environment variables
@@ -18,25 +27,51 @@ export async function POST(request: NextRequest) {
             },
         });
 
+        // Build quote details HTML based on jurisdiction
+        let quoteDetailsHTML = "";
+        if (jurisdiction === "freezone" && freezone) {
+            quoteDetailsHTML = `
+                <h3>Free Zone Setup Details:</h3>
+                <ul>
+                    <li><strong>Free Zone:</strong> ${freezone.freezone}</li>
+                    <li><strong>Office Type:</strong> ${freezone.officeType}</li>
+                    <li><strong>Visa Count:</strong> ${freezone.visaCount}</li>
+                    <li><strong>Contract Years:</strong> ${freezone.contractYears}</li>
+                    <li><strong>Total Estimated Cost:</strong> AED ${freezone.price ? freezone.price.toLocaleString() : 'N/A'}</li>
+                </ul>
+            `;
+        } else if (jurisdiction === "mainland" && mainland) {
+            quoteDetailsHTML = `
+                <h3>Mainland Setup Details:</h3>
+                <ul>
+                    <li><strong>Office Type:</strong> ${mainland.officeType}</li>
+                    <li><strong>Estimated License Fee:</strong> AED ${mainland.estimatedLicenseFee ? mainland.estimatedLicenseFee.toLocaleString() : 'N/A'}</li>
+                    <li><strong>Note:</strong> DED fees subject to specific activity approval</li>
+                </ul>
+            `;
+        }
+
         const mailOptions = {
             from: process.env.SMTP_USER, // Sender address
             to: "sales@bwmc.ae", // Receiver address
-            subject: `New Calculator Quote: ${name}`,
+            subject: `New Calculator Quote: ${businessName} - ${jurisdiction.toUpperCase()}`,
             html: `
                 <h2>New Business Setup Quote Request</h2>
-                <p><strong>Name:</strong> ${name}</p>
-                <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Phone:</strong> ${phone}</p>
-                
-                <h3>Quote Details:</h3>
+                <h3>Contact Information:</h3>
                 <ul>
-                    <li><strong>Freezone:</strong> ${quoteDetails.freezone}</li>
-                    <li><strong>Office Type:</strong> ${quoteDetails.officeType}</li>
-                    <li><strong>License Type:</strong> ${quoteDetails.licenseType}</li>
-                    <li><strong>Visa Count:</strong> ${quoteDetails.visaCount}</li>
-                    <li><strong>Contract Years:</strong> ${quoteDetails.contractYears}</li>
-                    <li><strong>Total Estimated Cost:</strong> AED ${quoteDetails.price.toLocaleString()}</li>
+                    <li><strong>Business Name:</strong> ${businessName}</li>
+                    <li><strong>Contact Name:</strong> ${contactName}</li>
+                    <li><strong>Email:</strong> ${email}</li>
+                    <li><strong>Mobile (WhatsApp):</strong> ${mobile}</li>
                 </ul>
+                
+                <h3>Business Requirements:</h3>
+                <ul>
+                    <li><strong>Business Activity:</strong> ${businessActivity}</li>
+                    <li><strong>Jurisdiction:</strong> ${jurisdiction === "freezone" ? "Free Zone" : "Mainland (Dubai DED)"}</li>
+                </ul>
+                
+                ${quoteDetailsHTML}
             `,
         };
 
