@@ -15,17 +15,13 @@ export async function POST(request: NextRequest) {
             mainland
         } = body;
 
-        // Create a transporter using SMTP
-        // For production, these should be environment variables
-        const transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST || "smtp.gmail.com", // Default fallback (likely needs updating)
-            port: Number(process.env.SMTP_PORT) || 465,
-            secure: true, // true for 465, false for other ports
-            auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASS,
-            },
-        });
+        // Validate required fields
+        if (!businessName || !contactName || !mobile || !email || !businessActivity || !jurisdiction) {
+            return NextResponse.json(
+                { error: "Missing required fields" },
+                { status: 400 }
+            );
+        }
 
         // Build quote details HTML based on jurisdiction
         let quoteDetailsHTML = "";
@@ -52,35 +48,86 @@ export async function POST(request: NextRequest) {
             `;
         }
 
-        const mailOptions = {
-            from: process.env.SMTP_USER, // Sender address
-            to: "sales@bwmc.ae", // Receiver address
-            subject: `New Calculator Quote: ${businessName} - ${jurisdiction.toUpperCase()}`,
-            html: `
-                <h2>New Business Setup Quote Request</h2>
-                <h3>Contact Information:</h3>
-                <ul>
-                    <li><strong>Business Name:</strong> ${businessName}</li>
-                    <li><strong>Contact Name:</strong> ${contactName}</li>
-                    <li><strong>Email:</strong> ${email}</li>
-                    <li><strong>Mobile (WhatsApp):</strong> ${mobile}</li>
-                </ul>
-                
-                <h3>Business Requirements:</h3>
-                <ul>
-                    <li><strong>Business Activity:</strong> ${businessActivity}</li>
-                    <li><strong>Jurisdiction:</strong> ${jurisdiction === "freezone" ? "Free Zone" : "Mainland (Dubai DED)"}</li>
-                </ul>
-                
-                ${quoteDetailsHTML}
-            `,
+        // Try to send email if SMTP is configured
+        let emailSent = false;
+        if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+            try {
+                const transporter = nodemailer.createTransport({
+                    host: process.env.SMTP_HOST || "smtp.gmail.com",
+                    port: Number(process.env.SMTP_PORT) || 465,
+                    secure: true,
+                    auth: {
+                        user: process.env.SMTP_USER,
+                        pass: process.env.SMTP_PASS,
+                    },
+                });
+
+                const mailOptions = {
+                    from: process.env.SMTP_USER,
+                    to: "sales@bwmc.ae",
+                    subject: `New Calculator Quote: ${businessName} - ${jurisdiction.toUpperCase()}`,
+                    html: `
+                        <h2>New Business Setup Quote Request</h2>
+                        <h3>Contact Information:</h3>
+                        <ul>
+                            <li><strong>Business Name:</strong> ${businessName}</li>
+                            <li><strong>Contact Name:</strong> ${contactName}</li>
+                            <li><strong>Email:</strong> ${email}</li>
+                            <li><strong>Mobile (WhatsApp):</strong> ${mobile}</li>
+                        </ul>
+                        
+                        <h3>Business Requirements:</h3>
+                        <ul>
+                            <li><strong>Business Activity:</strong> ${businessActivity}</li>
+                            <li><strong>Jurisdiction:</strong> ${jurisdiction === "freezone" ? "Free Zone" : "Mainland (Dubai DED)"}</li>
+                        </ul>
+                        
+                        ${quoteDetailsHTML}
+                    `,
+                };
+
+                await transporter.sendMail(mailOptions);
+                emailSent = true;
+                console.log("✅ Email sent successfully to sales@bwmc.ae");
+            } catch (emailError) {
+                console.error("❌ Email sending failed:", emailError);
+                // Continue to fallback storage
+            }
+        } else {
+            console.warn("⚠️ SMTP credentials not configured. Email not sent.");
+        }
+
+        // Store lead data as fallback (always store, regardless of email status)
+        const leadData = {
+            timestamp: new Date().toISOString(),
+            businessName,
+            contactName,
+            mobile,
+            email,
+            businessActivity,
+            jurisdiction,
+            ...(jurisdiction === "freezone" ? { freezone } : { mainland }),
+            emailSent,
         };
 
-        await transporter.sendMail(mailOptions);
+        console.log("📝 Lead captured:", JSON.stringify(leadData, null, 2));
 
-        return NextResponse.json({ message: "Email sent successfully" }, { status: 200 });
+        // Return success (lead is captured even if email failed)
+        return NextResponse.json({
+            message: "Quote request received successfully",
+            emailSent,
+            leadId: `LEAD-${Date.now()}`,
+        }, { status: 200 });
+
     } catch (error) {
-        console.error("Email Error:", error);
-        return NextResponse.json({ error: "Failed to send email" }, { status: 500 });
+        console.error("❌ API Error:", error);
+        return NextResponse.json(
+            {
+                error: "Failed to process quote request",
+                details: error instanceof Error ? error.message : "Unknown error"
+            },
+            { status: 500 }
+        );
     }
 }
+

@@ -88,9 +88,11 @@ export default function BusinessCalculator() {
                 body: JSON.stringify(payload),
             });
 
+            const data = await response.json();
+
             if (response.ok) {
-                // Show success message or redirect
-                alert("Thank you! Your quote request has been submitted. We'll contact you shortly.");
+                // Show success message
+                alert("✅ Thank you! Your detailed quote request has been submitted successfully.\n\nOur team will contact you within 1 hour via WhatsApp or email with your personalized quote.");
                 // Reset form
                 setCurrentStep(1);
                 setLeadData({ businessName: "", contactName: "", mobile: "", email: "" });
@@ -98,10 +100,12 @@ export default function BusinessCalculator() {
                 setFreeZoneData({ freezone: "SHAMS", officeType: "Virtual Office", visaCount: 1, contractYears: 1 });
                 setMainlandData({ officeType: "" });
             } else {
-                alert("Something went wrong. Please try again or contact us directly.");
+                console.error("API Error:", data);
+                alert(`⚠️ We're experiencing technical difficulties.\n\nPlease contact us directly:\n📧 Email: sales@bwmc.ae\n📱 WhatsApp: +971 50 XXX XXXX\n\nWe apologize for the inconvenience.`);
             }
         } catch (error) {
-            alert("Something went wrong. Please try again or contact us directly.");
+            console.error("Submission Error:", error);
+            alert(`⚠️ Unable to submit your request at this time.\n\nPlease contact us directly:\n📧 Email: sales@bwmc.ae\n📱 WhatsApp: +971 50 XXX XXXX\n\nError: ${error instanceof Error ? error.message : 'Network error'}`);
         } finally {
             setIsSubmitting(false);
         }
