@@ -60,11 +60,24 @@ export default function BusinessCalculator() {
         setIsSubmitting(true);
 
         try {
+            // Calculate the actual price for the sales team (hidden from user)
+            let calculatedPrice = null;
+            if (requirementsData.jurisdiction === "freezone") {
+                const { getPrice } = await import("@/lib/calculatorPricing");
+                calculatedPrice = getPrice(
+                    freeZoneData.freezone,
+                    freeZoneData.officeType,
+                    "Standard License",
+                    freeZoneData.visaCount,
+                    freeZoneData.contractYears
+                );
+            }
+
             const payload = {
                 ...leadData,
                 ...requirementsData,
                 ...(requirementsData.jurisdiction === "freezone"
-                    ? { freezone: freeZoneData }
+                    ? { freezone: { ...freeZoneData, calculatedPrice } }
                     : { mainland: mainlandData }
                 ),
             };

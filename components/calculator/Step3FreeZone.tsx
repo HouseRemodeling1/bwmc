@@ -66,7 +66,7 @@ export default function Step3FreeZone({ formData, onUpdate, onBack, onSubmit }: 
 
     const whatsappNumber = "+971501234567"; // Replace with actual number
     const whatsappMessage = encodeURIComponent(
-        `Hi! I'm interested in the ${formData.freezone} Free Zone setup package (${calculatedPrice?.toLocaleString()} AED). Can you provide more details?`
+        `Hi! I'm interested in a ${formData.freezone} Free Zone setup with ${formData.visaCount} visa(s). Can you send me a detailed quote?`
     );
 
     return (
@@ -120,8 +120,8 @@ export default function Step3FreeZone({ formData, onUpdate, onBack, onSubmit }: 
                                         type="button"
                                         onClick={() => onUpdate({ officeType: type })}
                                         className={`px-4 py-3 rounded-md text-sm font-medium transition-all text-left ${formData.officeType === type
-                                                ? "bg-royal-blue text-white shadow-md"
-                                                : "bg-gray-50 text-navy hover:bg-gray-100"
+                                            ? "bg-royal-blue text-white shadow-md"
+                                            : "bg-gray-50 text-navy hover:bg-gray-100"
                                             }`}
                                     >
                                         {type}
@@ -164,8 +164,8 @@ export default function Step3FreeZone({ formData, onUpdate, onBack, onSubmit }: 
                                             type="button"
                                             onClick={() => onUpdate({ contractYears: years })}
                                             className={`py-2 px-3 rounded-md text-sm font-semibold transition-all ${formData.contractYears === years
-                                                    ? "bg-royal-blue text-white shadow-md"
-                                                    : "bg-gray-50 text-navy hover:bg-gray-100"
+                                                ? "bg-royal-blue text-white shadow-md"
+                                                : "bg-gray-50 text-navy hover:bg-gray-100"
                                                 }`}
                                         >
                                             {years}Y
@@ -181,11 +181,14 @@ export default function Step3FreeZone({ formData, onUpdate, onBack, onSubmit }: 
                         <div className="mb-6">
                             <p className="text-sm text-white/70 mb-2">Premium Free Zone Setup</p>
                             <h3 className="text-5xl font-bold text-white mb-2">
-                                {calculatedPrice ? `${calculatedPrice.toLocaleString()}` : "—"}
-                                <span className="text-2xl ml-2">AED</span>
+                                Starting from
                             </h3>
+                            <div className="flex items-baseline gap-2 mb-2">
+                                <span className="text-6xl font-bold text-sky-blue">4,888</span>
+                                <span className="text-3xl font-semibold">AED</span>
+                            </div>
                             <p className="text-sm text-white/60">
-                                {formData.contractYears === 1 ? "Total for 1 year" : `Total for ${formData.contractYears} years`}
+                                Complete setup package - Get your exact quote now
                             </p>
                         </div>
 
@@ -225,9 +228,9 @@ export default function Step3FreeZone({ formData, onUpdate, onBack, onSubmit }: 
                             </div>
                             {formData.contractYears > 1 && (
                                 <div className="flex justify-between">
-                                    <span className="text-white/70">Multi-Year Discount:</span>
+                                    <span className="text-white/70">Contract Period:</span>
                                     <span className="font-semibold text-green-300">
-                                        {formData.contractYears === 2 ? "2%" : formData.contractYears === 3 ? "3%" : formData.contractYears === 5 ? "5%" : "10%"}
+                                        {formData.contractYears} years (Save up to {formData.contractYears === 2 ? "2%" : formData.contractYears === 3 ? "3%" : formData.contractYears === 5 ? "5%" : "10%"})
                                     </span>
                                 </div>
                             )}
@@ -237,10 +240,10 @@ export default function Step3FreeZone({ formData, onUpdate, onBack, onSubmit }: 
                         <div className="space-y-3">
                             <button
                                 onClick={onSubmit}
-                                className="w-full bg-white text-navy font-bold py-3 rounded-md hover:bg-gray-100 transition-all flex items-center justify-center gap-2"
+                                className="w-full bg-white text-navy font-bold py-4 rounded-md hover:bg-gray-100 transition-all flex items-center justify-center gap-2 shadow-lg"
                             >
-                                <Download className="w-4 h-4" />
-                                Download Full Quote (PDF)
+                                <Download className="w-5 h-5" />
+                                Get Your Detailed Quote Now
                             </button>
                             <a
                                 href={`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`}
@@ -249,7 +252,7 @@ export default function Step3FreeZone({ formData, onUpdate, onBack, onSubmit }: 
                                 className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-md transition-all flex items-center justify-center gap-2"
                             >
                                 <MessageCircle className="w-4 h-4" />
-                                Talk to Expert on WhatsApp
+                                Chat with Expert on WhatsApp
                             </a>
                         </div>
 

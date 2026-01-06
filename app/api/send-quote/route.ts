@@ -37,7 +37,8 @@ export async function POST(request: NextRequest) {
                     <li><strong>Office Type:</strong> ${freezone.officeType}</li>
                     <li><strong>Visa Count:</strong> ${freezone.visaCount}</li>
                     <li><strong>Contract Years:</strong> ${freezone.contractYears}</li>
-                    <li><strong>Total Estimated Cost:</strong> AED ${freezone.price ? freezone.price.toLocaleString() : 'N/A'}</li>
+                    ${freezone.calculatedPrice ? `<li><strong>Calculated Price (Internal):</strong> <span style="background-color: yellow; padding: 2px 6px;">AED ${freezone.calculatedPrice.toLocaleString()}</span></li>` : ''}
+                    <li><em>Note: User was shown "Starting from AED 4,888" - actual price above</em></li>
                 </ul>
             `;
         } else if (jurisdiction === "mainland" && mainland) {
