@@ -15,6 +15,7 @@ export default function BusinessCalculator() {
     // Form Data State
     const [formData, setFormData] = useState({
         activity: "",
+        businessName: "",
         visaCount: null as number | null,
         jurisdiction: null as "mainland" | "freezone" | null,
         lead: {
@@ -79,12 +80,14 @@ export default function BusinessCalculator() {
 
             <div className="bg-white rounded-[2rem] p-6 md:p-12 shadow-sm border border-gray-100 min-h-[500px] relative">
                 <AnimatePresence mode="wait">
-                    {/* Step 1: Activity */}
+                    {/* Step 1: Activity & Name */}
                     {currentStep === 1 && (
                         <Step1Activity
                             key="step1"
-                            value={formData.activity}
-                            onChange={(val) => setFormData(prev => ({ ...prev, activity: val }))}
+                            activity={formData.activity}
+                            setActivity={(val) => setFormData(prev => ({ ...prev, activity: val }))}
+                            businessName={formData.businessName}
+                            setBusinessName={(val) => setFormData(prev => ({ ...prev, businessName: val }))}
                             onNext={handleStep1Next}
                         />
                     )}
@@ -111,7 +114,7 @@ export default function BusinessCalculator() {
                         />
                     )}
 
-                    {/* Lead Gate (Overlay or Separate Step) */}
+                    {/* Lead Gate */}
                     {showGate && (
                         <LeadGate
                             key="gate"
@@ -124,6 +127,7 @@ export default function BusinessCalculator() {
                         <Step4Results
                             key="step4"
                             jurisdiction={formData.jurisdiction}
+                            visaCount={formData.visaCount}
                         />
                     )}
                 </AnimatePresence>

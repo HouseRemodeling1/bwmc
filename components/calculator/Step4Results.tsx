@@ -1,17 +1,48 @@
 import { CheckCircle2, Calendar } from "lucide-react";
 import Link from "next/link";
+import { getPrice, FREEZONES } from "@/lib/calculatorPricing";
 
 interface Step4Props {
     jurisdiction: "mainland" | "freezone" | null;
+    visaCount: number | null;
 }
 
-export default function Step4Results({ jurisdiction }: Step4Props) {
+export default function Step4Results({ jurisdiction, visaCount }: Step4Props) {
+
+    // Calculate Freezone Estimate
+    const calculateFreezoneEstimate = () => {
+        if (visaCount === null) return 4888; // Fallback
+
+        // We check a few known cost-effective freezones to find the "Starting From" price
+        const zonesToCheck = [FREEZONES.SHAMS, FREEZONES.SPC, FREEZONES.ANC_FZ, FREEZONES.AJMAN];
+        let minPrice = Infinity;
+
+        zonesToCheck.forEach(zone => {
+            // Assume Virtual Office / Standard License / 1 Year for "Starting From"
+            // Note: Some zones might return null if the combo isn't valid, getPrice handles that.
+
+            // Try Standard License
+            let price = getPrice(zone, "Virtual Office", "Standard License", visaCount, 1);
+            if (price && price < minPrice) minPrice = price;
+
+            // Try Freelancer for 0/1 visa if applicable (cheap option)
+            if (visaCount <= 1) {
+                price = getPrice(zone, "Freelancer", "Standard License", visaCount, 1);
+                if (price && price < minPrice) minPrice = price;
+            }
+        });
+
+        return minPrice === Infinity ? 4888 : minPrice;
+    };
+
     if (jurisdiction === "freezone") {
+        const estimatedPrice = calculateFreezoneEstimate();
+
         return (
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
                 <div className="text-center">
                     <h2 className="text-3xl font-bold text-navy mb-2">Your Estimated Cost</h2>
-                    <p className="text-gray-500">Based on your requirements</p>
+                    <p className="text-gray-500">Based on {visaCount} Visa{visaCount !== 1 ? 's' : ''}</p>
                 </div>
 
                 <div className="max-w-md mx-auto relative group">
@@ -26,7 +57,9 @@ export default function Step4Results({ jurisdiction }: Step4Props) {
                         <h3 className="text-navy font-bold text-xl mb-4">Starter Package</h3>
                         <div className="flex items-baseline gap-1 mb-6">
                             <span className="text-lg text-gray-500 font-medium">AED</span>
-                            <span className="text-5xl font-extrabold text-royal-blue tracking-tight">4,888</span>
+                            <span className="text-5xl font-extrabold text-royal-blue tracking-tight">
+                                {estimatedPrice.toLocaleString()}
+                            </span>
                         </div>
 
                         <ul className="space-y-3 mb-8">
@@ -34,7 +67,7 @@ export default function Step4Results({ jurisdiction }: Step4Props) {
                                 "100% Ownership",
                                 "Zero Personal Income Tax",
                                 "Virtual Office Included",
-                                "Up to 3 Activities",
+                                `${visaCount} Residency Visa${visaCount !== 1 ? 's' : ''} Eligible`,
                                 "Fast & Digital Setup"
                             ].map((item, i) => (
                                 <li key={i} className="flex items-center gap-3">
@@ -45,7 +78,7 @@ export default function Step4Results({ jurisdiction }: Step4Props) {
                         </ul>
 
                         <Link
-                            href="https://calendly.com/bwmc-consulting" // Replace with actual calendar link
+                            href="https://calendly.com/bwmc-consulting"
                             target="_blank"
                             className="w-full bg-navy text-white py-4 rounded-lg font-bold hover:bg-royal-blue transition-all flex items-center justify-center gap-2 shadow-lg"
                         >
@@ -58,7 +91,7 @@ export default function Step4Results({ jurisdiction }: Step4Props) {
         );
     }
 
-    // Mainland Result
+    // Mainland Result (kept mostly same, but updated title context)
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
             <div className="text-center">

@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
             mobile = lead.whatsapp;
             businessActivity = activity;
             jurisdiction = jur || "Not Selected";
-            businessName = "Not Provided (Calculator Lead)";
+            businessName = body.businessName || "Not Provided (Calculator Lead)";
             email = "Not Provided"; // New form doesn't ask for email
             subject = `New Calculator Lead: ${contactName} - ${jurisdiction.toUpperCase()}`;
 
