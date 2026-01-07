@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Lock, Calculator, Copy, Printer, CheckCircle, Smartphone, Building2, FileText, User, Users, Briefcase } from "lucide-react";
+import { Lock, Calculator, Copy, Printer, CheckCircle, Smartphone, Building2, User, Users, Briefcase } from "lucide-react";
 
 // --- Configuration ---
 const PASSWORD = process.env.NEXT_PUBLIC_STAFF_PASSWORD || "BWMC2026";
@@ -11,15 +11,10 @@ const JURISDICTIONS = [
     { id: "mainland", name: "Mainland (Dubai)", type: "mainland" },
 ];
 
-const OFFICE_TYPES = [
-    { id: "virtual", name: "Virtual Office", cost: 0 },
-    { id: "physical", name: "Physical Office (Est. 10k/yr)", cost: 10000 },
-];
-
 const ADDONS = [
     { id: "medical", name: "VIP Medical & Emirates ID", price: 2500, cost: 800 },
-    { id: "tax", name: "Corporate Tax Registration", price: 1500, cost: 0 }, // Pure service
-    { id: "bank", name: "Bank Account Opening Assistance", price: 3000, cost: 0 }, // Pure service
+    { id: "tax", name: "Corporate Tax Registration", price: 1500, cost: 0 },
+    { id: "bank", name: "Bank Account Opening Assistance", price: 3000, cost: 0 },
 ];
 
 export default function StaffPortal() {
@@ -30,14 +25,22 @@ export default function StaffPortal() {
     // --- Form State ---
     const [clientName, setClientName] = useState("");
     const [clientPhone, setClientPhone] = useState("");
-    const [businessName, setBusinessName] = useState(""); // For "Business Name" in quote
+    const [businessName, setBusinessName] = useState("");
     const [jurisdiction, setJurisdiction] = useState(JURISDICTIONS[0].id);
-    const [licenseType, setLicenseType] = useState("Commercial");
     const [visaCount, setVisaCount] = useState(0);
-    const [officeType, setOfficeType] = useState(OFFICE_TYPES[0].id);
-    const [voucherAmount, setVoucherAmount] = useState(0); // For Mainland only
     const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
     const [discount, setDiscount] = useState(0);
+
+    // --- Mainland Specific State ---
+    const [mainlandForm, setMainlandForm] = useState({
+        legalType: "LLC", // LLC | Sole | Civil
+        tradeName: "Foreign", // Foreign | Local
+        premise: "Instant", // Instant | Physical
+        rentAmount: 100000, // For Market Fee
+        activityGroup: "Standard", // Standard | Regulated | General
+        externalApproval: 0, // Manual fee input
+        bwmcServiceFee: 8000, // Our Markup
+    });
 
     // --- Calculations ---
     const [totals, setTotals] = useState({
@@ -49,10 +52,11 @@ export default function StaffPortal() {
         cost: 0,
         profit: 0,
         margin: 0,
+        breakdown: {} as any // Detailed breakdown for mainland
     });
 
     useEffect(() => {
-        // Check local storage for session (optional, keeping it simple for now)
+        // Check local storage for session
         const session = sessionStorage.getItem("bwmc_staff_auth");
         if (session === "true") setIsAuthenticated(true);
     }, []);
@@ -74,39 +78,92 @@ export default function StaffPortal() {
         );
     };
 
-    // --- The Brain ---
+    const updateMainland = (field: string, value: any) => {
+        setMainlandForm(prev => ({ ...prev, [field]: value }));
+    };
+
+    // --- The Brain (Logic Tree) ---
     useEffect(() => {
-        let basePrice = 0;
+        let basePrice = 0; // The price charged to client
+        let baseCost = 0; // The hard cost
         let visaPriceTotal = 0;
-        let baseCost = 0;
         let visaCostTotal = 0;
+        let mainlandBreakdown = {};
 
         const isMainland = jurisdiction === "mainland";
 
-        // 1. License Base Calculation
         if (isMainland) {
-            // Mainland: Base 12,000 + Voucher
-            basePrice = 12000 + Number(voucherAmount);
-            // Cost: Voucher + assumed internal admin cost (e.g. 3000)
-            baseCost = Number(voucherAmount) + 3000;
+            // --- Mainland Logic Tree ---
+
+            // 1. Activity & Approvals
+            // Base Activity Fee (Avg Standard)
+            const activityFee = 1500;
+            const externalApproval = Number(mainlandForm.externalApproval) || 0;
+
+            // 2. Trade Name
+            const tradeNameFee = mainlandForm.tradeName === "Foreign" ? 2000 : 620;
+
+            // 3. Legal Form Notary
+            const notaryFee = mainlandForm.legalType === "LLC" ? 1200 : 500; // Sole is cheaper
+
+            // 4. Market Fee logic
+            let marketFee = 0;
+            if (mainlandForm.premise === "Instant") {
+                marketFee = 3000; // Fixed Year 1
+            } else {
+                // Physical or Desk - standard 5% of Rent
+                // For Desk (Business Center), often included in rent, but DED charges 5% on Ejari value.
+                // We'll use the Rent Amount slider.
+                marketFee = (Number(mainlandForm.rentAmount) || 0) * 0.05;
+                // Minimum Market Fee is often around 500-1000 depending on location, but formula is 5%.
+            }
+
+            // 5. Surcharges (Knowledge, Innovation, Admin)
+            const fixedSurcharges = 10 + 10 + 50; // 70
+
+            // 6. Chamber of Commerce
+            const chamberFee = mainlandForm.activityGroup === "General" ? 3000 : 1200;
+
+            // --- Total Government "Stack" ---
+            const totalGovtFees = activityFee + externalApproval + tradeNameFee + notaryFee + marketFee + fixedSurcharges + chamberFee;
+
+            // --- BWMC Pricing ---
+            // For Mainland, we charge: Total Govt Costs + Our Service Fee
+            baseCost = totalGovtFees;
+            const serviceFee = Number(mainlandForm.bwmcServiceFee) || 0;
+            basePrice = totalGovtFees + serviceFee;
+
+            mainlandBreakdown = {
+                activityFee,
+                externalApproval,
+                tradeNameFee,
+                notaryFee,
+                marketFee,
+                chamberFee,
+                fixedSurcharges,
+                totalGovt: totalGovtFees
+            };
+
         } else {
-            // Freezone: Base 4,888 
+            // --- Freezone Logic (Simplified) ---
+            // Base 4,888 Sale Price.
+            // Est Cost ~3,500.
             basePrice = 4888;
-            // Cost Adjustment: 3500
             baseCost = 3500;
         }
 
-        // 2. Visas
+        // --- Visas ---
         if (isMainland) {
-            visaPriceTotal = visaCount * 4500; // Slightly higher for mainland
+            // Mainland Visas: ~4,500 Sale, ~3,000 Cost
+            visaPriceTotal = visaCount * 4500;
             visaCostTotal = visaCount * 3000;
         } else {
-            // Freezone
+            // Freezone Visas: 3,500 Sale, 2,200 Cost
             visaPriceTotal = visaCount * 3500;
             visaCostTotal = visaCount * 2200;
         }
 
-        // 3. Addons
+        // --- Addons ---
         let addonPriceTotal = 0;
         let addonCostTotal = 0;
         selectedAddons.forEach((addonId) => {
@@ -117,11 +174,10 @@ export default function StaffPortal() {
             }
         });
 
-        // 4. Totals
+        // --- Final Tally ---
         const subtotal = basePrice + visaPriceTotal + addonPriceTotal;
         const finalTotal = subtotal - Number(discount);
 
-        // Costs
         const totalCost = baseCost + visaCostTotal + addonCostTotal;
         const profit = finalTotal - totalCost;
         const margin = finalTotal > 0 ? (profit / finalTotal) * 100 : 0;
@@ -135,11 +191,11 @@ export default function StaffPortal() {
             cost: totalCost,
             profit,
             margin,
+            breakdown: mainlandBreakdown
         });
-    }, [jurisdiction, visaCount, voucherAmount, selectedAddons, discount]);
+    }, [jurisdiction, visaCount, selectedAddons, discount, mainlandForm]);
 
     // --- Output Generators ---
-
     const generateWhatsApp = () => {
         const jurisName = JURISDICTIONS.find(j => j.id === jurisdiction)?.name;
         const addonsList = selectedAddons.map(id => ADDONS.find(a => a.id === id)?.name).join(", ");
@@ -147,7 +203,7 @@ export default function StaffPortal() {
         const text = `Hi ${clientName || "there"}, great speaking with you.\n\n` +
             `Here is the breakdown for *${businessName || "Your Business"}*:\n\n` +
             `🏢 *Jurisdiction:* ${jurisName}\n` +
-            `📜 *License Type:* ${licenseType}\n` +
+            `📜 *License Type:* ${mainlandForm.legalType}\n` +
             `🛂 *Visas Included:* ${visaCount}\n` +
             (selectedAddons.length > 0 ? `✨ *Extras:* ${addonsList}\n` : "") +
             `\n` +
@@ -233,7 +289,7 @@ export default function StaffPortal() {
                             </div>
                         </div>
 
-                        {/* 2. License Details */}
+                        {/* 2. License Scope */}
                         <div className="bg-white rounded-xl shadow-sm border border-neutral-100 p-6">
                             <h3 className="flex items-center gap-2 font-semibold text-neutral-700 mb-4">
                                 <Briefcase className="w-5 h-5 text-emerald-600" /> License Scope
@@ -247,41 +303,84 @@ export default function StaffPortal() {
                                 </div>
 
                                 {jurisdiction === "mainland" && (
-                                    <div className="animate-in fade-in slide-in-from-top-2">
-                                        <label className="block text-sm font-medium text-neutral-500 mb-1">Govt Voucher Amount (AED)</label>
-                                        <input type="number" className="w-full p-2.5 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg outline-none" placeholder="Est. Voucher Cost" value={voucherAmount} onChange={e => setVoucherAmount(Number(e.target.value))} />
-                                        <p className="text-xs text-neutral-400 mt-1">Check DED portal for estimate</p>
+                                    <div className="space-y-4 animate-in fade-in slide-in-from-top-2 pt-2 border-t border-dashed border-neutral-200">
+                                        <div>
+                                            <label className="block text-xs font-bold text-emerald-600 uppercase tracking-wider mb-2">Mainland Logic Engine</label>
+                                            <div className="grid grid-cols-2 gap-2 mb-2">
+                                                <div>
+                                                    <label className="text-xs text-neutral-500 block mb-1">Premise Logic</label>
+                                                    <select className="w-full p-2 bg-neutral-50 text-sm border border-neutral-200 rounded" value={mainlandForm.premise} onChange={e => updateMainland("premise", e.target.value)}>
+                                                        <option value="Instant">Instant License</option>
+                                                        <option value="Physical">Physical Office</option>
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <label className="text-xs text-neutral-500 block mb-1">Trade Name</label>
+                                                    <select className="w-full p-2 bg-neutral-50 text-sm border border-neutral-200 rounded" value={mainlandForm.tradeName} onChange={e => updateMainland("tradeName", e.target.value)}>
+                                                        <option value="Foreign">Foreign (2k)</option>
+                                                        <option value="Local">Local (620)</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-2 mb-2">
+                                                <div>
+                                                    <label className="text-xs text-neutral-500 block mb-1">Legal Form</label>
+                                                    <select className="w-full p-2 bg-neutral-50 text-sm border border-neutral-200 rounded" value={mainlandForm.legalType} onChange={e => updateMainland("legalType", e.target.value)}>
+                                                        <option value="LLC">LLC</option>
+                                                        <option value="Sole">Sole Est.</option>
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <label className="text-xs text-neutral-500 block mb-1">Activity Group</label>
+                                                    <select className="w-full p-2 bg-neutral-50 text-sm border border-neutral-200 rounded" value={mainlandForm.activityGroup} onChange={e => updateMainland("activityGroup", e.target.value)}>
+                                                        <option value="Standard">Standard</option>
+                                                        <option value="General">General Trade</option>
+                                                        <option value="Regulated">Regulated</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            {mainlandForm.premise === "Physical" && (
+                                                <div className="bg-neutral-50 p-2 rounded border border-neutral-200">
+                                                    <label className="flex justify-between text-xs text-neutral-500 mb-1">
+                                                        <span>Annual Rent (For 5% Market Fee)</span>
+                                                        <span>{Number(mainlandForm.rentAmount).toLocaleString()}</span>
+                                                    </label>
+                                                    <input type="range" min="10000" max="500000" step="5000" className="w-full accent-emerald-500 h-1 bg-neutral-200 rounded-lg appearance-none cursor-pointer" value={mainlandForm.rentAmount} onChange={e => updateMainland("rentAmount", e.target.value)} />
+                                                </div>
+                                            )}
+
+                                            <div className="pt-2 flex gap-2">
+                                                <div className="flex-1">
+                                                    <label className="text-xs text-neutral-500 block mb-1">External Approval</label>
+                                                    <input type="number" className="w-full p-2 text-sm border border-neutral-200 rounded" placeholder="0" value={mainlandForm.externalApproval} onChange={e => updateMainland("externalApproval", e.target.value)} />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <label className="text-xs text-emerald-600 font-bold block mb-1">BWMC Service Fee</label>
+                                                    <input type="number" className="w-full p-2 text-sm border border-emerald-200 bg-emerald-50 rounded font-bold text-emerald-700" value={mainlandForm.bwmcServiceFee} onChange={e => updateMainland("bwmcServiceFee", e.target.value)} />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 )}
-
-                                <div>
-                                    <label className="block text-sm font-medium text-neutral-500 mb-1">License Type</label>
-                                    <select className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-lg outline-none" value={licenseType} onChange={e => setLicenseType(e.target.value)}>
-                                        <option>Commercial (Trading)</option>
-                                        <option>Professional (Service)</option>
-                                        <option>Industrial</option>
-                                    </select>
-                                </div>
                             </div>
                         </div>
 
-                        {/* 3. Visas & Allocations */}
+                        {/* 3. Visas */}
                         <div className="bg-white rounded-xl shadow-sm border border-neutral-100 p-6">
                             <h3 className="flex items-center gap-2 font-semibold text-neutral-700 mb-4">
                                 <Users className="w-5 h-5 text-emerald-600" /> Visa Allocation
                             </h3>
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-neutral-500 mb-1 flex justify-between">
-                                        <span>Number of Visas</span>
-                                        <span className="text-emerald-600 font-bold">{visaCount}</span>
-                                    </label>
-                                    <input type="range" min="0" max="20" className="w-full accent-emerald-600" value={visaCount} onChange={e => setVisaCount(Number(e.target.value))} />
-                                </div>
+                            <div>
+                                <label className="block text-sm font-medium text-neutral-500 mb-1 flex justify-between">
+                                    <span>Number of Visas</span>
+                                    <span className="text-emerald-600 font-bold">{visaCount}</span>
+                                </label>
+                                <input type="range" min="0" max="20" className="w-full accent-emerald-600" value={visaCount} onChange={e => setVisaCount(Number(e.target.value))} />
                             </div>
                         </div>
 
-                        {/* 4. Upsells */}
+                        {/* 4. Addons */}
                         <div className="bg-white rounded-xl shadow-sm border border-neutral-100 p-6">
                             <h3 className="flex items-center gap-2 font-semibold text-neutral-700 mb-4">
                                 <CheckCircle className="w-5 h-5 text-emerald-600" /> Services & Add-ons
@@ -302,7 +401,7 @@ export default function StaffPortal() {
                         {/* 5. Discount */}
                         <div className="bg-white rounded-xl shadow-sm border border-neutral-100 p-6">
                             <h3 className="flex items-center gap-2 font-semibold text-neutral-700 mb-4">
-                                <Calculator className="w-5 h-5 text-emerald-600" /> Valid Adjustments
+                                <Calculator className="w-5 h-5 text-emerald-600" /> Adjustments
                             </h3>
                             <div>
                                 <label className="block text-sm font-medium text-neutral-500 mb-1">Manager Discount (AED)</label>
@@ -312,10 +411,10 @@ export default function StaffPortal() {
 
                     </div>
 
-                    {/* --- RIGHT COLUMN: Output (Preview & Staff View) --- */}
+                    {/* --- RIGHT COLUMN: Output --- */}
                     <div className="lg:col-span-8 space-y-8">
 
-                        {/* 1. The Quote Card (What Client Sees) */}
+                        {/* Quote Card */}
                         <div className="bg-white rounded-2xl shadow-xl overflow-hidden print:shadow-none print:rounded-none">
 
                             {/* Header */}
@@ -337,15 +436,15 @@ export default function StaffPortal() {
                             <div className="p-8 print:p-0">
                                 <div className="space-y-6">
 
-                                    {/* Summary Grid */}
+                                    {/* Summary */}
                                     <div className="grid grid-cols-2 gap-4 mb-8 print:mb-4">
                                         <div className="p-4 bg-neutral-50 rounded-lg print:border print:bg-white">
                                             <div className="text-xs text-neutral-500 uppercase tracking-wider mb-1">Jurisdiction</div>
                                             <div className="font-semibold text-lg">{JURISDICTIONS.find(j => j.id === jurisdiction)?.name}</div>
                                         </div>
                                         <div className="p-4 bg-neutral-50 rounded-lg print:border print:bg-white">
-                                            <div className="text-xs text-neutral-500 uppercase tracking-wider mb-1">License Breakdown</div>
-                                            <div className="font-semibold text-lg">{licenseType} <span className="text-neutral-400 font-normal">({visaCount} Visas)</span></div>
+                                            <div className="text-xs text-neutral-500 uppercase tracking-wider mb-1">Configuration</div>
+                                            <div className="font-semibold text-lg">{mainlandForm.legalType} <span className="text-neutral-400 font-normal">({visaCount} Visas)</span></div>
                                         </div>
                                     </div>
 
@@ -361,7 +460,7 @@ export default function StaffPortal() {
                                             <tr>
                                                 <td className="py-4 font-medium text-neutral-800">
                                                     Primary License Setup & Fees
-                                                    <div className="text-xs text-neutral-400 font-normal mt-0.5">Includes gov fees and initial approvals</div>
+                                                    <div className="text-xs text-neutral-400 font-normal mt-0.5">Includes gov fees, initial approvals, and service charges</div>
                                                 </td>
                                                 <td className="py-4 text-right font-medium">{totals.basePrice.toLocaleString()}</td>
                                             </tr>
@@ -369,7 +468,6 @@ export default function StaffPortal() {
                                                 <tr>
                                                     <td className="py-4 font-medium text-neutral-800">
                                                         Visa Alignment & Processing ({visaCount}x)
-                                                        <div className="text-xs text-neutral-400 font-normal mt-0.5">Processing, medical application, and stamping coordination</div>
                                                     </td>
                                                     <td className="py-4 text-right font-medium">{totals.visaPrice.toLocaleString()}</td>
                                                 </tr>
@@ -400,13 +498,13 @@ export default function StaffPortal() {
                                     </table>
 
                                     <div className="mt-8 pt-8 border-t border-neutral-100 text-neutral-500 text-sm leading-relaxed print:mt-4">
-                                        <p><strong>Terms:</strong> This quotation is valid for 7 days. Prices are subject to final government invoices. Full payment is required to initiate the process.</p>
+                                        <p><strong>Terms:</strong> This quotation is valid for 7 days. Prices are subject to final government invoices.</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* 2. Actions (Screen Only) */}
+                        {/* Actions */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 print:hidden">
                             <button onClick={generateWhatsApp} className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1fae52] text-white p-4 rounded-xl font-bold transition-all shadow-lg shadow-green-100 transform active:scale-95">
                                 <Smartphone className="w-5 h-5" /> Copy WhatsApp Message
@@ -416,7 +514,7 @@ export default function StaffPortal() {
                             </button>
                         </div>
 
-                        {/* 3. STAFF ONLY INTELLIGENCE (Hidden in Print) */}
+                        {/* STAFF INTELLIGENCE */}
                         <div className="bg-neutral-800 rounded-xl p-6 text-neutral-300 print:hidden border border-neutral-700 relative overflow-hidden">
                             <div className="absolute top-0 right-0 p-2 opacity-10">
                                 <Lock className="w-32 h-32" />
@@ -426,15 +524,14 @@ export default function StaffPortal() {
                                 Internal Profitability Dashboard
                             </h3>
 
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-6">
                                 <div>
                                     <div className="text-xs text-neutral-500 mb-1">Total Revenue</div>
                                     <div className="text-2xl font-mono text-white">{totals.total.toLocaleString()}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-neutral-500 mb-1">Est. Hard Costs</div>
+                                    <div className="text-xs text-neutral-500 mb-1">Govt Cost Stack</div>
                                     <div className="text-2xl font-mono text-red-400">{totals.cost.toLocaleString()}</div>
-                                    <div className="text-[10px] text-neutral-600">Gov. Fees + Processing</div>
                                 </div>
                                 <div>
                                     <div className="text-xs text-neutral-500 mb-1">Net Profit</div>
@@ -450,9 +547,18 @@ export default function StaffPortal() {
                                 </div>
                             </div>
 
-                            <div className="mt-6 pt-6 border-t border-neutral-700 text-xs text-neutral-500">
-                                * Hard costs are estimates based on standard DED processing fees. Actuals may vary +/- 5%.
-                            </div>
+                            {jurisdiction === "mainland" && (
+                                <div className="grid grid-cols-3 gap-2 text-[10px] text-neutral-500 opacity-60 font-mono border-t border-neutral-700 pt-3">
+                                    <div>Actv: {totals.breakdown.activityFee}</div>
+                                    <div>Ext.App: {totals.breakdown.externalApproval}</div>
+                                    <div>TradeNm: {totals.breakdown.tradeNameFee}</div>
+                                    <div>Notary: {totals.breakdown.notaryFee}</div>
+                                    <div>Market: {totals.breakdown.marketFee}</div>
+                                    <div>Chambr: {totals.breakdown.chamberFee}</div>
+                                    <div>Surchrg: {totals.breakdown.fixedSurcharges}</div>
+                                    <div className="col-span-2 text-emerald-500">Service Fee: {mainlandForm.bwmcServiceFee}</div>
+                                </div>
+                            )}
                         </div>
 
                     </div>
