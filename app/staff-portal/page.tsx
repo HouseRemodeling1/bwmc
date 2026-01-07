@@ -37,7 +37,7 @@ export default function StaffPortal() {
         activityType: "Standard", // Standard | Tourism | Transport | Regulated
         tradeName: "Local", // Local | Foreign
         rentAmount: 30000,
-        profFee: 15000, // Custom Agency Fee
+        profFee: 0, // Custom Agency Fee (starts at 0)
     });
 
     // --- Calculations ---
