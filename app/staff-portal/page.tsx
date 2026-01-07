@@ -1,18 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Lock, Calculator, Copy, Printer, CheckCircle, Smartphone, Building2, User, Users, Briefcase, MapPin } from "lucide-react";
+import { Lock, Calculator, Copy, Printer, CheckCircle, Smartphone, Building2, User, Users, Briefcase, MapPin, Layers } from "lucide-react";
 
 // --- Configuration ---
 const PASSWORD = process.env.NEXT_PUBLIC_STAFF_PASSWORD || "BWMC2026";
 
-const EMIRATES = [
-    { id: "dubai", name: "Dubai (DED)" },
-    { id: "abudhabi", name: "Abu Dhabi (TAMM)" },
-    { id: "sharjah", name: "Sharjah (SEDD)" },
-    { id: "ajman", name: "Ajman (DED)" },
-    { id: "rak", name: "Ras Al Khaimah (DED)" },
-    { id: "freezone", name: "Freezone (General)" },
+const JURSIDICTIONS = [
+    { id: "dubai-mainland", name: "Dubai Mainland (6-Stage)", type: "mainland" },
+    { id: "freezone", name: "Freezone", type: "freezone" },
+    // Keeping others hidden for now to focus on the requested 6-stage model
 ];
 
 const ADDONS = [
@@ -30,37 +27,33 @@ export default function StaffPortal() {
     const [clientName, setClientName] = useState("");
     const [clientPhone, setClientPhone] = useState("");
     const [businessName, setBusinessName] = useState("");
-    const [jurisdiction, setJurisdiction] = useState(EMIRATES[0].id); // Defaults to Dubai
+    const [jurisdiction, setJurisdiction] = useState(JURSIDICTIONS[0].id);
     const [visaCount, setVisaCount] = useState(0);
     const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
     const [discount, setDiscount] = useState(0);
 
-    // --- Mainland Specific State ---
-    const [mainlandForm, setMainlandForm] = useState({
-        legalType: "LLC", // LLC | Sole | Civil
-        tradeName: "Foreign", // Foreign | Local
-        premise: "Instant", // Instant | Physical | Tajer
-        rentAmount: 60000, // For Market Fee
-        activityGroup: "Standard", // Standard | Regulated | General
-        externalApproval: 0, // Manual fee input
-        bwmcServiceFee: 8000, // Our Markup
+    // --- Dubai 6-Stage Form ---
+    const [dubaiForm, setDubaiForm] = useState({
+        activityType: "Standard", // Standard | Tourism | Transport | Regulated
+        tradeName: "Local", // Local | Foreign
+        rentAmount: 30000,
+        profFee: 15000, // Custom Agency Fee
     });
 
     // --- Calculations ---
     const [totals, setTotals] = useState({
-        basePrice: 0,
-        visaPrice: 0,
-        addonPrice: 0,
-        subtotal: 0,
-        total: 0,
-        cost: 0,
-        profit: 0,
-        margin: 0,
-        breakdown: {} as any // Detailed breakdown for mainland
+        stage1: 0, // Pre-Licensing
+        stage2: 0, // Activity
+        stage3: 0, // Legal
+        stage4: 0, // Finalization
+        stage5: 0, // Post-License
+        stage6: 0, // Service
+        govtTotal: 0,
+        grandTotal: 0,
+        breakdown: {} as any
     });
 
     useEffect(() => {
-        // Check local storage for session
         const session = sessionStorage.getItem("bwmc_staff_auth");
         if (session === "true") setIsAuthenticated(true);
     }, []);
@@ -82,176 +75,109 @@ export default function StaffPortal() {
         );
     };
 
-    const updateMainland = (field: string, value: any) => {
-        setMainlandForm(prev => ({ ...prev, [field]: value }));
+    const updateDubai = (field: string, value: any) => {
+        setDubaiForm(prev => ({ ...prev, [field]: value }));
     };
 
-    // --- The Brain (Multi-Emirate Logic Tree) ---
+    // --- The Brain (6-Stage Logic) ---
     useEffect(() => {
-        let licenseCost = 0; // Pure Govt License Fees
-        let federalCost = 0; // MoE + MOHRE Setup
-        let marketFees = 0;
-        let visaSale = 0;
-        let visaCost = 0;
-        let breakdown = {};
+        if (jurisdiction === "dubai-mainland") {
+            // --- STAGE 1: Pre-Licensing (Fixed) ---
+            const initAppSys = 117;
+            const initAppIss = 120;
+            const nameApp = 117;
+            const nameApprov = 620;
+            const foreignSurcharge = dubaiForm.tradeName === "Foreign" ? 2000 : 0;
 
-        const isMainland = jurisdiction !== "freezone";
+            const s1_total = initAppSys + initAppIss + nameApp + nameApprov + foreignSurcharge;
 
-        if (isMainland) {
-            // 1. Emirate Specific Base Logic
-            if (jurisdiction === "dubai") {
-                // --- DUBAI Logic ---
-                const actFee = 1500 + Number(mainlandForm.externalApproval);
-                const trdName = mainlandForm.tradeName === "Foreign" ? 2000 : 620;
-                const notary = mainlandForm.legalType === "LLC" ? 1200 : 500;
-                const surcharges = 70; // Innovation etc
-                const chamber = mainlandForm.activityGroup === "General" ? 3000 : 1200;
-
-                // Market Fee
-                if (mainlandForm.premise === "Instant") {
-                    marketFees = 3000;
-                } else {
-                    marketFees = (Number(mainlandForm.rentAmount) || 0) * 0.05;
-                }
-
-                licenseCost = actFee + trdName + notary + surcharges + chamber;
-                breakdown = { ...breakdown, Act: actFee, Nam: trdName, Mkt: marketFees };
+            // --- STAGE 2: Activity Clearance ---
+            let s2_total = 0;
+            let activityFee = 0;
+            if (dubaiForm.activityType === "Tourism") {
+                activityFee = 8620; // DCAA
+            } else if (dubaiForm.activityType === "Transport") {
+                activityFee = 3000; // RTA (Default)
             }
-            else if (jurisdiction === "abudhabi") {
-                // --- ABU DHABI Logic (Low Cost Leader) ---
-                // Tajer Abu Dhabi / Virtual
-                const base = mainlandForm.premise === "Instant" ? 790 : 1000;
-                const chamber = 50;
-                const trdName = mainlandForm.tradeName === "Foreign" ? 2000 : 0; // Often free in Tajer unless Foreign name
+            s2_total = activityFee;
 
-                marketFees = 0; // Exempt for new Tajer licenses usually
-                licenseCost = base + chamber + trdName + Number(mainlandForm.externalApproval);
-                breakdown = { ...breakdown, Base: base, Chm: chamber };
-            }
-            else if (jurisdiction === "sharjah") {
-                // --- SHARJAH Logic ---
-                const base = 5000; // Approx base for license + chamber
-                const trdName = 1000; // Reservation
+            // --- STAGE 3: Legal & Infra ---
+            const moa = 500; // Base
+            const insurance = dubaiForm.activityType === "Tourism" ? 3000 : 0;
+            const marketFee = (Number(dubaiForm.rentAmount) || 0) * 0.05;
 
-                // Market Fee (Lease Tax)
-                // 10% for Foreign, 6% Local/GCC
-                const rate = mainlandForm.tradeName === "Foreign" ? 0.10 : 0.06;
-                marketFees = (Number(mainlandForm.rentAmount) || 0) * rate;
-                if (marketFees < 2000) marketFees = 2000; // Min threshold often applies
+            const s3_total = moa + insurance + marketFee;
 
-                licenseCost = base + trdName + Number(mainlandForm.externalApproval);
-                breakdown = { ...breakdown, Base: base, Mkt: marketFees };
-            }
-            else if (jurisdiction === "ajman") {
-                // --- AJMAN Logic ---
-                const issuance = 600;
-                const csr = 1500;
-                const chamber = 500;
-                licenseCost = issuance + csr + chamber + Number(mainlandForm.externalApproval);
-                marketFees = 0; // Often included or varied
-                breakdown = { ...breakdown, Iss: issuance, CSR: csr };
-            }
-            else if (jurisdiction === "rak") {
-                // --- RAK Logic ---
-                const reg = 2100;
-                const licFee = 2000; // varied
-                const chamber = 1000;
-                licenseCost = reg + licFee + chamber + Number(mainlandForm.externalApproval);
-                breakdown = { ...breakdown, Reg: reg, Lic: licFee };
-            }
+            // --- STAGE 4: License Finalization ---
+            const issuance = 10000; // Default Base
+            const innovation = 40;
+            const chamber = 1200;
 
-            // 2. Federal Stack (MoE) - Applies to ALL Mainland LLCs
-            if (mainlandForm.legalType === "LLC") {
-                federalCost += 3000; // MoE Registration
-            }
+            const s4_total = issuance + innovation + chamber;
 
-            // 3. Establishment Card Setup (MOHRE + Immigration)
-            if (visaCount > 0) {
-                federalCost += 2000; // Est Card
-                federalCost += 2200; // ICP E-Channel (One time)
-            }
+            // --- STAGE 5: Post-License (Visas) ---
+            const estCard = 750;
+            const visaUnitCost = 5000; // Entry, Status, Med, ID
+            const visaTotal = visaCount * visaUnitCost;
+
+            const s5_total = estCard + visaTotal;
+
+            // --- STAGE 6: Service Fee ---
+            const s6_total = Number(dubaiForm.profFee) || 0;
+
+            // --- TALLY ---
+            const govtTotal = s1_total + s2_total + s3_total + s4_total + s5_total;
+
+            // Addons (Optional - let's keep separate from the 6 stages or merge into Service?)
+            // User prompt didn't specify Addons in the 6 stages, so let's add them to Grand Total distinct
+            // OR assummed part of the "Grand Total". Let's stick to the prompt's structure first.
+
+            let addonTotal = 0;
+            selectedAddons.forEach((addonId) => {
+                const addon = ADDONS.find((a) => a.id === addonId);
+                if (addon) addonTotal += addon.price;
+            });
+
+            const grandTotal = govtTotal + s6_total + addonTotal - discount;
+
+            setTotals({
+                stage1: s1_total,
+                stage2: s2_total,
+                stage3: s3_total,
+                stage4: s4_total,
+                stage5: s5_total,
+                stage6: s6_total,
+                govtTotal,
+                grandTotal,
+                breakdown: { marketFee }
+            });
 
         } else {
-            // Freezone Logic (Simple)
-            licenseCost = 4888; // Base
-            marketFees = 0;
-            federalCost = 0; // Freezones distinct
+            // Fallback Freezone (Simplified for now)
+            setTotals({
+                stage1: 4888, stage2: 0, stage3: 0, stage4: 0, stage5: visaCount * 3500, stage6: 5000,
+                govtTotal: 4888 + (visaCount * 3500),
+                grandTotal: 4888 + (visaCount * 3500) + 5000,
+                breakdown: {}
+            });
         }
 
-        // --- VISAS ---
-        if (isMainland) {
-            // Detailed Mainland Visa Stack
-            // Entry(1000) + Status(650) + Med(320) + ID(370) + Ins(600) = ~2940
-            const costPerVisa = 2940;
-            const salePerVisa = 5000; // Standard markup
+    }, [jurisdiction, visaCount, selectedAddons, discount, dubaiForm]);
 
-            visaCost = visaCount * costPerVisa;
-            visaSale = visaCount * salePerVisa;
-        } else {
-            // Freezone
-            visaCost = visaCount * 2200;
-            visaSale = visaCount * 3500;
-        }
-
-        // --- Price Assembly ---
-        const totalLocalGovt = licenseCost + marketFees; // The DED/Economic part
-        const totalFederal = federalCost; // The MoE/MOHRE part
-
-        const totalGovtStack = totalLocalGovt + totalFederal;
-
-        // BWMC Service Fee (Profit)
-        const serviceFee = Number(mainlandForm.bwmcServiceFee) || 0;
-
-        // Total Sale Price
-        const baseSalePrice = totalGovtStack + serviceFee;
-
-        // --- Addons ---
-        let addonPriceTotal = 0;
-        let addonCostTotal = 0;
-        selectedAddons.forEach((addonId) => {
-            const addon = ADDONS.find((a) => a.id === addonId);
-            if (addon) {
-                addonPriceTotal += addon.price;
-                addonCostTotal += addon.cost;
-            }
-        });
-
-        // --- Final Math ---
-        const subtotal = baseSalePrice + visaSale + addonPriceTotal;
-        const finalTotal = subtotal - Number(discount);
-
-        const totalCost = totalGovtStack + visaCost + addonCostTotal;
-        const profit = finalTotal - totalCost;
-        const margin = finalTotal > 0 ? (profit / finalTotal) * 100 : 0;
-
-        setTotals({
-            basePrice: baseSalePrice,
-            visaPrice: visaSale,
-            addonPrice: addonPriceTotal,
-            subtotal,
-            total: finalTotal,
-            cost: totalCost,
-            profit,
-            margin,
-            breakdown: { ...breakdown, Fed: totalFederal, Mkt: marketFees, Lic: licenseCost }
-        });
-    }, [jurisdiction, visaCount, selectedAddons, discount, mainlandForm]);
-
-    // --- Helpers ---
+    // --- Output Generators ---
     const generateWhatsApp = () => {
-        const jurisName = EMIRATES.find(j => j.id === jurisdiction)?.name;
-        const addonsList = selectedAddons.map(id => ADDONS.find(a => a.id === id)?.name).join(", ");
-
         const text = `Hi ${clientName || "there"}, great speaking with you.\n\n` +
-            `Here is the breakdown for *${businessName || "Your Business"}*:\n\n` +
-            `🏢 *Jurisdiction:* ${jurisName}\n` +
-            `📜 *License Type:* ${mainlandForm.legalType}\n` +
-            `🛂 *Visas Included:* ${visaCount}\n` +
-            (selectedAddons.length > 0 ? `✨ *Extras:* ${addonsList}\n` : "") +
+            `Here is the 6-Stage Breakdown for *${businessName || "Your Business"}* (Dubai Mainland):\n\n` +
+            `1️⃣ Pre-Licensing: AED ${totals.stage1.toLocaleString()}\n` +
+            `2️⃣ Approvals: AED ${totals.stage2.toLocaleString()}\n` +
+            `3️⃣ Legal/Infra: AED ${totals.stage3.toLocaleString()}\n` +
+            `4️⃣ Finalization: AED ${totals.stage4.toLocaleString()}\n` +
+            `5️⃣ Post-License (${visaCount} Visas): AED ${totals.stage5.toLocaleString()}\n` +
+            `6️⃣ Professional Fee: AED ${totals.stage6.toLocaleString()}\n` +
             `\n` +
-            `💰 *Total Investment:* AED ${totals.total.toLocaleString()}\n` +
+            `💰 *Grand Total:* AED ${totals.grandTotal.toLocaleString()}\n` +
             `\n` +
-            `This quote is valid for 7 days. I've attached the full breakdown. Shall we proceed with the initial approval?\n\n` +
+            `Note: Market/Activity fees subject to final IID invoice.\n` +
             `– BWMC Team`;
 
         navigator.clipboard.writeText(text);
@@ -277,7 +203,7 @@ export default function StaffPortal() {
                         <div>
                             <input
                                 type="password"
-                                value={passwordInput} // BWMC2026
+                                value={passwordInput}
                                 onChange={(e) => setPasswordInput(e.target.value)}
                                 className="w-full px-4 py-3 rounded-lg border border-neutral-200 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
                                 placeholder="Enter Code"
@@ -307,9 +233,10 @@ export default function StaffPortal() {
                         <Building2 className="w-6 h-6 text-emerald-400" />
                         <span className="font-bold text-lg tracking-tight">BWMC <span className="font-light text-neutral-400">Internal</span></span>
                     </div>
-                    <button onClick={() => setIsAuthenticated(false)} className="text-sm text-neutral-400 hover:text-white transition-colors">
-                        Logout
-                    </button>
+                    <div className="flex gap-4">
+                        <button onClick={() => setJurisdiction("dubai-mainland")} className={`text-sm ${jurisdiction === "dubai-mainland" ? "text-emerald-400" : "text-neutral-400"}`}>Dubai 6-Stage</button>
+                        <button onClick={() => setIsAuthenticated(false)} className="text-sm text-neutral-400 hover:text-white transition-colors">Logout</button>
+                    </div>
                 </div>
             </nav>
 
@@ -331,100 +258,63 @@ export default function StaffPortal() {
                             </div>
                         </div>
 
-                        {/* 2. Strategy & Emirate */}
+                        {/* 2. Dubai 6-Stage Input Variables */}
                         <div className="bg-white rounded-xl shadow-sm border border-neutral-100 p-6">
                             <h3 className="flex items-center gap-2 font-semibold text-neutral-700 mb-4">
-                                <MapPin className="w-5 h-5 text-emerald-600" /> Jurisdiction & Scope
+                                <Layers className="w-5 h-5 text-emerald-600" /> Input Variables
                             </h3>
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-neutral-500 mb-1">Target Emirate / Zone</label>
-                                    <select className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-lg outline-none font-medium" value={jurisdiction} onChange={e => setJurisdiction(e.target.value)}>
-                                        {EMIRATES.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
-                                    </select>
-                                </div>
-
-                                {jurisdiction !== "freezone" && (
-                                    <div className="space-y-4 animate-in fade-in pt-2 border-t border-dashed border-neutral-200">
-                                        <div>
-                                            <div className="grid grid-cols-2 gap-2 mb-2">
-                                                <div>
-                                                    <label className="text-xs text-neutral-500 block mb-1">Premise Type</label>
-                                                    <select className="w-full p-2 bg-neutral-50 text-sm border border-neutral-200 rounded" value={mainlandForm.premise} onChange={e => updateMainland("premise", e.target.value)}>
-                                                        <option value="Instant">Instant / Tajer</option>
-                                                        <option value="Physical">Physical Office</option>
-                                                    </select>
-                                                </div>
-                                                <div>
-                                                    <label className="text-xs text-neutral-500 block mb-1">Trade Name</label>
-                                                    <select className="w-full p-2 bg-neutral-50 text-sm border border-neutral-200 rounded" value={mainlandForm.tradeName} onChange={e => updateMainland("tradeName", e.target.value)}>
-                                                        <option value="Foreign">Foreign (Surcharge)</option>
-                                                        <option value="Local">Local / Arabic</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div className="grid grid-cols-2 gap-2 mb-2">
-                                                <div>
-                                                    <label className="text-xs text-neutral-500 block mb-1">Legal Form</label>
-                                                    <select className="w-full p-2 bg-neutral-50 text-sm border border-neutral-200 rounded" value={mainlandForm.legalType} onChange={e => updateMainland("legalType", e.target.value)}>
-                                                        <option value="LLC">LLC</option>
-                                                        <option value="Sole">Sole Est.</option>
-                                                    </select>
-                                                </div>
-                                                <div>
-                                                    <label className="text-xs text-neutral-500 block mb-1">Activity Tier</label>
-                                                    <select className="w-full p-2 bg-neutral-50 text-sm border border-neutral-200 rounded" value={mainlandForm.activityGroup} onChange={e => updateMainland("activityGroup", e.target.value)}>
-                                                        <option value="Standard">Standard</option>
-                                                        <option value="General">General Trade</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            {mainlandForm.premise === "Physical" && (
-                                                <div className="bg-neutral-50 p-2 rounded border border-neutral-200">
-                                                    <label className="flex justify-between text-xs text-neutral-500 mb-1">
-                                                        <span>Annual Rent (Market Fee Calc)</span>
-                                                        <span>{Number(mainlandForm.rentAmount).toLocaleString()}</span>
-                                                    </label>
-                                                    <input type="range" min="10000" max="500000" step="5000" className="w-full accent-emerald-500 h-1 bg-neutral-200 rounded-lg appearance-none cursor-pointer" value={mainlandForm.rentAmount} onChange={e => updateMainland("rentAmount", e.target.value)} />
-                                                </div>
-                                            )}
-
-                                            <div className="pt-2 flex gap-2">
-                                                <div className="flex-1">
-                                                    <label className="text-xs text-neutral-500 block mb-1">Ext. Approval (AED)</label>
-                                                    <input type="number" className="w-full p-2 text-sm border border-neutral-200 rounded" placeholder="0" value={mainlandForm.externalApproval} onChange={e => updateMainland("externalApproval", e.target.value)} />
-                                                </div>
-                                                <div className="flex-1">
-                                                    <label className="text-xs text-emerald-600 font-bold block mb-1">BWMC Service Fee</label>
-                                                    <input type="number" className="w-full p-2 text-sm border border-emerald-200 bg-emerald-50 rounded font-bold text-emerald-700" value={mainlandForm.bwmcServiceFee} onChange={e => updateMainland("bwmcServiceFee", e.target.value)} />
-                                                </div>
-                                            </div>
-                                        </div>
+                            {jurisdiction === "dubai-mainland" ? (
+                                <div className="space-y-4 animate-in fade-in">
+                                    <div>
+                                        <label className="text-xs text-neutral-500 block mb-1">Activity Type</label>
+                                        <select className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-lg outline-none" value={dubaiForm.activityType} onChange={e => updateDubai("activityType", e.target.value)}>
+                                            <option value="Standard">Standard</option>
+                                            <option value="Regulated">Regulated (General)</option>
+                                            <option value="Tourism">Tourism (DCAA)</option>
+                                            <option value="Transport">Transport (RTA)</option>
+                                        </select>
                                     </div>
-                                )}
-                            </div>
+
+                                    <div>
+                                        <label className="text-xs text-neutral-500 block mb-1">Trade Name Type</label>
+                                        <select className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-lg outline-none" value={dubaiForm.tradeName} onChange={e => updateDubai("tradeName", e.target.value)}>
+                                            <option value="Local">Arabic-Only / Local</option>
+                                            <option value="Foreign">Foreign / Non-Arabic (+2k)</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label className="flex justify-between text-xs text-neutral-500 mb-1">
+                                            <span>Office Annual Rent (AED)</span>
+                                            <span>{Number(dubaiForm.rentAmount).toLocaleString()}</span>
+                                        </label>
+                                        <input type="range" min="10000" max="200000" step="5000" className="w-full accent-emerald-500 h-1 bg-neutral-200 rounded-lg appearance-none cursor-pointer" value={dubaiForm.rentAmount} onChange={e => updateDubai("rentAmount", e.target.value)} />
+                                        <p className="text-[10px] text-neutral-400 mt-1">Updates Market Fee (5%)</p>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-neutral-500 mb-1 flex justify-between">
+                                            <span>Visa Count (x5,000)</span>
+                                            <span className="text-emerald-600 font-bold">{visaCount}</span>
+                                        </label>
+                                        <input type="range" min="0" max="20" className="w-full accent-emerald-600" value={visaCount} onChange={e => setVisaCount(Number(e.target.value))} />
+                                    </div>
+
+                                    <div className="pt-2 border-t border-neutral-100">
+                                        <label className="text-xs text-emerald-600 font-bold block mb-1">Professional Fee (Agency)</label>
+                                        <input type="number" className="w-full p-2 text-sm border border-emerald-200 bg-emerald-50 rounded font-bold text-emerald-700" value={dubaiForm.profFee} onChange={e => updateDubai("profFee", e.target.value)} />
+                                    </div>
+
+                                </div>
+                            ) : (
+                                <div className="text-sm text-neutral-400 italic">Select Dubai Mainland above to activate variables.</div>
+                            )}
                         </div>
 
-                        {/* 3. Visas */}
+                        {/* Addons */}
                         <div className="bg-white rounded-xl shadow-sm border border-neutral-100 p-6">
                             <h3 className="flex items-center gap-2 font-semibold text-neutral-700 mb-4">
-                                <Users className="w-5 h-5 text-emerald-600" /> Visa Allocation
-                            </h3>
-                            <div>
-                                <label className="block text-sm font-medium text-neutral-500 mb-1 flex justify-between">
-                                    <span>Number of Visas</span>
-                                    <span className="text-emerald-600 font-bold">{visaCount}</span>
-                                </label>
-                                <input type="range" min="0" max="20" className="w-full accent-emerald-600" value={visaCount} onChange={e => setVisaCount(Number(e.target.value))} />
-                                <p className="text-[10px] text-neutral-400 mt-2">*Includes Entry, Status Change, Medical, ID, Insurance</p>
-                            </div>
-                        </div>
-
-                        {/* 4. Addons */}
-                        <div className="bg-white rounded-xl shadow-sm border border-neutral-100 p-6">
-                            <h3 className="flex items-center gap-2 font-semibold text-neutral-700 mb-4">
-                                <CheckCircle className="w-5 h-5 text-emerald-600" /> Services & Add-ons
+                                <CheckCircle className="w-5 h-5 text-emerald-600" /> Extras
                             </h3>
                             <div className="space-y-3">
                                 {ADDONS.map(addon => (
@@ -436,17 +326,6 @@ export default function StaffPortal() {
                                         </div>
                                     </label>
                                 ))}
-                            </div>
-                        </div>
-
-                        {/* 5. Discount */}
-                        <div className="bg-white rounded-xl shadow-sm border border-neutral-100 p-6">
-                            <h3 className="flex items-center gap-2 font-semibold text-neutral-700 mb-4">
-                                <Calculator className="w-5 h-5 text-emerald-600" /> Adjustments
-                            </h3>
-                            <div>
-                                <label className="block text-sm font-medium text-neutral-500 mb-1">Manager Discount (AED)</label>
-                                <input type="number" className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-lg outline-none" value={discount} onChange={e => setDiscount(Number(e.target.value))} />
                             </div>
                         </div>
 
@@ -475,73 +354,101 @@ export default function StaffPortal() {
 
                             {/* Body */}
                             <div className="p-8 print:p-0">
-                                <div className="space-y-6">
+                                <div className="space-y-2">
 
                                     {/* Summary */}
-                                    <div className="grid grid-cols-2 gap-4 mb-8 print:mb-4">
-                                        <div className="p-4 bg-neutral-50 rounded-lg print:border print:bg-white">
-                                            <div className="text-xs text-neutral-500 uppercase tracking-wider mb-1">Jurisdiction</div>
-                                            <div className="font-semibold text-lg">{EMIRATES.find(j => j.id === jurisdiction)?.name}</div>
+                                    <div className="mb-6 print:mb-4">
+                                        <div className="font-semibold text-lg">Dubai Mainland Setup (6-Stage Model)</div>
+                                        <div className="text-sm text-neutral-500">Configuration: {dubaiForm.activityType} Activity • {dubaiForm.tradeName} Name • {visaCount} Visas</div>
+                                    </div>
+
+                                    {/* 6 STAGES */}
+                                    <div className="space-y-4">
+
+                                        {/* Stage 1 */}
+                                        <div className="bg-neutral-50 p-4 rounded-lg flex justify-between items-center print:bg-white print:border print:border-neutral-100 print:py-2">
+                                            <div>
+                                                <div className="font-bold text-neutral-800">Stage 1: Pre-Licensing (Approvals)</div>
+                                                <div className="text-xs text-neutral-500">Initial Approval, Name Reservation, Security Checks</div>
+                                            </div>
+                                            <div className="font-mono font-medium">{totals.stage1.toLocaleString()}</div>
                                         </div>
-                                        <div className="p-4 bg-neutral-50 rounded-lg print:border print:bg-white">
-                                            <div className="text-xs text-neutral-500 uppercase tracking-wider mb-1">Configuration</div>
-                                            <div className="font-semibold text-lg">{mainlandForm.legalType} <span className="text-neutral-400 font-normal">({visaCount} Visas)</span></div>
+
+                                        {/* Stage 2 */}
+                                        {totals.stage2 > 0 && (
+                                            <div className="bg-neutral-50 p-4 rounded-lg flex justify-between items-center print:bg-white print:border print:border-neutral-100 print:py-2">
+                                                <div>
+                                                    <div className="font-bold text-neutral-800">Stage 2: Activity Clearance</div>
+                                                    <div className="text-xs text-neutral-500">External Approvals ({dubaiForm.activityType === "Tourism" ? "DCAA" : "RTA"})</div>
+                                                </div>
+                                                <div className="font-mono font-medium">{totals.stage2.toLocaleString()}</div>
+                                            </div>
+                                        )}
+
+                                        {/* Stage 3 */}
+                                        <div className="bg-neutral-50 p-4 rounded-lg flex justify-between items-center print:bg-white print:border print:border-neutral-100 print:py-2">
+                                            <div>
+                                                <div className="font-bold text-neutral-800">Stage 3: Legal & Infrastructure</div>
+                                                <div className="text-xs text-neutral-500">MOA, Market Fees (5% of Rent), Insurance</div>
+                                            </div>
+                                            <div className="font-mono font-medium">{totals.stage3.toLocaleString()}</div>
+                                        </div>
+
+                                        {/* Stage 4 */}
+                                        <div className="bg-neutral-50 p-4 rounded-lg flex justify-between items-center print:bg-white print:border print:border-neutral-100 print:py-2">
+                                            <div>
+                                                <div className="font-bold text-neutral-800">Stage 4: License Finalization</div>
+                                                <div className="text-xs text-neutral-500">Issuance, Innovation Fees, Chamber of Commerce</div>
+                                            </div>
+                                            <div className="font-mono font-medium">{totals.stage4.toLocaleString()}</div>
+                                        </div>
+
+                                        {/* Stage 5 */}
+                                        <div className="bg-neutral-50 p-4 rounded-lg flex justify-between items-center print:bg-white print:border print:border-neutral-100 print:py-2">
+                                            <div>
+                                                <div className="font-bold text-neutral-800">Stage 5: Post-License Processing</div>
+                                                <div className="text-xs text-neutral-500">Establishment Card + {visaCount} Visas (Full Pkg)</div>
+                                            </div>
+                                            <div className="font-mono font-medium">{totals.stage5.toLocaleString()}</div>
+                                        </div>
+
+                                        {/* Stage 6 */}
+                                        <div className="bg-emerald-50 p-4 rounded-lg flex justify-between items-center border border-emerald-100 print:bg-white print:border-none print:py-2">
+                                            <div>
+                                                <div className="font-bold text-emerald-800">Stage 6: Professional Services</div>
+                                                <div className="text-xs text-emerald-600">Agency Fees, Consultation, Typing &PRO</div>
+                                            </div>
+                                            <div className="font-mono font-medium">{totals.stage6.toLocaleString()}</div>
+                                        </div>
+
+                                        {/* Addons */}
+                                        {selectedAddons.length > 0 && (
+                                            <div className="mt-4 pt-4 border-t border-dashed border-neutral-200">
+                                                {selectedAddons.map(id => {
+                                                    const item = ADDONS.find(a => a.id === id);
+                                                    if (!item) return null;
+                                                    return (
+                                                        <div key={id} className="flex justify-between text-sm py-1">
+                                                            <span className="text-neutral-600">+ {item.name}</span>
+                                                            <span>{item.price.toLocaleString()}</span>
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                        )}
+
+                                    </div>
+
+                                    <div className="mt-8 pt-8 border-t-2 border-neutral-900 flex justify-between items-end">
+                                        <div className="text-sm text-neutral-500 max-w-xs">
+                                            *Note: Market fees and Activity fees are subject to the specific invoice generated by Invest in Dubai (IID).
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="text-sm text-neutral-500 uppercase tracking-wider mb-1">Grand Total</div>
+                                            <div className="text-4xl font-bold text-neutral-900">AED {totals.grandTotal.toLocaleString()}</div>
                                         </div>
                                     </div>
 
-                                    {/* Line Items */}
-                                    <table className="w-full text-left border-collapse">
-                                        <thead>
-                                            <tr className="border-b border-neutral-200">
-                                                <th className="py-3 font-medium text-neutral-500 text-sm">Description</th>
-                                                <th className="py-3 font-medium text-neutral-500 text-sm text-right">Amount (AED)</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-neutral-100">
-                                            <tr>
-                                                <td className="py-4 font-medium text-neutral-800">
-                                                    Primary License Setup & DED/Economic Fees
-                                                    <div className="text-xs text-neutral-400 font-normal mt-0.5">Includes setup, approvals, trade name, and initial year registration</div>
-                                                </td>
-                                                <td className="py-4 text-right font-medium">{totals.basePrice.toLocaleString()}</td>
-                                            </tr>
-                                            {visaCount > 0 && (
-                                                <tr>
-                                                    <td className="py-4 font-medium text-neutral-800">
-                                                        Visa Alignment & Processing ({visaCount}x)
-                                                        <div className="text-xs text-neutral-400 font-normal mt-0.5">Includes Establishment Card and ICP Setup</div>
-                                                    </td>
-                                                    <td className="py-4 text-right font-medium">{totals.visaPrice.toLocaleString()}</td>
-                                                </tr>
-                                            )}
-                                            {selectedAddons.map(id => {
-                                                const item = ADDONS.find(a => a.id === id);
-                                                if (!item) return null;
-                                                return (
-                                                    <tr key={id}>
-                                                        <td className="py-4 font-medium text-neutral-800">{item.name}</td>
-                                                        <td className="py-4 text-right font-medium">{item.price.toLocaleString()}</td>
-                                                    </tr>
-                                                )
-                                            })}
-                                            {discount > 0 && (
-                                                <tr className="text-emerald-600">
-                                                    <td className="py-4 font-medium">Strategic Partnership Discount</td>
-                                                    <td className="py-4 text-right font-medium">-{discount.toLocaleString()}</td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                        <tfoot className="border-t-2 border-neutral-900">
-                                            <tr>
-                                                <td className="py-6 text-xl font-bold">Total Investment</td>
-                                                <td className="py-6 text-right text-3xl font-bold text-emerald-600">AED {totals.total.toLocaleString()}</td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-
-                                    <div className="mt-8 pt-8 border-t border-neutral-100 text-neutral-500 text-sm leading-relaxed print:mt-4">
-                                        <p><strong>Terms:</strong> This quotation is valid for 7 days. Prices are subject to final government invoices. Third-party fees (Medical/ID) are estimates.</p>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -566,37 +473,20 @@ export default function StaffPortal() {
                                 Internal Profitability Dashboard
                             </h3>
 
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-6">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                                 <div>
-                                    <div className="text-xs text-neutral-500 mb-1">Total Revenue</div>
-                                    <div className="text-2xl font-mono text-white">{totals.total.toLocaleString()}</div>
+                                    <div className="text-xs text-neutral-500 mb-1">Govt Stack (1-5)</div>
+                                    <div className="text-2xl font-mono text-red-400">{totals.govtTotal.toLocaleString()}</div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-neutral-500 mb-1">Total Gov. Cost</div>
-                                    <div className="text-2xl font-mono text-red-400">{totals.cost.toLocaleString()}</div>
+                                    <div className="text-xs text-neutral-500 mb-1">Agency Fee (6)</div>
+                                    <div className="text-2xl font-mono text-emerald-400">{totals.stage6.toLocaleString()}</div>
                                 </div>
-                                <div>
-                                    <div className="text-xs text-neutral-500 mb-1">Net Profit</div>
-                                    <div className={`text-2xl font-mono font-bold ${totals.profit > 0 ? "text-emerald-400" : "text-red-500"}`}>
-                                        {totals.profit.toLocaleString()}
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-neutral-500 mb-1">Margin</div>
-                                    <div className={`text-2xl font-mono ${totals.margin > 20 ? "text-emerald-400" : "text-yellow-500"}`}>
-                                        {totals.margin.toFixed(1)}%
-                                    </div>
+                                <div className="col-span-2">
+                                    <div className="text-xs text-neutral-500 mb-1">Total Quote</div>
+                                    <div className="text-2xl font-mono text-white">AED {totals.grandTotal.toLocaleString()}</div>
                                 </div>
                             </div>
-
-                            {jurisdiction !== "freezone" && (
-                                <div className="grid grid-cols-4 gap-2 text-[10px] text-neutral-500 opacity-60 font-mono border-t border-neutral-700 pt-3">
-                                    <div>Lic(DED): {totals.breakdown.Lic}</div>
-                                    <div>MrktFee: {totals.breakdown.Mkt}</div>
-                                    <div>Fed(MoE): {totals.breakdown.Fed}</div>
-                                    <div className="text-emerald-500">Service: {mainlandForm.bwmcServiceFee}</div>
-                                </div>
-                            )}
                         </div>
 
                     </div>
