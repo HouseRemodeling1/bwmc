@@ -2,161 +2,132 @@
 
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
-import ProgressBar from "./calculator/ProgressBar";
-import Step1LeadCapture from "./calculator/Step1LeadCapture";
-import Step2Requirements from "./calculator/Step2Requirements";
-import Step3FreeZone from "./calculator/Step3FreeZone";
-import Step3Mainland from "./calculator/Step3Mainland";
+import Step1Activity from "./calculator/Step1Activity";
+import Step2Visa from "./calculator/Step2Visa";
+import Step3Location from "./calculator/Step3Location";
+import LeadGate from "./calculator/LeadGate";
+import Step4Results from "./calculator/Step4Results";
 
 export default function BusinessCalculator() {
     const [currentStep, setCurrentStep] = useState(1);
+    const [showGate, setShowGate] = useState(false);
 
-    // Step 1: Lead Capture
-    const [leadData, setLeadData] = useState({
-        businessName: "",
-        contactName: "",
-        mobile: "",
-        email: "",
+    // Form Data State
+    const [formData, setFormData] = useState({
+        activity: "",
+        visaCount: null as number | null,
+        jurisdiction: null as "mainland" | "freezone" | null,
+        lead: {
+            name: "",
+            whatsapp: ""
+        }
     });
 
-    // Step 2: Requirements
-    const [requirementsData, setRequirementsData] = useState({
-        businessActivity: "",
-        jurisdiction: "" as "mainland" | "freezone" | "",
-    });
+    // Handlers
+    const handleStep1Next = () => setCurrentStep(2);
 
-    // Step 3a: Free Zone Data
-    const [freeZoneData, setFreeZoneData] = useState({
-        freezone: "SHAMS",
-        officeType: "Virtual Office",
-        visaCount: 1,
-        contractYears: 1,
-    });
+    const handleStep2Next = () => setCurrentStep(3);
+    const handleStep2Back = () => setCurrentStep(1);
 
-    // Step 3b: Mainland Data
-    const [mainlandData, setMainlandData] = useState({
-        officeType: "" as "physical" | "virtual" | "",
-    });
+    const handleStep3Back = () => setCurrentStep(2);
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
-    const handleStep1Next = () => {
-        setCurrentStep(2);
+    // Triggered when Step 3 is done (Mainland popup handled internally in Step 3)
+    const handleStep3Next = () => {
+        setShowGate(true);
     };
 
-    const handleStep2Next = () => {
-        setCurrentStep(3);
-    };
+    const handleGateComplete = async (leadData: { name: string; whatsapp: string }) => {
+        setFormData(prev => ({ ...prev, lead: leadData }));
 
-    const handleStep2Back = () => {
-        setCurrentStep(1);
-    };
-
-    const handleStep3Back = () => {
-        setCurrentStep(2);
-    };
-
-    const handleFinalSubmit = async () => {
-        setIsSubmitting(true);
-
+        // Submit to API
         try {
-            // Calculate the actual price for the sales team (hidden from user)
-            let calculatedPrice = null;
-            if (requirementsData.jurisdiction === "freezone") {
-                const { getPrice } = await import("@/lib/calculatorPricing");
-                calculatedPrice = getPrice(
-                    freeZoneData.freezone,
-                    freeZoneData.officeType,
-                    "Standard License",
-                    freeZoneData.visaCount,
-                    freeZoneData.contractYears
-                );
-            }
-
-            const payload = {
-                ...leadData,
-                ...requirementsData,
-                ...(requirementsData.jurisdiction === "freezone"
-                    ? { freezone: { ...freeZoneData, calculatedPrice } }
-                    : { mainland: mainlandData }
-                ),
-            };
-
-            const response = await fetch("/api/send-quote", {
+            await fetch("/api/send-quote", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
+                body: JSON.stringify({
+                    ...formData,
+                    lead: leadData,
+                    type: "calculator_lead"
+                }),
             });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                // Show success message
-                alert("✅ Thank you! Your detailed quote request has been submitted successfully.\n\nOur team will contact you within 1 hour via WhatsApp or email with your personalized quote.");
-                // Reset form
-                setCurrentStep(1);
-                setLeadData({ businessName: "", contactName: "", mobile: "", email: "" });
-                setRequirementsData({ businessActivity: "", jurisdiction: "" });
-                setFreeZoneData({ freezone: "SHAMS", officeType: "Virtual Office", visaCount: 1, contractYears: 1 });
-                setMainlandData({ officeType: "" });
-            } else {
-                console.error("API Error:", data);
-                alert(`⚠️ We're experiencing technical difficulties.\n\nPlease contact us directly:\n📧 Email: sales@bwmc.ae\n📱 WhatsApp: +971 50 XXX XXXX\n\nWe apologize for the inconvenience.`);
-            }
         } catch (error) {
-            console.error("Submission Error:", error);
-            alert(`⚠️ Unable to submit your request at this time.\n\nPlease contact us directly:\n📧 Email: sales@bwmc.ae\n📱 WhatsApp: +971 50 XXX XXXX\n\nError: ${error instanceof Error ? error.message : 'Network error'}`);
-        } finally {
-            setIsSubmitting(false);
+            console.error("Failed to save lead", error);
         }
+
+        setShowGate(false);
+        setCurrentStep(4);
     };
 
     return (
-        <div className="min-h-[600px]">
-            {/* Progress Bar */}
-            <ProgressBar currentStep={currentStep} totalSteps={3} />
+        <div className="min-h-[600px] w-full max-w-5xl mx-auto">
+            {/* Progress Bar (Visible only for steps 1-3) */}
+            {currentStep < 4 && !showGate && (
+                <div className="mb-12 max-w-xl mx-auto">
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div
+                            className="h-full bg-royal-blue transition-all duration-500 ease-out"
+                            style={{ width: `${(currentStep / 3) * 100}%` }}
+                        />
+                    </div>
+                    <div className="flex justify-between mt-2 text-xs font-bold text-gray-400 uppercase tracking-widest">
+                        <span className={currentStep >= 1 ? "text-royal-blue" : ""}>Activity</span>
+                        <span className={currentStep >= 2 ? "text-royal-blue" : ""}>Visas</span>
+                        <span className={currentStep >= 3 ? "text-royal-blue" : ""}>Location</span>
+                    </div>
+                </div>
+            )}
 
-            {/* Step Content */}
-            <AnimatePresence mode="wait">
-                {currentStep === 1 && (
-                    <Step1LeadCapture
-                        key="step1"
-                        formData={leadData}
-                        onUpdate={(data) => setLeadData({ ...leadData, ...data })}
-                        onNext={handleStep1Next}
-                    />
-                )}
+            <div className="bg-white rounded-[2rem] p-6 md:p-12 shadow-sm border border-gray-100 min-h-[500px] relative">
+                <AnimatePresence mode="wait">
+                    {/* Step 1: Activity */}
+                    {currentStep === 1 && (
+                        <Step1Activity
+                            key="step1"
+                            value={formData.activity}
+                            onChange={(val) => setFormData(prev => ({ ...prev, activity: val }))}
+                            onNext={handleStep1Next}
+                        />
+                    )}
 
-                {currentStep === 2 && (
-                    <Step2Requirements
-                        key="step2"
-                        formData={requirementsData}
-                        onUpdate={(data) => setRequirementsData({ ...requirementsData, ...data })}
-                        onNext={handleStep2Next}
-                        onBack={handleStep2Back}
-                    />
-                )}
+                    {/* Step 2: Visa */}
+                    {currentStep === 2 && (
+                        <Step2Visa
+                            key="step2"
+                            value={formData.visaCount}
+                            onChange={(val) => setFormData(prev => ({ ...prev, visaCount: val }))}
+                            onNext={handleStep2Next}
+                            onBack={handleStep2Back}
+                        />
+                    )}
 
-                {currentStep === 3 && requirementsData.jurisdiction === "freezone" && (
-                    <Step3FreeZone
-                        key="step3-freezone"
-                        formData={freeZoneData}
-                        onUpdate={(data) => setFreeZoneData({ ...freeZoneData, ...data })}
-                        onBack={handleStep3Back}
-                        onSubmit={handleFinalSubmit}
-                    />
-                )}
+                    {/* Step 3: Location */}
+                    {currentStep === 3 && !showGate && (
+                        <Step3Location
+                            key="step3"
+                            value={formData.jurisdiction}
+                            onChange={(val) => setFormData(prev => ({ ...prev, jurisdiction: val }))}
+                            onNext={handleStep3Next}
+                            onBack={handleStep3Back}
+                        />
+                    )}
 
-                {currentStep === 3 && requirementsData.jurisdiction === "mainland" && (
-                    <Step3Mainland
-                        key="step3-mainland"
-                        formData={mainlandData}
-                        onUpdate={(data) => setMainlandData({ ...mainlandData, ...data })}
-                        onBack={handleStep3Back}
-                        onSubmit={handleFinalSubmit}
-                    />
-                )}
-            </AnimatePresence>
+                    {/* Lead Gate (Overlay or Separate Step) */}
+                    {showGate && (
+                        <LeadGate
+                            key="gate"
+                            onComplete={handleGateComplete}
+                        />
+                    )}
+
+                    {/* Step 4: Results */}
+                    {currentStep === 4 && (
+                        <Step4Results
+                            key="step4"
+                            jurisdiction={formData.jurisdiction}
+                        />
+                    )}
+                </AnimatePresence>
+            </div>
         </div>
     );
 }
