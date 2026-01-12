@@ -33,10 +33,11 @@ export default function NewBlog() {
             if (res.ok) {
                 router.push("/admin");
             } else {
-                alert("Failed to create blog");
+                const data = await res.json();
+                alert(data.error || "Failed to create blog");
             }
         } catch (error) {
-            alert("Failed to create blog");
+            alert("Failed to create blog: " + (error as Error).message);
         } finally {
             setLoading(false);
         }

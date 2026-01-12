@@ -64,7 +64,20 @@ export async function PUT(
             updatedAt: new Date().toISOString(),
         };
 
-        await kv.set("blogs", blogs);
+        if (process.env.NODE_ENV === 'development') {
+            try {
+                fs.writeFileSync(blogsFilePath, JSON.stringify({ blogs }, null, 2));
+            } catch (fsError) {
+                console.error("Failed to write to local file:", fsError);
+            }
+        }
+
+        try {
+            await kv.set("blogs", blogs);
+        } catch (error) {
+            console.warn("KV update failed:", error);
+        }
+
         return NextResponse.json(blogs[index]);
     } catch (error) {
         return NextResponse.json({ error: "Failed to update blog" }, { status: 500 });
@@ -85,7 +98,19 @@ export async function DELETE(
             return NextResponse.json({ error: "Blog not found" }, { status: 404 });
         }
 
-        await kv.set("blogs", filteredBlogs);
+        if (process.env.NODE_ENV === 'development') {
+            try {
+                fs.writeFileSync(blogsFilePath, JSON.stringify({ blogs: filteredBlogs }, null, 2));
+            } catch (fsError) {
+                console.error("Failed to write to local file:", fsError);
+            }
+        }
+
+        try {
+            await kv.set("blogs", filteredBlogs);
+        } catch (error) {
+            console.warn("KV delete failed:", error);
+        }
 
         return NextResponse.json({ message: "Blog deleted successfully" });
     } catch (error) {

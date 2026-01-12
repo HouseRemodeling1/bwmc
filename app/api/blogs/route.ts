@@ -57,12 +57,27 @@ export async function POST(request: NextRequest) {
 
         blogs.push(newBlog);
 
-        // Save to KV
-        await kv.set("blogs", blogs);
+        // Save to KV (Production Persistence)
+        try {
+            await kv.set("blogs", blogs);
+        } catch (kvError) {
+            console.warn("Vercel KV save failed (expected locally without credentials):", kvError);
+        }
+
+        // Save to Local File (Development Persistence)
+        // This allows the dashboard to work locally without Vercel KV
+        if (process.env.NODE_ENV === 'development') {
+            try {
+                fs.writeFileSync(blogsFilePath, JSON.stringify({ blogs }, null, 2));
+                console.log("Saved blog to local file:", blogsFilePath);
+            } catch (fsError) {
+                console.error("Failed to write to local file:", fsError);
+            }
+        }
 
         return NextResponse.json(newBlog, { status: 201 });
-    } catch (error) {
-        console.error("Create Blob Error:", error);
-        return NextResponse.json({ error: "Failed to create blog" }, { status: 500 });
+    } catch (error: any) {
+        console.error("Create Blog Error:", error);
+        return NextResponse.json({ error: error.message || "Failed to create blog" }, { status: 500 });
     }
 }
