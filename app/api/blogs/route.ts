@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
-import { kv } from "@vercel/kv";
+import { createClient } from "@vercel/kv";
+
+// Create KV client with fallback to Upstash variables if standard KV vars aren't present
+const kv = createClient({
+    url: process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || "",
+    token: process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || "",
+});
 
 const blogsFilePath = path.join(process.cwd(), "public", "data", "blogs.json");
 
@@ -58,8 +64,12 @@ export async function POST(request: NextRequest) {
         blogs.push(newBlog);
 
         // Save to KV (Production Persistence)
+        // Save to KV (Production Persistence)
         if (process.env.NODE_ENV === 'production') {
-            if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) {
+            const hasKV = (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
+            const hasUpstash = (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
+
+            if (!hasKV && !hasUpstash) {
                 throw new Error("Vercel KV not configured. Please add KV database in Vercel.");
             }
             try {
