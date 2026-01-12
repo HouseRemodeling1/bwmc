@@ -6,7 +6,7 @@ import ProcessSteps from "@/components/global-setup/ProcessSteps";
 import TrustSection from "@/components/global-setup/TrustSection";
 import InternationalForm from "@/components/global-setup/InternationalForm";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
 
 export default function GlobalSetupPage() {
     return (
@@ -30,7 +30,6 @@ export default function GlobalSetupPage() {
                 <InternationalForm />
             </main>
 
-            <Footer />
         </div>
     );
 }
