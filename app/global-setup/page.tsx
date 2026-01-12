@@ -1,9 +1,10 @@
 "use client";
 
 import Hero from "@/components/global-setup/Hero";
+import StatsStrip from "@/components/global-setup/StatsStrip";
 import BenefitsGrid from "@/components/global-setup/BenefitsGrid";
 import ProcessSteps from "@/components/global-setup/ProcessSteps";
-import TrustSection from "@/components/global-setup/TrustSection";
+import ClientTrust from "@/components/ClientTrust";
 import InternationalForm from "@/components/global-setup/InternationalForm";
 import Header from "@/components/Header";
 
@@ -17,6 +18,9 @@ export default function GlobalSetupPage() {
             <main>
                 <Hero />
 
+                {/* Stats Strip */}
+                <StatsStrip />
+
                 {/* Benefits Section */}
                 <BenefitsGrid />
 
@@ -24,7 +28,7 @@ export default function GlobalSetupPage() {
                 <ProcessSteps />
 
                 {/* Trust & Testimonials */}
-                <TrustSection />
+                <ClientTrust />
 
                 {/* Lead Capture Form */}
                 <InternationalForm />

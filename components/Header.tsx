@@ -30,7 +30,7 @@ export default function Header() {
 
     return (
         <header
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isDarkHeader ? "bg-white/90 backdrop-blur-md shadow-sm py-3" : "bg-transparent py-5"
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isDarkHeader ? "bg-[#1A2B4C]/95 backdrop-blur-md shadow-sm py-3" : "bg-transparent py-5"
                 }`}
         >
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -39,10 +39,7 @@ export default function Header() {
                     <Link href="/" className="relative z-50">
                         <div className="relative w-[250px] h-[70px]">
                             <Image
-                                src={isDarkHeader
-                                    ? "https://bwmc.ae/wp-content/uploads/2025/03/BRIDGEWATER-LAST-400x150.png"
-                                    : "https://bwmc.ae/wp-content/uploads/2025/03/BRIDGEWATER-WHITE-400x150.png"
-                                }
+                                src={"https://bwmc.ae/wp-content/uploads/2025/03/BRIDGEWATER-WHITE-400x150.png"}
                                 alt="BWMC Logo"
                                 fill
                                 className="object-contain object-left"
@@ -61,7 +58,7 @@ export default function Header() {
                                 onMouseLeave={() => setHoveredItem(null)}
                             >
                                 <div
-                                    className={`flex items-center gap-1 text-sm font-medium cursor-pointer py-2 transition-colors ${isDarkHeader ? "text-navy hover:text-royal-blue" : "text-white/90 hover:text-white"
+                                    className={`flex items-center gap-1 text-sm font-medium cursor-pointer py-2 transition-colors ${isDarkHeader ? "text-white hover:text-gold" : "text-white/90 hover:text-white"
                                         }`}
                                 >
                                     <Link href={item.href}>{item.name}</Link>
@@ -104,7 +101,7 @@ export default function Header() {
                         <Link
                             href="/calculator"
                             className={`flex items-center gap-2 px-5 py-2.5 rounded-[4px] text-sm font-semibold transition-all ${isDarkHeader
-                                ? "bg-royal-blue text-white hover:bg-navy"
+                                ? "bg-white text-navy hover:bg-gold hover:text-navy"
                                 : "bg-white text-navy hover:bg-neutral"
                                 }`}
                         >
@@ -119,9 +116,9 @@ export default function Header() {
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                     >
                         {mobileMenuOpen ? (
-                            <X className={`w-8 h-8 ${isDarkHeader ? "text-navy" : "text-white"}`} />
+                            <X className={`w-8 h-8 text-white`} />
                         ) : (
-                            <Menu className={`w-8 h-8 ${isDarkHeader ? "text-navy" : "text-white"}`} />
+                            <Menu className={`w-8 h-8 text-white`} />
                         )}
                     </button>
                 </div>
