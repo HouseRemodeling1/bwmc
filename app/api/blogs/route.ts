@@ -58,10 +58,21 @@ export async function POST(request: NextRequest) {
         blogs.push(newBlog);
 
         // Save to KV (Production Persistence)
-        try {
-            await kv.set("blogs", blogs);
-        } catch (kvError) {
-            console.warn("Vercel KV save failed (expected locally without credentials):", kvError);
+        if (process.env.NODE_ENV === 'production') {
+            if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) {
+                throw new Error("Vercel KV not configured. Please add KV database in Vercel.");
+            }
+            try {
+                await kv.set("blogs", blogs);
+            } catch (kvError) {
+                console.error("Vercel KV save failed:", kvError);
+                throw new Error("Failed to save to Vercel KV");
+            }
+        } else {
+            // Development: Try KV but don't crash if it fails (likely just testing without credentials)
+            try {
+                await kv.set("blogs", blogs);
+            } catch (e) { /* ignore */ }
         }
 
         // Save to Local File (Development Persistence)
