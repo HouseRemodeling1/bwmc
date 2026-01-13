@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
 import Hero from "@/components/cfo-services/Hero";
 import ProblemSolution from "@/components/cfo-services/ProblemSolution";
 import ServicesList from "@/components/cfo-services/ServicesList";
@@ -28,7 +28,7 @@ export default function CFOServicesPage() {
                 <FinalCTA />
             </main>
 
-            <Footer />
+
         </div>
     );
 }

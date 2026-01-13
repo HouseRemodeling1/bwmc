@@ -36,14 +36,31 @@ export default function AdvantageSection() {
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Reuse Client Trust for Testimonials & Badges - it has white background so wrap it or modify */}
-            {/* Since ClientTrust has its own section wrapper and white bg, we should probably just place it below this section or embed parts.
+                {/* Right Side Visual to fill blank space */}
+                <div className="relative h-[400px] rounded-2xl overflow-hidden shadow-2xl border border-white/10 hidden lg:block">
+                    <div className="absolute inset-0 bg-gradient-to-t from-navy/80 to-transparent z-10" />
+                    {/* Fallback image if user hasn't provided one - using a professional finance meeting image */}
+                    <img
+                        src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=2070&auto=format&fit=crop"
+                        alt="BWMC Financial Experts"
+                        className="w-full h-full object-cover"
+                    />
+
+                    <div className="absolute bottom-6 left-6 z-20">
+                        <p className="text-white font-bold text-xl">Expert Guidance</p>
+                        <p className="text-gray-300 text-sm">Navigating complex regulations with ease.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            {/* Reuse Client Trust for Testimonials & Badges - it has white background so wrap it or modify */ }
+    {/* Since ClientTrust has its own section wrapper and white bg, we should probably just place it below this section or embed parts.
                 Given the requirement for credentials and testimonials, ClientTrust is perfect but it has a white BG.
                 Let's render it below as a separate strip or customize it. 
                 For now, I'll let it be its own section below the dark Advantage section for contrast.
             */}
-        </section>
+        </section >
     );
 }
