@@ -62,157 +62,123 @@ export default function InternationalForm() {
         <section id="consultation-form" className="py-24 bg-navy relative">
             <div className="absolute inset-0 bg-royal-blue/10"></div>
 
-            <div className="relative max-w-6xl mx-auto px-6 lg:px-8">
-                <div className="grid lg:grid-cols-2 gap-16 items-center">
 
-                    {/* Left Copy */}
-                    <div>
-                        <h2 className="text-4xl font-bold text-white mb-6">
-                            Ready to Expand Your Horizon?
-                        </h2>
-                        <p className="text-lg text-gray-300 mb-8">
-                            Connect with BWMC's experts today for a personalized strategy.
-                            We reply to all international inquiries within 12 hours.
-                        </p>
+            <div className="relative max-w-3xl mx-auto px-6 lg:px-8">
+                {/* Right Form */}
+                <div className="bg-white rounded-2xl p-8 shadow-2xl">
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <h3 className="text-xl font-bold text-navy mb-6">Schedule Your Free Consultation</h3>
 
-                        <div className="space-y-6">
-                            <div className="flex items-start gap-4">
-                                <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center shrink-0">
-                                    <span className="text-2xl">📞</span>
+                        {status === "success" ? (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="bg-green-50 border border-green-200 rounded-lg p-6 text-center py-12"
+                            >
+                                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <Check className="w-8 h-8 text-green-600" />
                                 </div>
-                                <div>
-                                    <h4 className="text-white font-semibold">Priority Support</h4>
-                                    <p className="text-white/60 text-sm">Dedicated managers for international clients.</p>
-                                </div>
-                            </div>
-                            <div className="flex items-start gap-4">
-                                <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center shrink-0">
-                                    <span className="text-2xl">🌍</span>
-                                </div>
-                                <div>
-                                    <h4 className="text-white font-semibold">Global Reach</h4>
-                                    <p className="text-white/60 text-sm">Serving clients from 150+ countries.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Right Form */}
-                    <div className="bg-white rounded-2xl p-8 shadow-2xl">
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <h3 className="text-xl font-bold text-navy mb-6">Schedule Your Free Consultation</h3>
-
-                            {status === "success" ? (
-                                <motion.div
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    className="bg-green-50 border border-green-200 rounded-lg p-6 text-center py-12"
+                                <h4 className="text-xl font-bold text-navy mb-2">Request Received!</h4>
+                                <p className="text-gray-600">
+                                    Thank you for your interest. One of our international setup experts will contact you shortly.
+                                </p>
+                                <button
+                                    onClick={() => setStatus("idle")}
+                                    className="mt-6 text-royal-blue font-semibold hover:underline"
                                 >
-                                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <Check className="w-8 h-8 text-green-600" />
-                                    </div>
-                                    <h4 className="text-xl font-bold text-navy mb-2">Request Received!</h4>
-                                    <p className="text-gray-600">
-                                        Thank you for your interest. One of our international setup experts will contact you shortly.
-                                    </p>
-                                    <button
-                                        onClick={() => setStatus("idle")}
-                                        className="mt-6 text-royal-blue font-semibold hover:underline"
-                                    >
-                                        Send another request
-                                    </button>
-                                </motion.div>
-                            ) : (
-                                <>
+                                    Send another request
+                                </button>
+                            </motion.div>
+                        ) : (
+                            <>
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={formData.name}
+                                        onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
+                                        placeholder="John Doe"
+                                    />
+                                </div>
+
+                                <div className="grid md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
                                         <input
-                                            type="text"
+                                            type="email"
                                             required
-                                            value={formData.name}
-                                            onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                            value={formData.email}
+                                            onChange={e => setFormData({ ...formData, email: e.target.value })}
                                             className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
-                                            placeholder="John Doe"
+                                            placeholder="john@company.com"
                                         />
                                     </div>
-
-                                    <div className="grid md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
-                                            <input
-                                                type="email"
-                                                required
-                                                value={formData.email}
-                                                onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
-                                                placeholder="john@company.com"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
-                                            <input
-                                                type="tel"
-                                                required
-                                                value={formData.phone}
-                                                onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
-                                                placeholder="+1 234 567 890"
-                                            />
-                                        </div>
-                                    </div>
-
                                     <div>
-                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Country of Residence</label>
+                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
                                         <input
-                                            type="text"
+                                            type="tel"
                                             required
-                                            value={formData.country}
-                                            onChange={e => setFormData({ ...formData, country: e.target.value })}
+                                            value={formData.phone}
+                                            onChange={e => setFormData({ ...formData, phone: e.target.value })}
                                             className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
-                                            placeholder="e.g. United Kingdom"
+                                            placeholder="+1 234 567 890"
                                         />
                                     </div>
+                                </div>
 
-                                    <div>
-                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Message (Optional)</label>
-                                        <textarea
-                                            rows={3}
-                                            value={formData.message}
-                                            onChange={e => setFormData({ ...formData, message: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
-                                            placeholder="Tell us about your business plans..."
-                                        />
-                                    </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Country of Residence</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={formData.country}
+                                        onChange={e => setFormData({ ...formData, country: e.target.value })}
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
+                                        placeholder="e.g. United Kingdom"
+                                    />
+                                </div>
 
-                                    <button
-                                        type="submit"
-                                        disabled={status === "submitting"}
-                                        className="w-full bg-gold hover:bg-yellow-600 text-navy font-bold py-4 rounded-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
-                                    >
-                                        {status === "submitting" ? (
-                                            <>
-                                                <Loader2 className="w-5 h-5 animate-spin" />
-                                                Submitting...
-                                            </>
-                                        ) : (
-                                            <>
-                                                Schedule Consultation
-                                                <Send className="w-5 h-5" />
-                                            </>
-                                        )}
-                                    </button>
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Message (Optional)</label>
+                                    <textarea
+                                        rows={3}
+                                        value={formData.message}
+                                        onChange={e => setFormData({ ...formData, message: e.target.value })}
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
+                                        placeholder="Tell us about your business plans..."
+                                    />
+                                </div>
 
-                                    {status === "error" && (
-                                        <p className="text-red-600 text-sm text-center mt-2">
-                                            Something went wrong. Please try again or contact us directly.
-                                        </p>
+                                <button
+                                    type="submit"
+                                    disabled={status === "submitting"}
+                                    className="w-full bg-gold hover:bg-yellow-600 text-navy font-bold py-4 rounded-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                                >
+                                    {status === "submitting" ? (
+                                        <>
+                                            <Loader2 className="w-5 h-5 animate-spin" />
+                                            Submitting...
+                                        </>
+                                    ) : (
+                                        <>
+                                            Schedule Consultation
+                                            <Send className="w-5 h-5" />
+                                        </>
                                     )}
-                                </>
-                            )}
-                        </form>
-                    </div>
+                                </button>
+
+                                {status === "error" && (
+                                    <p className="text-red-600 text-sm text-center mt-2">
+                                        Something went wrong. Please try again or contact us directly.
+                                    </p>
+                                )}
+                            </>
+                        )}
+                    </form>
                 </div>
             </div>
-        </section>
+        </section >
     );
 }
