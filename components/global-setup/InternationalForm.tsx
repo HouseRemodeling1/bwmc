@@ -6,10 +6,12 @@ import { Check, Loader2, Send } from "lucide-react";
 
 export default function InternationalForm() {
     const [formData, setFormData] = useState({
-        name: "",
+        firstName: "",
+        lastName: "",
         email: "",
         phone: "",
-        country: "",
+        company: "",
+        service: "Business Setup Services",
         message: ""
     });
 
@@ -20,23 +22,15 @@ export default function InternationalForm() {
         setStatus("submitting");
 
         try {
-            // Reusing the existing send-quote API but sending the form data
-            // We'll map it to match the expected schema reasonably well or strict validation?
-            // The /api/send-quote expects: businessName, contactName, mobile, email, businessActivity, jurisdiction etc.
-            // Since this is a generic contact/lead form, we might need a simpler endpoint or adapt the payload.
-            // Let's adapt the payload to fit the existing robust API (or create a new contact API).
-            // For now, mapping 'name' to 'contactName', 'country' can be appended to 'businessActivity' or 'jurisdiction' placeholder.
-
-            // NOTE: Ideally we should use a /api/contact or similar. 
-            // Reusing send-quote for now as it has the fallback logic we just built.
             const payload = {
-                businessName: "International Lead: " + (formData.country || "Unknown"), // Context hacking
-                contactName: formData.name,
+                // Mapping consistent with our API interface
+                businessName: formData.company,
+                contactName: `${formData.firstName} ${formData.lastName}`.trim(),
                 email: formData.email,
                 mobile: formData.phone,
-                businessActivity: "International Inquiry",
-                jurisdiction: "International Setup", // Signal to sales team
-                country: formData.country,
+                businessActivity: formData.service, // Mapped to Interested service
+                jurisdiction: "International Setup",
+                country: "Unknown", // Removed specific country field in favor of Company/Services as per request
                 message: formData.message
             };
 
@@ -48,7 +42,7 @@ export default function InternationalForm() {
 
             if (res.ok) {
                 setStatus("success");
-                setFormData({ name: "", email: "", phone: "", country: "", message: "" });
+                setFormData({ firstName: "", lastName: "", email: "", phone: "", company: "", service: "Business Setup Services", message: "" });
             } else {
                 setStatus("error");
             }
@@ -91,21 +85,45 @@ export default function InternationalForm() {
                             </motion.div>
                         ) : (
                             <>
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-700 mb-2">First Name <span className="text-red-500">*</span></label>
+                                        <input
+                                            type="text"
+                                            required
+                                            value={formData.firstName}
+                                            onChange={e => setFormData({ ...formData, firstName: e.target.value })}
+                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
+                                            placeholder="John"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Last Name <span className="text-red-500">*</span></label>
+                                        <input
+                                            type="text"
+                                            required
+                                            value={formData.lastName}
+                                            onChange={e => setFormData({ ...formData, lastName: e.target.value })}
+                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
+                                            placeholder="Doe"
+                                        />
+                                    </div>
+                                </div>
+
                                 <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Company</label>
                                     <input
                                         type="text"
-                                        required
-                                        value={formData.name}
-                                        onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                        value={formData.company}
+                                        onChange={e => setFormData({ ...formData, company: e.target.value })}
                                         className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
-                                        placeholder="John Doe"
+                                        placeholder="Your Business Name"
                                     />
                                 </div>
 
                                 <div className="grid md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address <span className="text-red-500">*</span></label>
                                         <input
                                             type="email"
                                             required
@@ -116,26 +134,46 @@ export default function InternationalForm() {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
+                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Mobile <span className="text-red-500">*</span></label>
                                         <input
                                             type="tel"
                                             required
                                             value={formData.phone}
                                             onChange={e => setFormData({ ...formData, phone: e.target.value })}
                                             className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
-                                            placeholder="+1 234 567 890"
+                                            placeholder="+971 50 123 4567"
                                         />
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Message (Optional)</label>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Interested Services</label>
+                                    <select
+                                        value={formData.service}
+                                        onChange={e => setFormData({ ...formData, service: e.target.value })}
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all bg-white"
+                                    >
+                                        <option value="Business Setup Services">Business Setup Services</option>
+                                        <option value="Accounting">Accounting</option>
+                                        <option value="Taxation">Taxation</option>
+                                        <option value="Excise Tax Service">Excise Tax Service</option>
+                                        <option value="Auditing">Auditing</option>
+                                        <option value="Compliance">Compliance</option>
+                                        <option value="Trade Finance Services">Trade Finance Services</option>
+                                        <option value="Credit Risk Evaluation">Credit Risk Evaluation</option>
+                                        <option value="ERP">ERP</option>
+                                        <option value="Human Resource">Human Resource</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Message</label>
                                     <textarea
                                         rows={3}
                                         value={formData.message}
                                         onChange={e => setFormData({ ...formData, message: e.target.value })}
                                         className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
-                                        placeholder="Tell us about your business plans..."
+                                        placeholder="Tell us about your requirements..."
                                     />
                                 </div>
 

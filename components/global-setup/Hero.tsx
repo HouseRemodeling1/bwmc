@@ -7,9 +7,11 @@ import Link from "next/link";
 
 export default function Hero() {
     const [formData, setFormData] = useState({
-        name: "",
+        firstName: "",
+        lastName: "",
         email: "",
         phone: "",
+        company: "",
         country: "",
         message: ""
     });
@@ -21,8 +23,8 @@ export default function Hero() {
 
         try {
             const payload = {
-                businessName: "Global Hero Lead: " + (formData.country || "Unknown"),
-                contactName: formData.name,
+                businessName: formData.company || "Global Hero Lead: " + (formData.country || "Unknown"),
+                contactName: `${formData.firstName} ${formData.lastName}`.trim(),
                 email: formData.email,
                 mobile: formData.phone,
                 businessActivity: "International Inquiry (Hero)",
@@ -39,7 +41,7 @@ export default function Hero() {
 
             if (res.ok) {
                 setStatus("success");
-                setFormData({ name: "", email: "", phone: "", country: "", message: "" });
+                setFormData({ firstName: "", lastName: "", email: "", phone: "", company: "", country: "", message: "" });
             } else {
                 setStatus("error");
             }
@@ -150,14 +152,38 @@ export default function Hero() {
                                     <>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
-                                                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Full Name</label>
+                                                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">First Name</label>
                                                 <input
                                                     type="text"
                                                     required
-                                                    value={formData.name}
-                                                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                                    value={formData.firstName}
+                                                    onChange={e => setFormData({ ...formData, firstName: e.target.value })}
                                                     className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
-                                                    placeholder="John Doe"
+                                                    placeholder="John"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Last Name</label>
+                                                <input
+                                                    type="text"
+                                                    required
+                                                    value={formData.lastName}
+                                                    onChange={e => setFormData({ ...formData, lastName: e.target.value })}
+                                                    className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
+                                                    placeholder="Doe"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Company</label>
+                                                <input
+                                                    type="text"
+                                                    value={formData.company}
+                                                    onChange={e => setFormData({ ...formData, company: e.target.value })}
+                                                    className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
+                                                    placeholder="Business Name"
                                                 />
                                             </div>
                                             <div>
@@ -168,7 +194,7 @@ export default function Hero() {
                                                     value={formData.country}
                                                     onChange={e => setFormData({ ...formData, country: e.target.value })}
                                                     className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
-                                                    placeholder="United Kingdom"
+                                                    placeholder="UK"
                                                 />
                                             </div>
                                         </div>

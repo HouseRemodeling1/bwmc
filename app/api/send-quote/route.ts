@@ -37,7 +37,9 @@ export async function POST(request: NextRequest) {
             businessActivity = activity;
             jurisdiction = jur || "Not Selected";
             businessName = body.businessName || "Not Provided (Calculator Lead)";
-            email = "Not Provided"; // New form doesn't ask for email
+            // Generate placeholder email for Zoho validation (Email is usually mandatory)
+            const cleanMobile = lead.whatsapp.replace(/[^0-9]/g, '');
+            email = `whatsapp-${cleanMobile}@no-email.com`;
             subject = `New Calculator Lead: ${contactName} - ${jurisdiction.toUpperCase()}`;
 
             message = `Source: Cost Calculator
