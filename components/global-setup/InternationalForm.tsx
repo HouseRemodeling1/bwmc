@@ -129,18 +129,6 @@ export default function InternationalForm() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Country of Residence</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={formData.country}
-                                        onChange={e => setFormData({ ...formData, country: e.target.value })}
-                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
-                                        placeholder="e.g. United Kingdom"
-                                    />
-                                </div>
-
-                                <div>
                                     <label className="block text-sm font-semibold text-gray-700 mb-2">Message (Optional)</label>
                                     <textarea
                                         rows={3}

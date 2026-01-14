@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { submitToZoho } from "@/lib/zoho";
 
 export async function POST(request: NextRequest) {
     try {
@@ -15,6 +16,7 @@ export async function POST(request: NextRequest) {
         let jurisdiction = "";
         let detailsHTML = "";
         let subject = "";
+        let message = ""; // For description
 
         // Handle new Calculator Lead Payload
         if (type === "calculator_lead") {
@@ -38,6 +40,11 @@ export async function POST(request: NextRequest) {
             email = "Not Provided"; // New form doesn't ask for email
             subject = `New Calculator Lead: ${contactName} - ${jurisdiction.toUpperCase()}`;
 
+            message = `Source: Cost Calculator
+Activity: ${activity}
+Visas: ${visaCount}
+Jurisdiction: ${jurisdiction}`;
+
             detailsHTML = `
                 <h3>Calculator Inputs:</h3>
                 <ul>
@@ -56,7 +63,9 @@ export async function POST(request: NextRequest) {
                 businessActivity: bAct,
                 jurisdiction: jur,
                 freezone,
-                mainland
+                mainland,
+                message: msg,
+                country
             } = body;
 
             businessName = bName;
@@ -66,8 +75,11 @@ export async function POST(request: NextRequest) {
             businessActivity = bAct;
             jurisdiction = jur;
             subject = `New Quote Request: ${businessName}`;
+            message = msg ? `${msg}\nCountry: ${country}` : `Country: ${country}`;
 
             if (jurisdiction === "freezone" && freezone) {
+                // ... (Existing HTML logic if needed, but for Zoho we just need description)
+                message += `\nType: Freezone\nFZ: ${freezone.freezone}\nOffice: ${freezone.officeType}`;
                 detailsHTML = `
                     <h3>Free Zone Setup Details:</h3>
                     <ul>
@@ -78,14 +90,36 @@ export async function POST(request: NextRequest) {
                     </ul>
                 `;
             } else if (jurisdiction === "mainland" && mainland) {
+                message += `\nType: Mainland\nOffice: ${mainland.officeType}`;
                 detailsHTML = `
                     <h3>Mainland Setup Details:</h3>
                     <ul>
                         <li><strong>Office Type:</strong> ${mainland.officeType}</li>
                     </ul>
                 `;
+            } else {
+                // Generic contact form
+                message += `\nActivity: ${bAct}`;
             }
         }
+
+        // --- ZOHO SUBMISSION ---
+        // Fire and forget (or await if critical)
+        // We split name into First/Last for Zoho
+        const nameParts = contactName.trim().split(" ");
+        const lastName = nameParts.pop() || contactName; // Last part is last name, or whole thing
+        const firstName = nameParts.join(" ");
+
+        await submitToZoho({
+            firstName,
+            lastName,
+            email: email === "Not Provided" ? "" : email,
+            mobile,
+            company: businessName === "Not Provided (Calculator Lead)" ? "Individual" : businessName,
+            description: message,
+            interestedServices: [businessActivity || "Business Setup Services"]
+        });
+        // -----------------------
 
         // Try to send email if SMTP is configured
         let emailSent = false;
@@ -116,6 +150,8 @@ export async function POST(request: NextRequest) {
                         </ul>
                         
                         ${detailsHTML}
+
+                        <p style="color: grey; font-size: 10px;">Also submitted to Zoho CRM.</p>
                     `,
                 };
 
