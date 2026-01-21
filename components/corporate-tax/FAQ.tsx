@@ -5,24 +5,24 @@ import { Plus, Minus } from "lucide-react";
 
 const faqs = [
     {
-        question: "When is the corporate tax filing deadline?",
-        answer: "Generally, for calendar year corporations, the deadline is April 15th (moved to the next business day if on a weekend). Fiscal year corporations must file by the 15th day of the 4th month following the close of their tax year."
+        question: "What is the Corporate Tax rate in the UAE?",
+        answer: "The standard Corporate Tax rate is 9% on taxable profits exceeding AED 375,000. Profits up to AED 375,000 are taxed at 0% to support small businesses and startups."
     },
     {
-        question: "What documents do I need to provide?",
-        answer: "Key documents include your P&L statement, balance sheet, prior year tax returns, payroll records, and details of any asset acquisitions or disposals."
+        question: "Do Free Zone companies need to register?",
+        answer: "Yes, all Free Zone companies are considered 'Taxable Persons' and must register for Corporate Tax. However, 'Qualifying Free Zone Persons' may benefit from a 0% rate on 'Qualifying Income'."
     },
     {
-        question: "How much do your services cost?",
-        answer: "Our fees are tailored to the complexity of your business. We offer transparent, flat-fee pricing after a quick initial assessment of your needs."
+        question: "What is the deadline for Corporate Tax registration?",
+        answer: "Deadlines vary based on the date of your Trade License issuance. The FTA has specific timelines for different license dates. Contact us to check your specific deadline and avoid penalties."
     },
     {
-        question: "Can you handle multi-state filings?",
-        answer: "Yes, we specialize in multi-state nexus analysis and compliance to ensure you are meeting obligations in every jurisdiction where you operate."
+        question: "Is there any relief for small businesses?",
+        answer: "Yes, the 'Small Business Relief' allows resident taxable persons with revenue below AED 3 Million in a tax period to be treated as having no taxable income for that period, effectively paying 0% tax."
     },
     {
-        question: "What if we're audited?",
-        answer: "We provide comprehensive audit protection. If you receive a notice, we will represent you before the IRS or state authorities and handle all correspondence."
+        question: "When do I need to file my Tax Return?",
+        answer: "Tax returns must be filed within 9 months from the end of your relevant Tax Period. For example, if your financial year ends on 31st December, your return is due by 30th September of the following year."
     }
 ];
 

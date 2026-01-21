@@ -3,23 +3,23 @@
 const steps = [
     {
         number: "01",
-        title: "Discovery & Data Collection",
-        description: "Initial consultation to understand your business and secure document upload via our portal."
+        title: "Registration & TRN",
+        description: "We assess your eligibility and register your business with the FTA to obtain your Tax Registration Number."
     },
     {
         number: "02",
-        title: "Analysis & Preparation",
-        description: "Comprehensive review by senior tax professionals wih multi-point quality control checks."
+        title: "Financial Review",
+        description: "Review of financial statements to identify taxable income, exempt income, and deductible expenses."
     },
     {
         number: "03",
-        title: "Review & Approval",
-        description: "Line-by-line review with you to explain tax positions and answer all questions."
+        title: "Tax Computation",
+        description: "Calculation of final tax liability, applying any available reliefs (like Small Business Relief) or 0% Free Zone benefits."
     },
     {
         number: "04",
-        title: "Filing & Follow-Up",
-        description: "Electronic filing with confirmation, tracking, and archiving for future reference."
+        title: "Filing & Payment",
+        description: "Submission of the final return to the FTA portal and guidance on tax payment to avoid penalties."
     }
 ];
 

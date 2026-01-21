@@ -3,16 +3,16 @@
 import { Check } from "lucide-react";
 
 const services = [
-    "Federal corporate tax return (Form 1120)",
-    "State and local tax compliance",
-    "Multi-state tax filing and nexus analysis",
-    "Quarterly estimated tax planning",
-    "Tax credits and incentives identification",
-    "Research & Development (R&D) tax credits",
-    "Section 179 and bonus depreciation optimization",
-    "International tax compliance",
-    "Sales and use tax consulting",
-    "Tax provision and ASC 740 support"
+    "Corporate Tax Registration & TRN Generation",
+    "Corporate Tax Return Filing (Annual)",
+    "Free Zone Qualifying Income Assessment",
+    "Small Business Relief Application",
+    "Tax Residency Certificate Assistance",
+    "Transfer Pricing Documentation",
+    "Financial Statement Preparation (IFRS)",
+    "Tax Impact Assessment Reports",
+    "FTA Clarifications & Private Rulings",
+    "Appeal & Penalties Waiver Assistance"
 ];
 
 export default function ServicesList() {
@@ -22,10 +22,10 @@ export default function ServicesList() {
                 <div className="grid lg:grid-cols-2 gap-16 items-center">
                     <div>
                         <h2 className="text-3xl lg:text-4xl font-bold text-[#1a4d6f] mb-6">
-                            Comprehensive Corporate <br />Tax Services
+                            End-to-End <br />UAE Corporate Tax Services
                         </h2>
                         <p className="text-gray-600 mb-8 text-lg">
-                            From routine filings to complex multi-state strategies, our team handles every aspect of your corporate tax lifecycle with precision and care.
+                            From straightforward registration to complex Free Zone structuring, our certified tax agents handle every aspect of your UAE tax compliance.
                         </p>
                         <div className="bg-[#f8f9fa] p-8 rounded-2xl border border-gray-100">
                             <h4 className="font-bold text-[#1a4d6f] mb-4">Coverage Includes:</h4>

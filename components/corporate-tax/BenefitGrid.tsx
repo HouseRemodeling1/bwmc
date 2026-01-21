@@ -5,33 +5,33 @@ import { Calculator, Clock, Shield, Building2, Headset, MonitorCheck } from "luc
 const benefits = [
     {
         icon: Calculator,
-        title: "Maximum Tax Savings",
-        description: "Our experts identify every deduction and credit your corporation qualifies for, ensuring you keep more of your hard-earned profits."
+        title: "Free Zone Assessment",
+        description: "Expert analysis of your Free Zone status to determine eligibility for the 0% Corporate Tax rate for Qualifying Free Zone Persons."
     },
     {
         icon: Clock,
-        title: "On-Time, Every Time",
-        description: "Never worry about deadlines again. We handle all federal, state, and local filing requirements with precision timing."
+        title: "FTA Registration",
+        description: "Seamless Tax Registration Number (TRN) generation and registration with the Federal Tax Authority for all business types."
     },
     {
         icon: Shield,
-        title: "Audit Protection",
-        description: "Comprehensive audit support and defense. We stand behind our work with full representation if questions arise."
+        title: "Compliance & Safety",
+        description: "Ensure full compliance with UAE Tax Laws to avoid hefty penalties for non-registration or late filing."
     },
     {
         icon: Building2,
-        title: "Industry Expertise",
-        description: "Specialized knowledge across manufacturing, technology, healthcare, real estate, and professional services sectors."
+        title: "Small Business Relief",
+        description: "Guidance on claiming Small Business Relief if your revenue is below AED 3 Million, exempting you from tax payments."
     },
     {
         icon: Headset,
-        title: "Year-Round Support",
-        description: "Tax planning isn't seasonal. Access your dedicated advisor 12 months a year for strategic guidance."
+        title: "Financial Restructuring",
+        description: "Strategic advice on restructuring your financial year or entity setup to align efficiently with the new tax regime."
     },
     {
         icon: MonitorCheck,
-        title: "Technology-Enabled",
-        description: "Secure portal for document sharing, real-time status updates, and seamless communication with your tax team."
+        title: "Records & Accounting",
+        description: "Ensure your financial statements meet international accounting standards (IFRS) as required by the FTA."
     }
 ];
 
@@ -41,10 +41,10 @@ export default function BenefitGrid() {
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl lg:text-4xl font-bold text-[#1a4d6f] mb-4">
-                        Why Choose BWMC for Corporate Tax Filing?
+                        Why Choose BWMC for UAE Corporate Tax?
                     </h2>
                     <p className="text-gray-600 max-w-2xl mx-auto">
-                        We combine deep industry expertise with cutting-edge technology to deliver superior tax outcomes.
+                        We simplify the 9% tax regime, ensuring your business maximizes relief options while remaining fully compliant.
                     </p>
                 </div>
 
