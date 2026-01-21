@@ -23,12 +23,48 @@ export default function LeadCaptureForm() {
         e.preventDefault();
         setStatus("submitting");
 
-        // Simulate API call
-        setTimeout(() => {
-            setStatus("success");
-            // Here we would integrate with Zoho CRM WebHook
-            console.log("Form Submitted:", formData);
-        }, 1500);
+        try {
+            // Combine extra fields into the message for Zoho Description
+            const detailedMessage = `
+Revenue Range: ${formData.revenue}
+Industry: ${formData.industry}
+Tax Situation: ${formData.taxSituation}
+
+Message:
+${formData.message}
+            `.trim();
+
+            const payload = {
+                contactName: formData.name,
+                email: formData.email,
+                mobile: formData.phone,
+                businessName: formData.company,
+                businessActivity: "Corporate Tax Filing", // Fixed value for this form
+                jurisdiction: "Corporate Tax Page",
+                message: detailedMessage,
+                country: "Unknown"
+            };
+
+            const res = await fetch("/api/send-quote", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                setStatus("success");
+                setFormData({
+                    name: "", company: "", email: "", phone: "",
+                    revenue: "", employees: "", industry: "",
+                    taxSituation: "current-year", message: ""
+                });
+            } else {
+                setStatus("error");
+            }
+        } catch (error) {
+            console.error("Submission error:", error);
+            setStatus("error");
+        }
     };
 
     if (status === "success") {
