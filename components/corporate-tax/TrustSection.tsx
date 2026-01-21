@@ -9,10 +9,10 @@ export default function TrustSection() {
 
                 {/* Credentials */}
                 <div className="flex flex-wrap justify-center items-center gap-12 mb-20 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-                    <div className="text-2xl font-bold text-gray-400">AICPA Member</div>
-                    <div className="text-2xl font-bold text-gray-400">Certified CPA</div>
-                    <div className="text-2xl font-bold text-gray-400">IRS Enrolled Agent</div>
-                    <div className="text-2xl font-bold text-gray-400">BBB Accredited</div>
+                    <div className="text-2xl font-bold text-gray-400">FTA Registered</div>
+                    <div className="text-2xl font-bold text-gray-400">Certified Tax Agents</div>
+                    <div className="text-2xl font-bold text-gray-400">UAE VAT Experts</div>
+                    <div className="text-2xl font-bold text-gray-400">IFRS Compliant</div>
                 </div>
 
                 <div className="text-center mb-16">
@@ -22,19 +22,19 @@ export default function TrustSection() {
                 <div className="grid md:grid-cols-3 gap-8">
                     {[
                         {
-                            quote: "BWMC transformed our chaotic tax process into a streamlined operation. We saved over $120k in our first year alone.",
-                            author: "Sarah Chen",
-                            role: "CFO, TechFlow Manufacturing"
+                            quote: "BWMC demystified the new 9% Corporate Tax for us. Their impact assessment saved us significant potential liability.",
+                            author: "Ahmed Al-Mansouri",
+                            role: "CEO, Al-Mansouri Trading"
                         },
                         {
-                            quote: "Their knowledge of multi-state nexus issues is unmatched. We expanded to 12 new states without a single compliance hiccup.",
-                            author: "Michael Ross",
-                            role: "Director of Finance, Global Retail Inc"
+                            quote: "Their guidance on Qualifying Free Zone Income was game-changing. We maintained our 0% tax status with full compliance.",
+                            author: "Sarah Jenkins",
+                            role: "Finance Director, TechGlobal DWC"
                         },
                         {
-                            quote: "Professional, responsive, and strategic. They don't just file taxes; they help us plan for the future.",
+                            quote: "From VAT to Corporate Tax, BWMC handles it all. Their monthly retainer model gives us complete peace of mind.",
                             author: "David Miller",
-                            role: "Owner, Miller Logistics"
+                            role: "Owner, Miller Logistics LLC"
                         }
                     ].map((t, idx) => (
                         <div key={idx} className="bg-[#f8f9fa] p-8 rounded-xl relative">

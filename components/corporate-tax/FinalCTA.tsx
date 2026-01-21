@@ -11,7 +11,7 @@ export default function FinalCTA() {
         <section className="py-24 bg-gradient-to-br from-[#1a4d6f] to-[#2d6a8f] text-white text-center">
             <div className="max-w-4xl mx-auto px-6 lg:px-8">
                 <h2 className="text-3xl lg:text-5xl font-bold mb-6">
-                    Ready to Simplify Your Corporate Tax Filing?
+                    Ready for UAE Corporate Tax Compliance?
                 </h2>
                 <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
                     Schedule your free consultation today. No obligation, just expert advice.
