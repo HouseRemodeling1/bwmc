@@ -19,13 +19,6 @@ export default function ThankYou() {
                 </p>
             </div>
 
-            <div className="pt-8">
-                <button className="inline-flex items-center gap-2 bg-royal-blue text-white px-6 py-3 rounded-lg hover:bg-navy transition-colors">
-                    <Download className="w-5 h-5" />
-                    <span>Download Cost Comparison Guide</span>
-                </button>
-                <p className="text-sm text-gray-400 mt-2">PDF Guide (Optional)</p>
-            </div>
         </div>
     );
 }
