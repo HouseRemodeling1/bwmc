@@ -120,7 +120,8 @@ export default function LeadCaptureWizard() {
             setFormData({ ...formData, [key]: value });
             // Auto advance for radio buttons after short delay for better UX
             setTimeout(() => {
-                handleNext();
+                setDirection(1);
+                setCurrentStep((prev) => prev + 1);
             }, 300);
         }
     };
@@ -255,8 +256,8 @@ export default function LeadCaptureWizard() {
                                                     key={option.value}
                                                     onClick={() => handleSelect(currentQuestion.id, option.value, currentQuestion.multiSelect)}
                                                     className={`w-full text-left p-4 rounded-xl border-2 transition-all flex items-center justify-between group ${isSelected
-                                                            ? 'border-royal-blue bg-blue-50 text-royal-blue shadow-md'
-                                                            : 'border-gray-200 hover:border-royal-blue hover:bg-gray-50'
+                                                        ? 'border-royal-blue bg-blue-50 text-royal-blue shadow-md'
+                                                        : 'border-gray-200 hover:border-royal-blue hover:bg-gray-50'
                                                         }`}
                                                 >
                                                     <span className="font-semibold text-lg">{option.label}</span>
@@ -289,8 +290,8 @@ export default function LeadCaptureWizard() {
                                     onClick={handleNext}
                                     disabled={!canProceed()}
                                     className={`flex items-center gap-2 px-8 py-3 rounded-lg font-bold text-white transition-all shadow-lg ${canProceed()
-                                            ? 'bg-[#D4AF37] hover:bg-[#b5952f] transform active:scale-95'
-                                            : 'bg-gray-300 cursor-not-allowed'
+                                        ? 'bg-[#D4AF37] hover:bg-[#b5952f] transform active:scale-95'
+                                        : 'bg-gray-300 cursor-not-allowed'
                                         }`}
                                 >
                                     Next step
