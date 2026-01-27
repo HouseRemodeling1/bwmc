@@ -271,7 +271,7 @@ export default function LeadCaptureWizard() {
                                                     onClick={() => handleSelect(currentQuestion.id, option.value, currentQuestion.multiSelect)}
                                                     className={`w-full text-left p-4 rounded-xl border-2 transition-all flex items-center justify-between group ${isSelected
                                                         ? 'border-royal-blue bg-blue-50 text-royal-blue shadow-md'
-                                                        : 'border-gray-200 hover:border-royal-blue hover:bg-gray-50'
+                                                        : 'border-gray-200 hover:border-royal-blue hover:bg-gray-50 text-black'
                                                         }`}
                                                 >
                                                     <span className="font-semibold text-lg">{option.label}</span>
