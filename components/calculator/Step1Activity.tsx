@@ -39,7 +39,7 @@ export default function Step1Activity({ activity, setActivity, businessName, set
                             value={activity}
                             onChange={(e) => setActivity(e.target.value)}
                             placeholder="e.g. Digital Marketing, Trading..."
-                            className="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 focus:border-royal-blue focus:ring-2 focus:ring-royal-blue/20 outline-none transition-all text-lg shadow-sm"
+                            className="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 focus:border-royal-blue focus:ring-2 focus:ring-royal-blue/20 outline-none transition-all text-lg shadow-sm text-black"
                             autoFocus
                         />
                     </div>
@@ -54,8 +54,8 @@ export default function Step1Activity({ activity, setActivity, businessName, set
                                 key={act}
                                 onClick={() => setActivity(act)}
                                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${activity === act
-                                        ? "bg-royal-blue text-white shadow-md transform scale-105"
-                                        : "bg-white border border-gray-200 text-gray-600 hover:border-royal-blue hover:text-royal-blue"
+                                    ? "bg-royal-blue text-white shadow-md transform scale-105"
+                                    : "bg-white border border-gray-200 text-gray-600 hover:border-royal-blue hover:text-royal-blue"
                                     }`}
                             >
                                 {act}
@@ -74,7 +74,7 @@ export default function Step1Activity({ activity, setActivity, businessName, set
                             value={businessName}
                             onChange={(e) => setBusinessName(e.target.value)}
                             placeholder="e.g. Future Tech LLC"
-                            className="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 focus:border-royal-blue focus:ring-2 focus:ring-royal-blue/20 outline-none transition-all text-lg shadow-sm"
+                            className="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 focus:border-royal-blue focus:ring-2 focus:ring-royal-blue/20 outline-none transition-all text-lg shadow-sm text-black"
                         />
                     </div>
                     <p className="text-xs text-gray-400 ml-1">Don't worry, you can verify availability later.</p>

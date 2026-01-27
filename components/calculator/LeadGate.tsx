@@ -64,7 +64,7 @@ export default function LeadGate({ onComplete }: LeadGateProps) {
                                 required
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                className="w-full p-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-2 focus:ring-royal-blue/20 outline-none transition-all"
+                                className="w-full p-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-2 focus:ring-royal-blue/20 outline-none transition-all text-black"
                                 placeholder="John Doe"
                             />
                         </div>
@@ -75,7 +75,7 @@ export default function LeadGate({ onComplete }: LeadGateProps) {
                                 required
                                 value={whatsapp}
                                 onChange={(e) => setWhatsapp(e.target.value)}
-                                className="w-full p-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-2 focus:ring-royal-blue/20 outline-none transition-all"
+                                className="w-full p-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-2 focus:ring-royal-blue/20 outline-none transition-all text-black"
                                 placeholder="+971 50 123 4567"
                             />
                         </div>

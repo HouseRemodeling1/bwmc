@@ -103,7 +103,7 @@ ${formData.message}
                         <input
                             required
                             type="text"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#2d6a8f] outline-none text-sm"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#2d6a8f] outline-none text-sm text-black"
                             placeholder="John Doe"
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -114,7 +114,7 @@ ${formData.message}
                         <input
                             required
                             type="text"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#2d6a8f] outline-none text-sm"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#2d6a8f] outline-none text-sm text-black"
                             placeholder="Acme Corp"
                             value={formData.company}
                             onChange={(e) => setFormData({ ...formData, company: e.target.value })}
@@ -128,7 +128,7 @@ ${formData.message}
                         <input
                             required
                             type="email"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#2d6a8f] outline-none text-sm"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#2d6a8f] outline-none text-sm text-black"
                             placeholder="john@acme.com"
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -139,7 +139,7 @@ ${formData.message}
                         <input
                             required
                             type="tel"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#2d6a8f] outline-none text-sm"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#2d6a8f] outline-none text-sm text-black"
                             placeholder="+971 50 000 0000"
                             value={formData.phone}
                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -151,7 +151,7 @@ ${formData.message}
                     <div>
                         <label className="block text-xs font-semibold text-gray-700 mb-1">Annual Revenue</label>
                         <select
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#2d6a8f] outline-none text-sm bg-white"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#2d6a8f] outline-none text-sm bg-white text-black"
                             value={formData.revenue}
                             onChange={(e) => setFormData({ ...formData, revenue: e.target.value })}
                         >
@@ -167,7 +167,7 @@ ${formData.message}
                     <div>
                         <label className="block text-xs font-semibold text-gray-700 mb-1">Industry</label>
                         <select
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#2d6a8f] outline-none text-sm bg-white"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#2d6a8f] outline-none text-sm bg-white text-black"
                             value={formData.industry}
                             onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
                         >
@@ -187,7 +187,7 @@ ${formData.message}
                     <label className="block text-xs font-semibold text-gray-700 mb-2">Current Tax Situation</label>
                     <div className="grid grid-cols-2 gap-2">
                         {["Need to file current year", "Need catch-up filing", "Ongoing support", "Just exploring"].map((opt) => (
-                            <label key={opt} className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer">
+                            <label key={opt} className="flex items-center gap-2 text-xs text-black cursor-pointer">
                                 <input
                                     type="radio"
                                     name="taxSituation"

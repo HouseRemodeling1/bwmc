@@ -93,7 +93,7 @@ export default function InternationalForm() {
                                             required
                                             value={formData.firstName}
                                             onChange={e => setFormData({ ...formData, firstName: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
+                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all text-black"
                                             placeholder="John"
                                         />
                                     </div>
@@ -104,7 +104,7 @@ export default function InternationalForm() {
                                             required
                                             value={formData.lastName}
                                             onChange={e => setFormData({ ...formData, lastName: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
+                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all text-black"
                                             placeholder="Doe"
                                         />
                                     </div>
@@ -116,7 +116,7 @@ export default function InternationalForm() {
                                         type="text"
                                         value={formData.company}
                                         onChange={e => setFormData({ ...formData, company: e.target.value })}
-                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all text-black"
                                         placeholder="Your Business Name"
                                     />
                                 </div>
@@ -129,7 +129,7 @@ export default function InternationalForm() {
                                             required
                                             value={formData.email}
                                             onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
+                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all text-black"
                                             placeholder="john@company.com"
                                         />
                                     </div>
@@ -140,7 +140,7 @@ export default function InternationalForm() {
                                             required
                                             value={formData.phone}
                                             onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
+                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all text-black"
                                             placeholder="+971 50 123 4567"
                                         />
                                     </div>
@@ -151,7 +151,7 @@ export default function InternationalForm() {
                                     <select
                                         value={formData.service}
                                         onChange={e => setFormData({ ...formData, service: e.target.value })}
-                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all bg-white"
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all bg-white text-black"
                                     >
                                         <option value="Business Setup Services">Business Setup Services</option>
                                         <option value="Accounting">Accounting</option>
@@ -172,7 +172,7 @@ export default function InternationalForm() {
                                         rows={3}
                                         value={formData.message}
                                         onChange={e => setFormData({ ...formData, message: e.target.value })}
-                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all text-black"
                                         placeholder="Tell us about your requirements..."
                                     />
                                 </div>

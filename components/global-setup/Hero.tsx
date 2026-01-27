@@ -158,7 +158,7 @@ export default function Hero() {
                                                     required
                                                     value={formData.firstName}
                                                     onChange={e => setFormData({ ...formData, firstName: e.target.value })}
-                                                    className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
+                                                    className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all text-black"
                                                     placeholder="John"
                                                 />
                                             </div>
@@ -169,7 +169,7 @@ export default function Hero() {
                                                     required
                                                     value={formData.lastName}
                                                     onChange={e => setFormData({ ...formData, lastName: e.target.value })}
-                                                    className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
+                                                    className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all text-black"
                                                     placeholder="Doe"
                                                 />
                                             </div>
@@ -182,7 +182,7 @@ export default function Hero() {
                                                     type="text"
                                                     value={formData.company}
                                                     onChange={e => setFormData({ ...formData, company: e.target.value })}
-                                                    className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
+                                                    className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all text-black"
                                                     placeholder="Business Name"
                                                 />
                                             </div>
@@ -193,7 +193,7 @@ export default function Hero() {
                                                     required
                                                     value={formData.country}
                                                     onChange={e => setFormData({ ...formData, country: e.target.value })}
-                                                    className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
+                                                    className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all text-black"
                                                     placeholder="UK"
                                                 />
                                             </div>
@@ -206,7 +206,7 @@ export default function Hero() {
                                                 required
                                                 value={formData.email}
                                                 onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                                className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
+                                                className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all text-black"
                                                 placeholder="john@company.com"
                                             />
                                         </div>
@@ -218,7 +218,7 @@ export default function Hero() {
                                                 required
                                                 value={formData.phone}
                                                 onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                                className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all"
+                                                className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-royal-blue focus:ring-1 focus:ring-royal-blue outline-none transition-all text-black"
                                                 placeholder="+44 7911 123456"
                                             />
                                         </div>
