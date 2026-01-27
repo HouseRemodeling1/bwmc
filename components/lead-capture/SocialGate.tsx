@@ -22,12 +22,12 @@ export default function SocialGate({ onUnlock, isSubmitting }: SocialGateProps) 
 
     const handleLinkedinClick = () => {
         setLinkedinClicked(true);
-        window.open('https://www.linkedin.com/company/bwmc-uue', '_blank');
+        window.open('https://www.linkedin.com/company/bridgewater-management-consultancies-co-l-l-c?originalSubdomain=ae', '_blank');
     };
 
     const handleInstagramClick = () => {
         setInstagramClicked(true);
-        window.open('https://www.instagram.com/bwmc_uae', '_blank');
+        window.open('https://www.instagram.com/bridgewater_bwmc/', '_blank');
     };
 
     return (
@@ -44,8 +44,8 @@ export default function SocialGate({ onUnlock, isSubmitting }: SocialGateProps) 
                     type="button"
                     onClick={handleLinkedinClick}
                     className={`relative flex items-center justify-center gap-2 p-4 rounded-xl border-2 transition-all ${linkedinClicked
-                            ? 'bg-blue-50 border-blue-600 text-blue-800'
-                            : 'bg-white border-gray-200 hover:border-blue-600 text-gray-700'
+                        ? 'bg-blue-50 border-blue-600 text-blue-800'
+                        : 'bg-white border-gray-200 hover:border-blue-600 text-gray-700'
                         }`}
                 >
                     <Linkedin className={`w-6 h-6 ${linkedinClicked ? 'text-blue-600' : '#0077b5'}`} />
@@ -61,8 +61,8 @@ export default function SocialGate({ onUnlock, isSubmitting }: SocialGateProps) 
                     type="button"
                     onClick={handleInstagramClick}
                     className={`relative flex items-center justify-center gap-2 p-4 rounded-xl border-2 transition-all ${instagramClicked
-                            ? 'bg-purple-50 border-purple-600 text-purple-800'
-                            : 'bg-white border-gray-200 hover:border-purple-600 text-gray-700'
+                        ? 'bg-purple-50 border-purple-600 text-purple-800'
+                        : 'bg-white border-gray-200 hover:border-purple-600 text-gray-700'
                         }`}
                 >
                     <Instagram className={`w-6 h-6 ${instagramClicked ? 'text-purple-600' : '#E1306C'}`} />
