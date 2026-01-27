@@ -219,7 +219,7 @@ export default function LeadCaptureWizard() {
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
                                             <input
                                                 type="text"
-                                                className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-royal-blue outline-none transition-all"
+                                                className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-royal-blue outline-none transition-all text-black"
                                                 placeholder="John Doe"
                                                 value={formData.contact?.name || ''}
                                                 onChange={(e) => handleContactChange('name', e.target.value)}
@@ -229,7 +229,7 @@ export default function LeadCaptureWizard() {
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Number (WhatsApp preferred)</label>
                                             <input
                                                 type="tel"
-                                                className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-royal-blue outline-none transition-all"
+                                                className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-royal-blue outline-none transition-all text-black"
                                                 placeholder="+971 50 123 4567"
                                                 value={formData.contact?.phone || ''}
                                                 onChange={(e) => handleContactChange('phone', e.target.value)}
@@ -239,7 +239,7 @@ export default function LeadCaptureWizard() {
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
                                             <input
                                                 type="email"
-                                                className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-royal-blue outline-none transition-all"
+                                                className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-royal-blue outline-none transition-all text-black"
                                                 placeholder="john@example.com"
                                                 value={formData.contact?.email || ''}
                                                 onChange={(e) => handleContactChange('email', e.target.value)}
