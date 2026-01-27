@@ -25,10 +25,10 @@ export default function Footer() {
                                 sales@bwmc.com
                             </Link>
 
-                            <button className="border border-white/20 rounded-[4px] px-6 py-3 flex items-center gap-2 hover:bg-white hover:text-black transition-all">
+                            <Link href="https://maps.app.goo.gl/DjYK95bXtDaL5KBPX" target="_blank" className="border border-white/20 rounded-[4px] px-6 py-3 flex items-center gap-2 hover:bg-white hover:text-black transition-all w-fit">
                                 <MapPin className="w-4 h-4" />
                                 <span>Click For Directions</span>
-                            </button>
+                            </Link>
 
                             <div className="pt-2">
                                 <p className="text-white text-lg font-bold">Tel: +971 45488184</p>
