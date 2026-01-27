@@ -8,7 +8,7 @@ export default function SurveyHero() {
     };
 
     return (
-        <section className="bg-navy text-white pt-12 pb-24 md:pt-20 md:pb-32 relative overflow-hidden">
+        <section className="bg-navy text-white pt-32 pb-24 md:pt-48 md:pb-32 relative overflow-hidden">
             {/* Background Decorative Pattern */}
             <div className="absolute inset-0 opacity-10 pointer-events-none">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-royal-blue rounded-full filter blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
