@@ -89,6 +89,7 @@ export default function LeadCaptureWizard() {
     const [currentStep, setCurrentStep] = useState(0);
     const [formData, setFormData] = useState<Record<string, any>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submissionStatus, setSubmissionStatus] = useState<'idle' | 'success' | 'error'>('idle');
     const [isCompleted, setIsCompleted] = useState(false);
     const [direction, setDirection] = useState(0);
 
@@ -96,6 +97,13 @@ export default function LeadCaptureWizard() {
 
     const handleNext = () => {
         if (!canProceed()) return;
+
+        // Trigger silent submission if completing the contact step
+        const currentQ = questions[currentStep];
+        if (currentQ?.type === 'contact') {
+            performSubmission();
+        }
+
         setDirection(1);
         setCurrentStep((prev) => prev + 1);
     };
@@ -152,7 +160,10 @@ export default function LeadCaptureWizard() {
         return !!formData[q.id];
     };
 
-    const handleSubmit = async () => {
+    const performSubmission = async () => {
+        // If already succeeded, don't submit again
+        if (submissionStatus === 'success') return true;
+
         setIsSubmitting(true);
         try {
             const response = await fetch('/api/submit-survey', {
@@ -165,12 +176,24 @@ export default function LeadCaptureWizard() {
 
             if (!response.ok) {
                 console.error('Submission failed');
-                // Optional: Show error to user, but for now we follow "success path" as per prompt guidance
+                setSubmissionStatus('error');
+                return false;
             }
+
+            setSubmissionStatus('success');
+            return true;
         } catch (error) {
             console.error('Error submitting form:', error);
+            setSubmissionStatus('error');
+            return false;
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const handleSubmit = async () => {
+        const success = await performSubmission();
+        if (success) {
             setIsCompleted(true);
         }
     };
