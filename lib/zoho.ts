@@ -8,11 +8,15 @@ export async function submitToZoho(data: {
     interestedServices?: string[];
 }) {
     const ZOHO_ACTION_URL = "https://crm.zoho.com/crm/WebToLeadForm";
-    const ZOHO_ID_1 = process.env.ZOHO_ID_1;
-    const ZOHO_ID_2 = process.env.ZOHO_ID_2;
+    // Hardcode fallback keys since user cannot configure Vercel env vars right now
+    const PID1 = "4d98b7d5df064fa9d055f0904ebcf9de445815041780cebce4af9522abcf10ac";
+    const PID2 = "5fa5d3a7a6ad2379c6db240af4164bbc0d3f014b47d579b3a5993fb433654ec4973758679de988d71d0087d9a935e35b";
+
+    const ZOHO_ID_1 = process.env.ZOHO_ID_1 || PID1;
+    const ZOHO_ID_2 = process.env.ZOHO_ID_2 || PID2;
 
     if (!ZOHO_ID_1 || !ZOHO_ID_2) {
-        console.error("❌ Zoho Integration: Missing environment variables (ZOHO_ID_1, ZOHO_ID_2)");
+        console.error("❌ Zoho Integration: Missing IDs");
         return false;
     }
 

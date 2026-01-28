@@ -31,64 +31,69 @@ export async function POST(request: NextRequest) {
             }
         }
 
-        // --- ZOHO SUBMISSION ---
-        // Fire and forget (or await)
-        const nameParts = contactName.trim().split(" ");
-        const lastName = nameParts.pop() || contactName;
-        const firstName = nameParts.join(" ");
-
-        await submitToZoho({
+        // --- PARALLEL SUBMISSION ---
+        const zohoTask = submitToZoho({
             firstName,
             lastName,
             email: email === "Not Provided" ? "" : email,
             mobile,
-            company: "Individual (Survey Lead)", // Default for individual survey leads
+            company: "Individual (Survey Lead)",
             description: description,
-            interestedServices: ["Business Setup Services"] // Default interest
+            interestedServices: ["Business Setup Services"]
+        }).catch(err => {
+            console.error("❌ Zoho Task Failed:", err);
+            return false;
         });
-        // -----------------------
 
-        // --- EMAIL NOTIFICATION ---
         let emailSent = false;
-        if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-            try {
-                const transporter = nodemailer.createTransport({
-                    host: process.env.SMTP_HOST || "smtp.gmail.com",
-                    port: Number(process.env.SMTP_PORT) || 465,
-                    secure: true,
-                    auth: {
-                        user: process.env.SMTP_USER,
-                        pass: process.env.SMTP_PASS,
-                    },
-                });
+        const emailTask = (async () => {
+            if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+                try {
+                    const transporter = nodemailer.createTransport({
+                        host: process.env.SMTP_HOST || "smtp.gmail.com",
+                        port: Number(process.env.SMTP_PORT) || 465,
+                        secure: true,
+                        auth: {
+                            user: process.env.SMTP_USER,
+                            pass: process.env.SMTP_PASS,
+                        },
+                    });
 
-                const mailOptions = {
-                    from: process.env.SMTP_USER,
-                    to: "sales@bwmc.ae",
-                    subject: `New Survey Lead: ${contactName}`,
-                    html: `
-                        <h2>New Survey Lead Captured</h2>
-                        <h3>Contact Details:</h3>
-                        <ul>
-                            <li><strong>Name:</strong> ${contactName}</li>
-                            <li><strong>Phone:</strong> <a href="https://wa.me/${mobile.replace(/[^0-9]/g, '')}">${mobile}</a></li>
-                            <li><strong>Email:</strong> ${email}</li>
-                        </ul>
-                        <hr />
-                        <h3>Survey Responses:</h3>
-                        <pre style="font-family: sans-serif; white-space: pre-wrap;">${description}</pre>
-                        <hr />
-                        <p style="color: grey; font-size: 10px;">Submitted to Zoho CRM automatically.</p>
-                    `,
-                };
+                    const mailOptions = {
+                        from: process.env.SMTP_USER,
+                        to: "sales@bwmc.ae",
+                        subject: `New Survey Lead: ${contactName}`,
+                        html: `
+                            <h2>New Survey Lead Captured</h2>
+                            <h3>Contact Details:</h3>
+                            <ul>
+                                <li><strong>Name:</strong> ${contactName}</li>
+                                <li><strong>Phone:</strong> <a href="https://wa.me/${mobile.replace(/[^0-9]/g, '')}">${mobile}</a></li>
+                                <li><strong>Email:</strong> ${email}</li>
+                            </ul>
+                            <hr />
+                            <h3>Survey Responses:</h3>
+                            <pre style="font-family: sans-serif; white-space: pre-wrap;">${description}</pre>
+                            <hr />
+                            <p style="color: grey; font-size: 10px;">Submitted to Zoho CRM automatically.</p>
+                        `,
+                    };
 
-                await transporter.sendMail(mailOptions);
-                emailSent = true;
-                console.log("✅ Survey email sent successfully");
-            } catch (emailError) {
-                console.error("❌ Survey email sending failed:", emailError);
+                    await transporter.sendMail(mailOptions);
+                    console.log("✅ Survey email sent successfully");
+                    return true;
+                } catch (emailError) {
+                    console.error("❌ Survey email sending failed:", emailError);
+                    return false;
+                }
             }
-        }
+            return false;
+        })();
+
+        const [zohoResult, emailResult] = await Promise.all([zohoTask, emailTask]);
+
+        emailSent = emailResult;
+        const zohoSubmitted = zohoResult;
 
         return NextResponse.json({
             message: "Survey submitted successfully",

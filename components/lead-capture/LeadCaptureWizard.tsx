@@ -175,11 +175,13 @@ export default function LeadCaptureWizard() {
             });
 
             if (!response.ok) {
-                console.error('Submission failed');
+                const errorText = await response.text();
+                console.error('Submission failed:', response.status, errorText);
                 setSubmissionStatus('error');
                 return false;
             }
 
+            console.log('Submission successful');
             setSubmissionStatus('success');
             return true;
         } catch (error) {
