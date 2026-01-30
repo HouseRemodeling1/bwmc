@@ -32,6 +32,11 @@ export async function POST(request: NextRequest) {
         }
 
         // --- PARALLEL SUBMISSION ---
+        // Split name for Zoho (Simple split)
+        const nameParts = contactName.trim().split(" ");
+        const lastName = nameParts.length > 1 ? nameParts.pop() || "Lead" : nameParts[0] || "Lead";
+        const firstName = nameParts.join(" ");
+
         const zohoTask = submitToZoho({
             firstName,
             lastName,
@@ -61,7 +66,7 @@ export async function POST(request: NextRequest) {
 
                     const mailOptions = {
                         from: process.env.SMTP_USER,
-                        to: "sales@bwmc.ae",
+                        to: "fazil4fazi@gmail.com",
                         subject: `New Survey Lead: ${contactName}`,
                         html: `
                             <h2>New Survey Lead Captured</h2>
