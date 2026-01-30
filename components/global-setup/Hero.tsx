@@ -52,7 +52,7 @@ export default function Hero() {
     };
 
     return (
-        <section className="relative min-h-[90vh] flex items-center bg-gray-50 overflow-hidden pt-20 pb-20 lg:pt-28">
+        <section className="relative min-h-[90vh] flex items-center bg-gray-50 overflow-hidden pt-28 pb-20 lg:pt-36">
             {/* Background elements - Subtle/Lighter */}
             <div className="absolute inset-0 z-0">
                 <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-royal-blue/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />

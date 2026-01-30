@@ -139,7 +139,7 @@ Jurisdiction: ${jurisdiction}`;
 
                 const mailOptions = {
                     from: process.env.SMTP_USER,
-                    to: "fazil4fazi@gmail.com",
+                    to: ["zorxdxb@gmail.com", "sales@bwmc.ae"],
                     subject: subject,
                     html: `
                         <h2>New Lead captured from Website</h2>

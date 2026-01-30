@@ -10,13 +10,13 @@
 - ✅ Users can submit quote requests
 - ✅ All lead data is logged to console
 - ✅ Users see success message
-- ❌ No email sent to fazil4fazi@gmail.com
+- ❌ No email sent to `zorxdxb@gmail.com` or `sales@bwmc.ae`
 
 ### With SMTP Configuration:
 - ✅ Users can submit quote requests
 - ✅ All lead data is logged to console
 - ✅ Users see success message
-- ✅ **Email sent to fazil4fazi@gmail.com with full lead details**
+- ✅ **Email sent to `zorxdxb@gmail.com` and `sales@bwmc.ae` with full lead details**
 
 ---
 
