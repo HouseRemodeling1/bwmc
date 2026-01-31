@@ -39,9 +39,21 @@ export const FREEZONE_LICENSE_MAP: Record<string, string[]> = {
 
 // CONSTANTS
 // CONSTANTS
-const VISA_COST_YEARLY = 6000;
-const VISA_FEE_YEARLY = 0; // Included in Visa Cost
-const BASE_FEE_YEARLY = 0; // Included in Base License
+// Visa Cost per allocation/year (varies by zone)
+const VISA_COST_MAP: Record<string, number> = {
+    [FREEZONES.ANC_FZ]: 6000,
+    [FREEZONES.RAKEZ]: 6000,
+    [FREEZONES.AJMAN]: 6125,
+    [FREEZONES.SHAMS]: 1600, // Allocation only typically
+    [FREEZONES.SPC]: 1600,
+    [FREEZONES.MEYDAN]: 6000,
+    [FREEZONES.IFZA]: 3500, // Estimate based on typical IFZA rates
+    [FREEZONES.DMCC]: 6000
+};
+
+const DEFAULT_VISA_COST = 6000;
+const VISA_FEE_YEARLY = 0;
+const BASE_FEE_YEARLY = 0;
 
 // Base License Fees (Per Year)
 // Logic: Map Freezone + OfficeType -> Base Price
@@ -137,8 +149,12 @@ export function getPrice(
         // Prompt: "0 Visas ... Additional Fees 500"
         // Prompt: "1 Visa ... Additional Fees 1500" (which is 500 + 1000)
         // So formula holds: 500 + (VisaCount * 1000)
+        // Formula: BaseLicense + (VisaCount * VisaCost) + Fees
         const additionalFees = BASE_FEE_YEARLY + (visaCount * VISA_FEE_YEARLY);
-        const visaCosts = visaCount * VISA_COST_YEARLY;
+
+        // Lookup specific visa cost for the zone, or fallback to default
+        const zoneVisaCost = VISA_COST_MAP[freezone] !== undefined ? VISA_COST_MAP[freezone] : DEFAULT_VISA_COST;
+        const visaCosts = visaCount * zoneVisaCost;
 
         const oneYearTotal = baseLicense + visaCosts + additionalFees;
 
