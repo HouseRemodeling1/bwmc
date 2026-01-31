@@ -38,9 +38,10 @@ export const FREEZONE_LICENSE_MAP: Record<string, string[]> = {
 };
 
 // CONSTANTS
-const VISA_COST_YEARLY = 10000;
-const VISA_FEE_YEARLY = 1000; // Medical, ID, etc. per visa
-const BASE_FEE_YEARLY = 500; // Fixed base additional fee
+// CONSTANTS
+const VISA_COST_YEARLY = 6000;
+const VISA_FEE_YEARLY = 0; // Included in Visa Cost
+const BASE_FEE_YEARLY = 0; // Included in Base License
 
 // Base License Fees (Per Year)
 // Logic: Map Freezone + OfficeType -> Base Price
