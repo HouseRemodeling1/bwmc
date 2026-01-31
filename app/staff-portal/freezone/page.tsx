@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Lock, Calculator, Copy, Printer, CheckCircle, Smartphone, Building2, User, Users, Briefcase, MapPin, Layers, Globe, ArrowRight, ArrowLeft } from "lucide-react";
-import { getPrice, FREEZONES, OFFICE_TYPES, LICENSE_TYPES } from "@/lib/calculatorPricing";
+import { getPrice, FREEZONES, OFFICE_TYPES, LICENSE_TYPES, FREEZONE_LICENSE_MAP } from "@/lib/calculatorPricing";
 import Link from "next/link";
 
 // --- Configuration ---
@@ -66,7 +66,16 @@ export default function FreezonePortal() {
     };
 
     const updateFreezone = (field: string, value: any) => {
-        setFreezoneForm(prev => ({ ...prev, [field]: value }));
+        setFreezoneForm(prev => {
+            const newState = { ...prev, [field]: value };
+
+            // Logic: If Zone changes, reset License Type to first valid option
+            if (field === "zone") {
+                const validLicenses = FREEZONE_LICENSE_MAP[value] || [LICENSE_TYPES.STANDARD];
+                newState.licenseType = validLicenses[0];
+            }
+            return newState;
+        });
     };
 
     // --- Logic ---
@@ -228,7 +237,7 @@ export default function FreezonePortal() {
                                 <div>
                                     <label className="text-xs text-neutral-500 block mb-1">License Type</label>
                                     <select className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-lg outline-none" value={freezoneForm.licenseType} onChange={e => updateFreezone("licenseType", e.target.value)}>
-                                        {Object.values(LICENSE_TYPES).map(t => (
+                                        {(FREEZONE_LICENSE_MAP[freezoneForm.zone] || [LICENSE_TYPES.STANDARD]).map(t => (
                                             <option key={t} value={t}>{t}</option>
                                         ))}
                                     </select>
