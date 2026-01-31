@@ -1,4 +1,5 @@
 // Comprehensive pricing data for UAE Freezone Business Setup Calculator
+// Updated with Recalculated Linear Model (Jan 2026)
 
 export const FREEZONES = {
     ANC_FZ: 'ANC_FZ',
@@ -25,108 +26,62 @@ export const LICENSE_TYPES = {
     PUBLISHING: 'Publishing License'
 } as const;
 
-// ANC FZ Pricing
-export const ANC_FZ_PRICING = {
-    packages: [
-        { visas: 0, price: 4888, renewal: 4888 },
-        { visas: 1, price: 12000, renewal: 11000 },
-        { visas: 2, price: 18000, renewal: 15500 },
-        { visas: 3, price: 23000, renewal: 19500 },
-        { visas: 4, price: 28000, renewal: 23500 },
-        { visas: 5, price: 33000, renewal: 27500 },
-        { visas: 6, price: 38000, renewal: 31500 },
-        { visas: 7, price: 43000, renewal: 35500 }
-    ]
+// CONSTANTS
+const VISA_COST_YEARLY = 10000;
+const VISA_FEE_YEARLY = 1000; // Medical, ID, etc. per visa
+const BASE_FEE_YEARLY = 500; // Fixed base additional fee
+
+// Base License Fees (Per Year)
+// Logic: Map Freezone + OfficeType -> Base Price
+// If OfficeType not found, use 'default'
+const BASE_LICENSE_PRICING: Record<string, Record<string, number>> = {
+    [FREEZONES.ANC_FZ]: {
+        default: 4888
+    },
+    [FREEZONES.AJMAN]: {
+        [OFFICE_TYPES.FREELANCER]: 6000,
+        [OFFICE_TYPES.VIRTUAL]: 5555,
+        default: 8500 // Physical/Standard
+    },
+    [FREEZONES.RAKEZ]: {
+        [OFFICE_TYPES.FREELANCER]: 6000, // Biz Saver / Coworking logic
+        [OFFICE_TYPES.VIRTUAL]: 6000,    // Biz Saver
+        [OFFICE_TYPES.SERVICED]: 10000,
+        [OFFICE_TYPES.STANDARD]: 12000,
+        [OFFICE_TYPES.EXECUTIVE]: 15000,
+        default: 8000 // SME All-Inclusive Coworking fallback
+    },
+    [FREEZONES.SHAMS]: {
+        // Note: SHAMS pricing depends heavily on "Media" vs "Standard" license in the prompt.
+        // We will handle license type specific logic in the function or here.
+        // Prompt: Media = 5500, Standard = 6000.
+        default: 6000
+    },
+    [FREEZONES.SPC]: {
+        // Prompt: Publishing = 5500, Business = 6500.
+        default: 6500
+    },
+    [FREEZONES.DMCC]: {
+        default: 2237 // Very low base, high other fees usually, but using prompt value
+    },
+    [FREEZONES.MEYDAN]: {
+        default: 6000
+    },
+    [FREEZONES.IFZA]: {
+        default: 5500
+    }
 };
 
-// AJMAN Pricing
-export const AJMAN_PRICING = {
-    freelancer: [
-        { visas: 0, price: 6000 },
-        { visas: 1, price: 12121 }
-    ],
-    virtualOffice: [
-        { visas: 0, price: 5555 },
-        { visas: 1, price: 13131 },
-        { visas: 2, price: 17171 },
-        { visas: 3, price: 21212 },
-        { visas: 4, price: 24242 }
-    ],
-    physicalOffice: [
-        { visas: 1, price: 21750 },
-        { visas: 2, price: 24750 },
-        { visas: 3, price: 29750 },
-        { visas: 4, price: 35500 }
-    ]
-};
-
-// RAKEZ Pricing - Biz Saver (Coworking)
-export const RAKEZ_BIZ_SAVER = {
-    0: { 1: 6000, 2: 10800, 3: 15300, 5: 25500, 10: 51000 },
-    1: { 1: 12000, 2: 22800, 3: 32400, 5: 51000, 10: 90000 },
-    2: { 1: 18000, 2: 34200, 3: 48600, 5: 76500, 10: 135000 },
-    3: { 1: 22000, 2: 41800, 3: 59400, 5: 93500, 10: 165000 },
-    4: { 1: 26000, 2: 49400, 3: 70200, 5: 110500, 10: 195000 }
-};
-
-// RAKEZ SME Serviced Office
-export const RAKEZ_SME_SERVICED = {
-    1: { 1: 20500, 2: 38950, 3: 55350, 5: 87125, 10: 153750 },
-    2: { 1: 24500, 2: 46550, 3: 66150, 5: 104125, 10: 183750 }
-};
-
-// RAKEZ SME Standard Office
-export const RAKEZ_SME_STANDARD = {
-    1: { 1: 27000, 2: 51300, 3: 72900, 5: 114750, 10: 202500 },
-    2: { 1: 31000, 2: 58900, 3: 83700, 5: 131750, 10: 232500 }
-};
-
-// SHAMS Pricing
-export const SHAMS_STANDARD = [
-    { visas: 0, price: 6875 },
-    { visas: 1, price: 8475 },
-    { visas: 2, price: 10075 },
-    { visas: 3, price: 11675 },
-    { visas: 4, price: 13275 },
-    { visas: 5, price: 14875 },
-    { visas: 6, price: 16475 },
-    { visas: 7, price: 18075 },
-    { visas: 8, price: 19675 },
-    { visas: 9, price: 21275 },
-    { visas: 10, price: 22875 }
-];
-
-export const SHAMS_MEDIA = [
-    { visas: 0, price: 5750 },
-    { visas: 1, price: 7350 },
-    { visas: 2, price: 8950 },
-    { visas: 3, price: 10550 },
-    { visas: 4, price: 12150 },
-    { visas: 5, price: 13750 },
-    { visas: 6, price: 15350 },
-    { visas: 7, price: 16950 },
-    { visas: 8, price: 18550 },
-    { visas: 9, price: 20150 },
-    { visas: 10, price: 21750 }
-];
-
-// SPC Pricing
-export const SPC_BUSINESS = {
-    0: { 1: 6875, 2: 13475, 3: 20006, 5: 32656, 10: 61875 },
-    1: { 1: 8475, 2: 16611, 3: 24662, 5: 40256, 10: 76275 },
-    2: { 1: 10075, 2: 19747, 3: 29318, 5: 47856, 10: 90675 },
-    3: { 1: 11675, 2: 22883, 3: 33974, 5: 55456, 10: 105075 },
-    4: { 1: 13275, 2: 26019, 3: 38630, 5: 63056, 10: 119475 },
-    5: { 1: 14875, 2: 29155, 3: 43286, 5: 70656, 10: 133875 }
-};
-
-export const SPC_PUBLISHING = {
-    0: { 1: 5750, 2: 11270, 3: 16733, 5: 27313, 10: 51750 },
-    1: { 1: 7350, 2: 14406, 3: 21389, 5: 34913, 10: 66150 },
-    2: { 1: 8950, 2: 17542, 3: 26045, 5: 42513, 10: 80550 },
-    3: { 1: 10550, 2: 20678, 3: 30701, 5: 50113, 10: 94950 },
-    4: { 1: 12150, 2: 23814, 3: 35357, 5: 57713, 10: 109350 },
-    5: { 1: 13750, 2: 26950, 3: 40013, 5: 65313, 10: 123750 }
+// License Type adjustments (Overrides base if applicable)
+const LICENSE_SPECIFIC_BASE: Record<string, Record<string, number>> = {
+    [FREEZONES.SHAMS]: {
+        [LICENSE_TYPES.MEDIA]: 5500,
+        [LICENSE_TYPES.STANDARD]: 6000
+    },
+    [FREEZONES.SPC]: {
+        [LICENSE_TYPES.PUBLISHING]: 5500,
+        [LICENSE_TYPES.STANDARD]: 6500
+    }
 };
 
 // Discount rates by contract period
@@ -147,50 +102,47 @@ export function getPrice(
     contractYears: number
 ): number | null {
     try {
-        switch (freezone) {
-            case FREEZONES.ANC_FZ:
-                const ancPackage = ANC_FZ_PRICING.packages.find(p => p.visas === visaCount);
-                return ancPackage ? ancPackage.price : null;
+        // 1. Determine Base License Fee per year
+        let baseLicense = 0;
 
-            case FREEZONES.AJMAN:
-                if (officeType === "Freelancer") {
-                    const ajFreelancer = AJMAN_PRICING.freelancer.find(p => p.visas === visaCount);
-                    return ajFreelancer ? ajFreelancer.price : null;
-                } else if (officeType === "Virtual Office") {
-                    const ajVirtual = AJMAN_PRICING.virtualOffice.find(p => p.visas === visaCount);
-                    return ajVirtual ? ajVirtual.price : null;
-                } else if (officeType === "Standard Office") {
-                    const ajPhysical = AJMAN_PRICING.physicalOffice.find(p => p.visas === visaCount);
-                    return ajPhysical ? ajPhysical.price : null;
-                }
-                return null;
-
-            case FREEZONES.RAKEZ:
-                if (officeType === "Virtual Office" && visaCount <= 4) {
-                    return RAKEZ_BIZ_SAVER[visaCount as keyof typeof RAKEZ_BIZ_SAVER]?.[contractYears as keyof typeof RAKEZ_BIZ_SAVER[0]] || null;
-                } else if (officeType === "Serviced Office" && visaCount <= 2) {
-                    return RAKEZ_SME_SERVICED[visaCount as keyof typeof RAKEZ_SME_SERVICED]?.[contractYears as keyof typeof RAKEZ_SME_SERVICED[1]] || null;
-                } else if (officeType === "Standard Office" && visaCount <= 2) {
-                    return RAKEZ_SME_STANDARD[visaCount as keyof typeof RAKEZ_SME_STANDARD]?.[contractYears as keyof typeof RAKEZ_SME_STANDARD[1]] || null;
-                }
-                return null;
-
-            case FREEZONES.SHAMS:
-                const shamsData = licenseType === "Media License" ? SHAMS_MEDIA : SHAMS_STANDARD;
-                const shamsPackage = shamsData.find(p => p.visas === visaCount);
-                if (!shamsPackage) return null;
-                const discount = MULTI_YEAR_DISCOUNTS[contractYears] || 0;
-                return shamsPackage.price * contractYears * (1 - discount);
-
-            case FREEZONES.SPC:
-                const spcData = licenseType === "Publishing License" ? SPC_PUBLISHING : SPC_BUSINESS;
-                const basePrice = spcData[visaCount as keyof typeof spcData]?.[contractYears as keyof typeof spcData[0]];
-                return basePrice || null;
-
-            default:
-                return null;
+        // Check for License-Specific pricing first (e.g. SHAMS Media vs Standard)
+        if (LICENSE_SPECIFIC_BASE[freezone] && LICENSE_SPECIFIC_BASE[freezone][licenseType]) {
+            baseLicense = LICENSE_SPECIFIC_BASE[freezone][licenseType];
         }
-    } catch {
+        // Fallback to Office Type pricing
+        else if (BASE_LICENSE_PRICING[freezone]) {
+            const fzPricing = BASE_LICENSE_PRICING[freezone];
+            baseLicense = fzPricing[officeType] || fzPricing['default'] || 0;
+        }
+
+        if (baseLicense === 0) return null; // Logic gap or invalid zone
+
+        // 2. Calculate Total for One Year (Base + Visas + Fees)
+        // Formula: BaseLicense + (VisaCount * 10000) + (VisaCount * 1000) + 500
+        // Combined: BaseLicense + (VisaCount * 11000) + 500
+
+        // SPECIAL CASE: 0 Visa might just be Base + 500?
+        // Prompt: "0 Visas ... Additional Fees 500"
+        // Prompt: "1 Visa ... Additional Fees 1500" (which is 500 + 1000)
+        // So formula holds: 500 + (VisaCount * 1000)
+        const additionalFees = BASE_FEE_YEARLY + (visaCount * VISA_FEE_YEARLY);
+        const visaCosts = visaCount * VISA_COST_YEARLY;
+
+        const oneYearTotal = baseLicense + visaCosts + additionalFees;
+
+        // 3. Multiply by Years
+        const rawTotal = oneYearTotal * contractYears;
+
+        // 4. Apply Discount
+        // Note: Discount is on TOTAL or just License?
+        // Prompt: "Discounts: Applied to total cost"
+        const discountRate = MULTI_YEAR_DISCOUNTS[contractYears] || 0;
+        const finalPrice = rawTotal * (1 - discountRate);
+
+        return Math.round(finalPrice);
+
+    } catch (e) {
+        console.error("Pricing calculation error", e);
         return null;
     }
 }
