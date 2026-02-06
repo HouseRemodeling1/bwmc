@@ -4,9 +4,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { ChevronDown, Calculator, Menu, X, ArrowRight } from "lucide-react";
-import { usePathname } from "next/navigation";
-import { menuItems, mainNav } from "@/lib/menuData";
+import { ChevronDown, Calculator, Menu, X, ArrowRight, Phone, MessageCircle } from "lucide-react";
+
+// ... existing imports ...
 
 export default function Header() {
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
@@ -16,9 +16,10 @@ export default function Header() {
 
     // Pages that have a dark hero section and need a transparent/white-text header initially
     const isTransparentPage = pathname === "/" || pathname.startsWith("/services/") || pathname === "/vat-guide";
+    const isGlobalSetup = pathname === "/global-setup";
 
     // Use dark header style if scrolled OR if we are on a page without a dark hero
-    const isDarkHeader = scrolled || !isTransparentPage;
+    const isDarkHeader = scrolled || !isTransparentPage || isGlobalSetup;
 
     useEffect(() => {
         const handleScroll = () => {
@@ -33,9 +34,9 @@ export default function Header() {
             className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${isDarkHeader ? "bg-[#1A2B4C]/95 backdrop-blur-md shadow-sm py-3" : "bg-transparent py-5"
                 }`}
         >
-            <div className="max-w-7xl mx-auto px-6 lg:px-8 h-full flex items-center justify-between lg:justify-normal">
-                {/* Logo Section - Takes 1/3 space on desktop to push nav to center */}
-                <div className="flex-shrink-0 lg:flex-1 flex justify-start z-50">
+            <div className={`mx-auto px-6 lg:px-10 h-full flex items-center ${isGlobalSetup ? "justify-between" : "justify-between lg:justify-normal"} ${isGlobalSetup ? "max-w-7xl" : "max-w-[1440px]"}`}>
+                {/* Logo Section */}
+                <div className={`flex-shrink-0 flex justify-start z-50 ${!isGlobalSetup && "lg:flex-1"}`}>
                     <Link href="/">
                         <div className="relative w-[220px] h-[65px] bg-white rounded-lg shadow-sm px-3 py-1 flex items-center justify-center">
                             <Image
@@ -49,69 +50,92 @@ export default function Header() {
                     </Link>
                 </div>
 
-                {/* Desktop Navigation - Centered naturally */}
-                <nav className="hidden lg:flex items-center gap-6 whitespace-nowrap z-40">
-                    {mainNav.map((item) => (
-                        <div
-                            key={item.name}
-                            className="relative group"
-                            onMouseEnter={() => setHoveredItem(item.name)}
-                            onMouseLeave={() => setHoveredItem(null)}
-                        >
+                {/* Desktop Navigation - Standard Pages Only */}
+                {!isGlobalSetup && (
+                    <nav className="hidden lg:flex items-center gap-8 whitespace-nowrap z-40">
+                        {mainNav.map((item) => (
                             <div
-                                className={`flex items-center gap-1 text-base font-medium cursor-pointer py-2 transition-colors ${isDarkHeader ? "text-white hover:text-gold" : "text-white/90 hover:text-white"
-                                    }`}
+                                key={item.name}
+                                className="relative group"
+                                onMouseEnter={() => setHoveredItem(item.name)}
+                                onMouseLeave={() => setHoveredItem(null)}
                             >
-                                <Link href={item.href}>{item.name}</Link>
-                                {item.hasDropdown && (
-                                    <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
-                                )}
+                                <div
+                                    className={`flex items-center gap-1 text-base font-medium cursor-pointer py-2 transition-colors ${isDarkHeader ? "text-white hover:text-gold" : "text-white/90 hover:text-white"
+                                        }`}
+                                >
+                                    <Link href={item.href}>{item.name}</Link>
+                                    {item.hasDropdown && (
+                                        <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
+                                    )}
+                                </div>
+
+                                {/* Dropdown Content */}
+                                <AnimatePresence>
+                                    {item.hasDropdown && hoveredItem === item.name && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: 10 }}
+                                            transition={{ duration: 0.2 }}
+                                            className="absolute top-full -left-4 w-64 bg-white rounded-[4px] shadow-xl border border-neutral/20 p-2 z-50"
+                                        >
+                                            <ul className="space-y-1">
+                                                {menuItems.find(m => m.title === item.name)?.items.map((subItem) => (
+                                                    <li key={subItem.slug}>
+                                                        <Link
+                                                            href={`/services/${subItem.slug}`}
+                                                            className="block px-4 py-2 text-sm text-navy/70 hover:text-royal-blue hover:bg-neutral rounded-[2px] transition-colors"
+                                                        >
+                                                            {subItem.name}
+                                                        </Link>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </div>
+                        ))}
+                    </nav>
+                )}
 
-                            {/* Dropdown Content */}
-                            <AnimatePresence>
-                                {item.hasDropdown && hoveredItem === item.name && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: 10 }}
-                                        transition={{ duration: 0.2 }}
-                                        className="absolute top-full -left-4 w-64 bg-white rounded-[4px] shadow-xl border border-neutral/20 p-2 z-50"
-                                    >
-                                        <ul className="space-y-1">
-                                            {menuItems.find(m => m.title === item.name)?.items.map((subItem) => (
-                                                <li key={subItem.slug}>
-                                                    <Link
-                                                        href={`/services/${subItem.slug}`}
-                                                        className="block px-4 py-2 text-sm text-navy/70 hover:text-royal-blue hover:bg-neutral rounded-[2px] transition-colors"
-                                                    >
-                                                        {subItem.name}
-                                                    </Link>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-                    ))}
-                </nav>
-
-                {/* Call to Action - Right Side - Takes 1/3 space to balance logo */}
-                <div className="hidden lg:flex lg:flex-1 justify-end items-center gap-4 z-50">
-                    <Link
-                        href="/calculator"
-                        className={`flex items-center gap-2 px-6 py-3 rounded-[4px] text-base font-semibold transition-all ${isDarkHeader
-                            ? "bg-white text-navy hover:bg-gold hover:text-navy"
-                            : "bg-white text-navy hover:bg-neutral"
-                            }`}
-                    >
-                        <span>Cost Calculator</span>
-                        <Calculator className="w-5 h-5" />
-                    </Link>
+                {/* Right/CTA Section */}
+                <div className={`hidden lg:flex items-center gap-4 z-50 ${!isGlobalSetup && "lg:flex-1 justify-end"}`}>
+                    {isGlobalSetup ? (
+                        <>
+                            <a
+                                href="https://wa.me/971509952542" // Replace with actual number
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 px-5 py-2.5 rounded-[4px] text-sm font-semibold bg-[#25D366] text-white hover:bg-[#128C7E] transition-all"
+                            >
+                                <MessageCircle className="w-4 h-4" />
+                                <span>WhatsApp</span>
+                            </a>
+                            <a
+                                href="tel:+971509952542" // Replace with actual number
+                                className="flex items-center gap-2 px-5 py-2.5 rounded-[4px] text-sm font-semibold bg-white text-navy hover:bg-neutral transition-all"
+                            >
+                                <Phone className="w-4 h-4" />
+                                <span>Call Us</span>
+                            </a>
+                        </>
+                    ) : (
+                        <Link
+                            href="/calculator"
+                            className={`flex items-center gap-2 px-6 py-3 rounded-[4px] text-base font-semibold transition-all ${isDarkHeader
+                                ? "bg-white text-navy hover:bg-gold hover:text-navy"
+                                : "bg-white text-navy hover:bg-neutral"
+                                }`}
+                        >
+                            <span>Cost Calculator</span>
+                            <Calculator className="w-5 h-5" />
+                        </Link>
+                    )}
                 </div>
 
-                {/* Mobile Menu Button - Align Right on Mobile */}
+                {/* Mobile Menu Button */}
                 <button
                     className="lg:hidden relative z-50 text-white ml-auto"
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
