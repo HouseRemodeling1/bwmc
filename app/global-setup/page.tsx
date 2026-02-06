@@ -15,17 +15,17 @@ import Script from "next/script";
 
 
 export default function GlobalSetupPage() {
-    return (
-        <div className="min-h-screen bg-gray-50 font-sans">
-            <Script id="google-conversion-tracking" strategy="afterInteractive">
-                {`
-                function gtag_report_conversion(url) {
+  return (
+    <div className="min-h-screen bg-gray-50 font-sans">
+      <Script id="google-conversion-tracking" strategy="afterInteractive">
+        {`
+                window.gtag_report_conversion = function(url) {
                   var callback = function () {
                     if (typeof(url) != 'undefined') {
                       window.location = url;
                     }
                   };
-                  gtag('event', 'conversion', {
+                  window.gtag('event', 'conversion', {
                       'send_to': 'AW-17792357372/vrJYCJDT5vMbEPynh6RC',
                       'value': 1.0,
                       'currency': 'AED',
@@ -33,41 +33,42 @@ export default function GlobalSetupPage() {
                   });
                   return false;
                 }
+
                 `}
-            </Script>
-            {/* We reuse the main header for credibility, or we could pass a 'minimal' prop if supported */}
-            <Header />
+      </Script>
+      {/* We reuse the main header for credibility, or we could pass a 'minimal' prop if supported */}
+      <Header />
 
-            <main>
-                <Hero />
+      <main>
+        <Hero />
 
-                {/* Stats Strip */}
-                <StatsStrip />
+        {/* Stats Strip */}
+        <StatsStrip />
 
-                {/* Benefits Section */}
-                <BenefitsGrid />
+        {/* Benefits Section */}
+        <BenefitsGrid />
 
-                {/* Founder Message */}
-                <FounderMessage />
+        {/* Founder Message */}
+        <FounderMessage />
 
-                {/* Expert CTA */}
-                <ExpertCTA />
+        {/* Expert CTA */}
+        <ExpertCTA />
 
-                {/* Process Section */}
-                <ProcessSteps />
+        {/* Process Section */}
+        <ProcessSteps />
 
-                {/* Guarantees Grid */}
-                <GuaranteesGrid />
+        {/* Guarantees Grid */}
+        <GuaranteesGrid />
 
-                {/* Trust & Testimonials */}
-                <ClientTrust />
+        {/* Trust & Testimonials */}
+        <ClientTrust />
 
-                {/* Lead Capture Form */}
-                <InternationalForm />
-            </main>
+        {/* Lead Capture Form */}
+        <InternationalForm />
+      </main>
 
-            <FloatingWhatsApp />
+      <FloatingWhatsApp />
 
-        </div>
-    );
+    </div>
+  );
 }
