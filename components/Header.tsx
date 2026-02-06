@@ -34,7 +34,7 @@ export default function Header() {
                 }`}
         >
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between lg:justify-start">
                     {/* Logo */}
                     <Link href="/" className="relative z-50">
                         <div className="relative w-[250px] h-[70px]">
@@ -49,7 +49,7 @@ export default function Header() {
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <nav className="hidden lg:flex items-center gap-8">
+                    <nav className="hidden lg:flex items-center gap-8 ml-auto mr-8">
                         {mainNav.map((item) => (
                             <div
                                 key={item.name}
