@@ -33,9 +33,9 @@ export default function Header() {
             className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${isDarkHeader ? "bg-[#1A2B4C]/95 backdrop-blur-md shadow-sm py-3" : "bg-transparent py-5"
                 }`}
         >
-            <div className="flex items-center justify-between lg:justify-start">
+            <div className="max-w-7xl mx-auto px-6 lg:px-8 h-full flex items-center justify-between relative">
                 {/* Logo */}
-                <Link href="/" className="relative z-50">
+                <Link href="/" className="relative z-50 flex-shrink-0">
                     <div className="relative w-[220px] h-[65px] bg-white rounded-lg shadow-sm px-3 py-1 flex items-center justify-center">
                         <Image
                             src="/images/bwmc-logo-new.png"
@@ -47,8 +47,8 @@ export default function Header() {
                     </div>
                 </Link>
 
-                {/* Desktop Navigation */}
-                <nav className="hidden lg:flex items-center gap-6 ml-auto mr-6 whitespace-nowrap">
+                {/* Desktop Navigation - Centered */}
+                <nav className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center gap-8 whitespace-nowrap">
                     {mainNav.map((item) => (
                         <div
                             key={item.name}
@@ -57,7 +57,7 @@ export default function Header() {
                             onMouseLeave={() => setHoveredItem(null)}
                         >
                             <div
-                                className={`flex items-center gap-1 text-sm font-medium cursor-pointer py-2 transition-colors ${isDarkHeader ? "text-white hover:text-gold" : "text-white/90 hover:text-white"
+                                className={`flex items-center gap-1 text-base font-medium cursor-pointer py-2 transition-colors ${isDarkHeader ? "text-white hover:text-gold" : "text-white/90 hover:text-white"
                                     }`}
                             >
                                 <Link href={item.href}>{item.name}</Link>
@@ -95,17 +95,17 @@ export default function Header() {
                     ))}
                 </nav>
 
-                {/* Call to Action */}
-                <div className="hidden lg:flex items-center gap-4">
+                {/* Call to Action - Right Side */}
+                <div className="hidden lg:flex items-center gap-4 flex-shrink-0">
                     <Link
                         href="/calculator"
-                        className={`flex items-center gap-2 px-5 py-2.5 rounded-[4px] text-sm font-semibold transition-all ${isDarkHeader
+                        className={`flex items-center gap-2 px-6 py-3 rounded-[4px] text-base font-semibold transition-all ${isDarkHeader
                             ? "bg-white text-navy hover:bg-gold hover:text-navy"
                             : "bg-white text-navy hover:bg-neutral"
                             }`}
                     >
                         <span>Cost Calculator</span>
-                        <Calculator className="w-4 h-4" />
+                        <Calculator className="w-5 h-5" />
                     </Link>
                 </div>
 
