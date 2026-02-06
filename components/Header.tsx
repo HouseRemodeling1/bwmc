@@ -6,7 +6,8 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { ChevronDown, Calculator, Menu, X, ArrowRight, Phone, MessageCircle } from "lucide-react";
 
-// ... existing imports ...
+import { usePathname } from "next/navigation";
+import { menuItems, mainNav } from "@/lib/menuData";
 
 export default function Header() {
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
