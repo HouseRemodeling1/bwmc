@@ -7,6 +7,7 @@ import ProcessSteps from "@/components/global-setup/ProcessSteps";
 import ExpertCTA from "@/components/global-setup/ExpertCTA";
 import ClientTrust from "@/components/ClientTrust";
 import InternationalForm from "@/components/global-setup/InternationalForm";
+import FloatingWhatsApp from "@/components/global-setup/FloatingWhatsApp";
 import Header from "@/components/Header";
 
 
@@ -37,6 +38,8 @@ export default function GlobalSetupPage() {
                 {/* Lead Capture Form */}
                 <InternationalForm />
             </main>
+
+            <FloatingWhatsApp />
 
         </div>
     );
