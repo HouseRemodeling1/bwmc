@@ -165,6 +165,28 @@ export default function RootLayout({
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'AW-17792357372');
+            
+            // Conversion tracking helper
+            window.gtag_report_conversion = function(url) {
+              console.log('Conversion tracking: Function called with url:', url);
+              var callback = function () {
+                if (typeof(url) != 'undefined') {
+                  window.location = url;
+                }
+              };
+              if (window.gtag) {
+                console.log('Conversion tracking: Firing event to Google');
+                window.gtag('event', 'conversion', {
+                    'send_to': 'AW-17792357372/vrJYCJDT5vMbEPynh6RC',
+                    'value': 1.0,
+                    'currency': 'AED',
+                    'event_callback': callback
+                });
+              } else {
+                 console.error('Conversion tracking: window.gtag is not defined');
+              }
+              return false;
+            }
           `}
         </Script>
 

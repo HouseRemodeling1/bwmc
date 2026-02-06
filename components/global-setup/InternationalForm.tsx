@@ -42,8 +42,15 @@ export default function InternationalForm() {
 
             if (res.ok) {
                 // Trigger Google Ads Conversion
-                if (typeof window !== "undefined" && (window as any).gtag_report_conversion) {
-                    (window as any).gtag_report_conversion();
+                // Trigger Google Ads Conversion
+                if (typeof window !== "undefined") {
+                    console.log("Form check: Attempting to trigger conversion");
+                    if ((window as any).gtag_report_conversion) {
+                        console.log("Form check: Calling global function");
+                        (window as any).gtag_report_conversion();
+                    } else {
+                        console.error("Form check: gtag_report_conversion not found on window");
+                    }
                 }
 
                 setStatus("success");

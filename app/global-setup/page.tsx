@@ -16,26 +16,8 @@ import Script from "next/script";
 
 export default function GlobalSetupPage() {
   return (
+    return (
     <div className="min-h-screen bg-gray-50 font-sans">
-      <Script id="google-conversion-tracking" strategy="afterInteractive">
-        {`
-                window.gtag_report_conversion = function(url) {
-                  var callback = function () {
-                    if (typeof(url) != 'undefined') {
-                      window.location = url;
-                    }
-                  };
-                  window.gtag('event', 'conversion', {
-                      'send_to': 'AW-17792357372/vrJYCJDT5vMbEPynh6RC',
-                      'value': 1.0,
-                      'currency': 'AED',
-                      'event_callback': callback
-                  });
-                  return false;
-                }
-
-                `}
-      </Script>
       {/* We reuse the main header for credibility, or we could pass a 'minimal' prop if supported */}
       <Header />
 
