@@ -82,12 +82,12 @@ export default function Footer() {
                 <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                         {/* Logo Area */}
-                        <div className="relative w-[220px] h-[60px]">
+                        <div className="relative w-[220px] h-[65px] bg-white rounded-lg shadow-sm px-3 py-1 flex items-center justify-center">
                             <Image
                                 src="/images/bwmc-logo-new.png"
                                 alt="BWMC Logo"
                                 fill
-                                className="object-contain object-left"
+                                className="object-contain"
                             />
                         </div>
                         {/* Tagline */}
