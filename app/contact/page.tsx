@@ -12,7 +12,7 @@ export default function ContactPage() {
         name: "Bridgewater Management Consultancies (BWMC)",
         description: "Leading business consultancy and financial services provider in Dubai, UAE.",
         url: "https://bwmc.ae/contact",
-        logo: "https://bwmc.ae/images/logo.png",
+        logo: "https://bwmc.ae/images/bwmc-logo-new.png",
         telephone: "+971 4 548 8184",
         email: "sales@bwmc.com",
         address: {

@@ -105,7 +105,7 @@ export default function RootLayout({
     description:
       "Strategic Partner for Financial Clarity & Compliance in the UAE. Business Setup, Accounting, Auditing, and Tax Services.",
     url: SITE_URL,
-    logo: `${SITE_URL}/logo.png`,
+    logo: `${SITE_URL}/images/bwmc-logo-new.png`,
     telephone: "+971-XX-XXX-XXXX", // TODO: Add actual phone number
     email: "info@bwmc.ae",
     address: {
