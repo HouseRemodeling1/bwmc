@@ -84,7 +84,7 @@ export default function Footer() {
                         {/* Logo Area */}
                         <div className="relative w-[220px] h-[60px]">
                             <Image
-                                src="https://bwmc.ae/wp-content/uploads/2025/03/BRIDGEWATER-WHITE-400x150.png"
+                                src="/images/bwmc-logo-white.svg"
                                 alt="BWMC Logo"
                                 fill
                                 className="object-contain object-left"

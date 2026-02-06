@@ -39,7 +39,7 @@ export default function Header() {
                     <Link href="/" className="relative z-50">
                         <div className="relative w-[250px] h-[70px]">
                             <Image
-                                src={"https://bwmc.ae/wp-content/uploads/2025/03/BRIDGEWATER-WHITE-400x150.png"}
+                                src="/images/bwmc-logo-white.svg"
                                 alt="BWMC Logo"
                                 fill
                                 className="object-contain object-left"
