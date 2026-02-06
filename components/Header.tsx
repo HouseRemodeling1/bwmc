@@ -121,55 +121,55 @@ export default function Header() {
                     )}
                 </button>
             </div>
-        </div>
 
-            {/* Mobile Menu Overlay */ }
-    <AnimatePresence>
-        {mobileMenuOpen && (
-            <motion.div
-                initial={{ opacity: 0, x: "100%" }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: "100%" }}
-                transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                className="fixed inset-0 bg-white z-40 lg:hidden overflow-y-auto"
-            >
-                <div className="pt-24 px-6 pb-12 space-y-8">
-                    {menuItems.map((category) => (
-                        <div key={category.title}>
-                            <h3 className="text-lg font-bold text-navy mb-4 flex items-center gap-2">
-                                <category.icon className="w-5 h-5 text-royal-blue" />
-                                {category.title}
-                            </h3>
-                            <ul className="space-y-3 pl-7 border-l-2 border-neutral">
-                                {category.items.map((item) => (
-                                    <li key={item.slug}>
-                                        <Link
-                                            href={`/services/${item.slug}`}
-                                            className="block text-navy/70 text-sm py-1"
-                                            onClick={() => setMobileMenuOpen(false)}
-                                        >
-                                            {item.name}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
+
+            {/* Mobile Menu Overlay */}
+            <AnimatePresence>
+                {mobileMenuOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, x: "100%" }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: "100%" }}
+                        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                        className="fixed inset-0 bg-white z-40 lg:hidden overflow-y-auto"
+                    >
+                        <div className="pt-24 px-6 pb-12 space-y-8">
+                            {menuItems.map((category) => (
+                                <div key={category.title}>
+                                    <h3 className="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+                                        <category.icon className="w-5 h-5 text-royal-blue" />
+                                        {category.title}
+                                    </h3>
+                                    <ul className="space-y-3 pl-7 border-l-2 border-neutral">
+                                        {category.items.map((item) => (
+                                            <li key={item.slug}>
+                                                <Link
+                                                    href={`/services/${item.slug}`}
+                                                    className="block text-navy/70 text-sm py-1"
+                                                    onClick={() => setMobileMenuOpen(false)}
+                                                >
+                                                    {item.name}
+                                                </Link>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))}
+
+                            <div className="pt-6 border-t border-neutral">
+                                <Link
+                                    href="/calculator"
+                                    className="w-full flex items-center justify-center gap-2 bg-royal-blue text-white py-3 rounded-[4px] font-semibold"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    <Calculator className="w-5 h-5" />
+                                    Cost Calculator
+                                </Link>
+                            </div>
                         </div>
-                    ))}
-
-                    <div className="pt-6 border-t border-neutral">
-                        <Link
-                            href="/calculator"
-                            className="w-full flex items-center justify-center gap-2 bg-royal-blue text-white py-3 rounded-[4px] font-semibold"
-                            onClick={() => setMobileMenuOpen(false)}
-                        >
-                            <Calculator className="w-5 h-5" />
-                            Cost Calculator
-                        </Link>
-                    </div>
-                </div>
-            </motion.div>
-        )}
-    </AnimatePresence>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </header >
     );
 }
