@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Check, Loader2, Send } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 
 export default function InternationalForm() {
     const [formData, setFormData] = useState({
@@ -190,7 +190,6 @@ export default function InternationalForm() {
                                     ) : (
                                         <>
                                             Schedule Consultation
-                                            <Send className="w-5 h-5" />
                                         </>
                                     )}
                                 </button>
