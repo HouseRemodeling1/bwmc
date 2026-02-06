@@ -33,22 +33,24 @@ export default function Header() {
             className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${isDarkHeader ? "bg-[#1A2B4C]/95 backdrop-blur-md shadow-sm py-3" : "bg-transparent py-5"
                 }`}
         >
-            <div className="max-w-7xl mx-auto px-6 lg:px-8 h-full flex items-center justify-between relative">
-                {/* Logo */}
-                <Link href="/" className="relative z-50 flex-shrink-0">
-                    <div className="relative w-[220px] h-[65px] bg-white rounded-lg shadow-sm px-3 py-1 flex items-center justify-center">
-                        <Image
-                            src="/images/bwmc-logo-new.png"
-                            alt="BWMC Logo"
-                            fill
-                            className="object-contain"
-                            priority
-                        />
-                    </div>
-                </Link>
+            <div className="max-w-7xl mx-auto px-6 lg:px-8 h-full flex items-center justify-between lg:justify-normal">
+                {/* Logo Section - Takes 1/3 space on desktop to push nav to center */}
+                <div className="flex-shrink-0 lg:flex-1 flex justify-start z-50">
+                    <Link href="/">
+                        <div className="relative w-[220px] h-[65px] bg-white rounded-lg shadow-sm px-3 py-1 flex items-center justify-center">
+                            <Image
+                                src="/images/bwmc-logo-new.png"
+                                alt="BWMC Logo"
+                                fill
+                                className="object-contain"
+                                priority
+                            />
+                        </div>
+                    </Link>
+                </div>
 
-                {/* Desktop Navigation - Centered */}
-                <nav className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center gap-8 whitespace-nowrap">
+                {/* Desktop Navigation - Centered naturally */}
+                <nav className="hidden lg:flex items-center gap-6 whitespace-nowrap z-40">
                     {mainNav.map((item) => (
                         <div
                             key={item.name}
@@ -95,8 +97,8 @@ export default function Header() {
                     ))}
                 </nav>
 
-                {/* Call to Action - Right Side */}
-                <div className="hidden lg:flex items-center gap-4 flex-shrink-0">
+                {/* Call to Action - Right Side - Takes 1/3 space to balance logo */}
+                <div className="hidden lg:flex lg:flex-1 justify-end items-center gap-4 z-50">
                     <Link
                         href="/calculator"
                         className={`flex items-center gap-2 px-6 py-3 rounded-[4px] text-base font-semibold transition-all ${isDarkHeader
@@ -109,9 +111,9 @@ export default function Header() {
                     </Link>
                 </div>
 
-                {/* Mobile Menu Button */}
+                {/* Mobile Menu Button - Align Right on Mobile */}
                 <button
-                    className="lg:hidden relative z-50 text-white"
+                    className="lg:hidden relative z-50 text-white ml-auto"
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 >
                     {mobileMenuOpen ? (
