@@ -106,7 +106,7 @@ export default function Header() {
                     {isGlobalSetup ? (
                         <>
                             <a
-                                href="https://wa.me/971509952542" // Replace with actual number
+                                href="https://wa.me/971543097850" // Updated number
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="flex items-center gap-2 px-5 py-2.5 rounded-[4px] text-sm font-semibold bg-[#25D366] text-white hover:bg-[#128C7E] transition-all"
@@ -115,7 +115,7 @@ export default function Header() {
                                 <span>WhatsApp</span>
                             </a>
                             <a
-                                href="tel:+971509952542" // Replace with actual number
+                                href="tel:+971543097850" // Updated number
                                 className="flex items-center gap-2 px-5 py-2.5 rounded-[4px] text-sm font-semibold bg-white text-navy hover:bg-neutral transition-all"
                             >
                                 <Phone className="w-4 h-4" />
