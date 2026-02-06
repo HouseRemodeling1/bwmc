@@ -41,6 +41,11 @@ export default function InternationalForm() {
             });
 
             if (res.ok) {
+                // Trigger Google Ads Conversion
+                if (typeof window !== "undefined" && (window as any).gtag_report_conversion) {
+                    (window as any).gtag_report_conversion();
+                }
+
                 setStatus("success");
                 setFormData({ firstName: "", lastName: "", email: "", phone: "", company: "", service: "Business Setup Services", message: "" });
             } else {

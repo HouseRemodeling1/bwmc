@@ -233,7 +233,7 @@ export default async function BlogPost({
                     <div className="max-w-4xl mx-auto">
                         <div
                             style={{ color: "#000000" }}
-                            className="prose prose-base md:prose-lg lg:prose-xl max-w-none
+                            className="prose prose-base md:prose-lg lg:prose-xl max-w-none font-serif
               prose-headings:text-black prose-headings:font-bold prose-headings:mb-6 prose-headings:mt-10 first:prose-headings:mt-0
               prose-p:text-black prose-p:leading-[1.8] prose-p:mb-6 prose-p:text-justify
               prose-a:text-royal-blue prose-a:font-semibold prose-a:underline prose-a:decoration-sky-blue/40 prose-a:underline-offset-4 hover:prose-a:decoration-royal-blue

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Montserrat, Inter } from "next/font/google";
+import { Montserrat, Inter, Merriweather } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -16,6 +16,12 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-body",
   weight: ["300", "400", "500", "600", "700"],
+});
+
+const merriweather = Merriweather({
+  subsets: ["latin"],
+  variable: "--font-serif",
+  weight: ["300", "400", "700", "900"],
 });
 
 const SITE_URL = "https://bwmc.ae";
@@ -146,7 +152,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${montserrat.variable} ${inter.variable} antialiased selection:bg-sky-blue selection:text-white`}
+        className={`${montserrat.variable} ${inter.variable} ${merriweather.variable} antialiased selection:bg-sky-blue selection:text-white`}
       >
         {/* Google Ads Tag */}
         <Script
