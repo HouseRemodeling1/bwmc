@@ -5,6 +5,8 @@ import StatsStrip from "@/components/global-setup/StatsStrip";
 import BenefitsGrid from "@/components/global-setup/BenefitsGrid";
 import ProcessSteps from "@/components/global-setup/ProcessSteps";
 import ExpertCTA from "@/components/global-setup/ExpertCTA";
+import FounderMessage from "@/components/global-setup/FounderMessage";
+import GuaranteesGrid from "@/components/global-setup/GuaranteesGrid";
 import ClientTrust from "@/components/ClientTrust";
 import InternationalForm from "@/components/global-setup/InternationalForm";
 import FloatingWhatsApp from "@/components/global-setup/FloatingWhatsApp";
@@ -26,11 +28,17 @@ export default function GlobalSetupPage() {
                 {/* Benefits Section */}
                 <BenefitsGrid />
 
+                {/* Founder Message */}
+                <FounderMessage />
+
                 {/* Expert CTA */}
                 <ExpertCTA />
 
                 {/* Process Section */}
                 <ProcessSteps />
+
+                {/* Guarantees Grid */}
+                <GuaranteesGrid />
 
                 {/* Trust & Testimonials */}
                 <ClientTrust />
