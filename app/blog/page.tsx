@@ -14,7 +14,9 @@ async function getBlogs() {
     const filePath = path.join(process.cwd(), "public", "data", "blogs.json");
     const fileContents = fs.readFileSync(filePath, "utf8");
     const data = JSON.parse(fileContents);
-    return data.blogs.filter((blog: any) => blog.published);
+    return data.blogs
+        .filter((blog: any) => blog.published)
+        .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 }
 
 export default async function BlogPage() {
