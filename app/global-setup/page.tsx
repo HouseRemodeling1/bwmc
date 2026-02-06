@@ -4,6 +4,7 @@ import Hero from "@/components/global-setup/Hero";
 import StatsStrip from "@/components/global-setup/StatsStrip";
 import BenefitsGrid from "@/components/global-setup/BenefitsGrid";
 import ProcessSteps from "@/components/global-setup/ProcessSteps";
+import ExpertCTA from "@/components/global-setup/ExpertCTA";
 import ClientTrust from "@/components/ClientTrust";
 import InternationalForm from "@/components/global-setup/InternationalForm";
 import Header from "@/components/Header";
@@ -23,6 +24,9 @@ export default function GlobalSetupPage() {
 
                 {/* Benefits Section */}
                 <BenefitsGrid />
+
+                {/* Expert CTA */}
+                <ExpertCTA />
 
                 {/* Process Section */}
                 <ProcessSteps />
