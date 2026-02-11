@@ -16,7 +16,7 @@ import Script from "next/script";
 
 export default function GlobalSetupPage() {
   return (
-    return (
+
     <div className="min-h-screen bg-gray-50 font-sans">
       {/* We reuse the main header for credibility, or we could pass a 'minimal' prop if supported */}
       <Header />
