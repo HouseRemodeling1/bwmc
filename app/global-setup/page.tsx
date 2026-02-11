@@ -55,15 +55,15 @@ export default function GlobalSetupPage() {
       <Script id="google-ads-conversion" strategy="afterInteractive">
         {`
           window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
+          window.gtag = function(){window.dataLayer.push(arguments);}
           
-          function gtag_report_conversion(url) {
+          window.gtag_report_conversion = function(url) {
             var callback = function () {
               if (typeof(url) != 'undefined') {
                 window.location = url;
               }
             };
-            gtag('event', 'conversion', {
+            window.gtag('event', 'conversion', {
                 'send_to': 'AW-17792357372/bT_dCNew9vMbEPynh6RC',
                 'event_callback': callback
             });
