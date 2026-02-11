@@ -51,6 +51,27 @@ export default function GlobalSetupPage() {
 
       <FloatingWhatsApp />
 
+      {/* Google Ads Conversion Tracking */}
+      <Script id="google-ads-conversion" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          
+          function gtag_report_conversion(url) {
+            var callback = function () {
+              if (typeof(url) != 'undefined') {
+                window.location = url;
+              }
+            };
+            gtag('event', 'conversion', {
+                'send_to': 'AW-17792357372/bT_dCNew9vMbEPynh6RC',
+                'event_callback': callback
+            });
+            return false;
+          }
+        `}
+      </Script>
+
     </div>
   );
 }
