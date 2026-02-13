@@ -52,7 +52,8 @@ export default function FounderMessage() {
                         </p>
 
                         <div className="inline-block mt-4 text-left">
-                            <p className="text-xl font-bold text-navy">Managing Partner</p>
+                            <p className="text-xl font-bold text-navy">Mahesh Thadani</p>
+                            <p className="text-sm font-semibold text-gray-500 mb-1">Managing Partner</p>
                             <p className="text-royal-blue text-sm">Bridgewater Management Consultancies</p>
                         </div>
                     </motion.div>
