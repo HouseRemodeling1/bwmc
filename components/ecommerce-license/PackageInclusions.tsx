@@ -41,11 +41,11 @@ export default function PackageInclusions() {
                             We've bundled all the essentials into one affordable package so you can focus on building your brand, not dealing with bureaucracy.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <a href="#ecommerce-form" className="inline-flex items-center justify-center gap-2 bg-gold text-navy font-bold px-8 py-4 rounded-lg hover:bg-yellow-500 transition-colors shadow-lg hover:shadow-xl">
+                            <a href="#ecommerce-form" className="inline-flex items-center justify-center gap-2 bg-yellow-500 text-navy font-bold px-8 py-4 rounded-lg hover:bg-yellow-400 transition-colors shadow-lg hover:shadow-xl">
                                 Get This Package Now
                                 <ArrowRight className="w-5 h-5" />
                             </a>
-                            <a href="https://wa.me/971543097850" target="_blank" className="inline-flex items-center justify-center gap-2 bg-white/10 text-white border border-white/20 font-bold px-8 py-4 rounded-lg hover:bg-white/20 transition-all backdrop-blur-sm">
+                            <a href="https://wa.me/971543097850" target="_blank" className="inline-flex items-center justify-center gap-2 bg-white/20 text-white border border-white/30 font-bold px-8 py-4 rounded-lg hover:bg-white/30 transition-all backdrop-blur-sm">
                                 <MessageCircle className="w-5 h-5 text-green-400" />
                                 WhatsApp Us
                             </a>
