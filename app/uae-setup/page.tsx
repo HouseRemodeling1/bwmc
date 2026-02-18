@@ -9,6 +9,7 @@ import ProcessSteps from "@/components/uae-setup/ProcessSteps";
 import LocalCompliance from "@/components/uae-setup/LocalCompliance";
 import WhyBWMC from "@/components/uae-setup/WhyBWMC";
 import FounderMessage from "@/components/global-setup/FounderMessage";
+import ExpertCTA from "@/components/global-setup/ExpertCTA";
 import TestimonialsAndTrust from "@/components/uae-setup/TestimonialsAndTrust";
 import UAESetupForm from "@/components/uae-setup/UAESetupForm";
 import Header from "@/components/Header";
@@ -16,29 +17,30 @@ import FloatingWhatsApp from "@/components/global-setup/FloatingWhatsApp";
 import Script from "next/script";
 
 export default function UAESetupPage() {
-    return (
-        <div className="min-h-screen bg-gray-50 font-sans">
-            <Header />
+  return (
+    <div className="min-h-screen bg-gray-50 font-sans">
+      <Header />
 
-            <main>
-                <Hero />
-                <StatsStrip />
-                <WhoIsThisFor />
-                <Pricing />
-                <FreeZoneMainland />
-                <ProcessSteps />
-                <LocalCompliance />
-                <WhyBWMC />
-                <FounderMessage />
-                <TestimonialsAndTrust />
-                <UAESetupForm />
-            </main>
+      <main>
+        <Hero />
+        <StatsStrip />
+        <WhoIsThisFor />
+        <Pricing />
+        <FreeZoneMainland />
+        <ProcessSteps />
+        <LocalCompliance />
+        <WhyBWMC />
+        <FounderMessage />
+        <ExpertCTA />
+        <TestimonialsAndTrust />
+        <UAESetupForm />
+      </main>
 
-            <FloatingWhatsApp />
+      <FloatingWhatsApp />
 
-            {/* Google Ads Conversion Tracking */}
-            <Script id="google-ads-conversion" strategy="afterInteractive">
-                {`
+      {/* Google Ads Conversion Tracking */}
+      <Script id="google-ads-conversion" strategy="afterInteractive">
+        {`
           window.dataLayer = window.dataLayer || [];
           window.gtag = function(){window.dataLayer.push(arguments);}
           
@@ -55,7 +57,7 @@ export default function UAESetupPage() {
             return false;
           }
         `}
-            </Script>
-        </div>
-    );
+      </Script>
+    </div>
+  );
 }
