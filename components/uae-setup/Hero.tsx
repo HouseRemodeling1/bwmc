@@ -2,15 +2,17 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Globe, CheckCircle2, Calculator, Loader2, Send, Check } from "lucide-react";
+import { ArrowRight, Globe, CheckCircle2, Calculator, Loader2, Send, Check, Phone, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function Hero() {
+    const [showContactOptions, setShowContactOptions] = useState(false);
+
     return (
-        <section className="relative min-h-[90vh] flex items-center bg-gray-50 overflow-hidden pt-28 pb-20 lg:pt-36">
+        <section className="relative min-h-[90vh] flex items-center bg-gray-50 pt-28 pb-20 lg:pt-36">
             {/* Background elements */}
-            <div className="absolute inset-0 z-0">
+            <div className="absolute inset-0 z-0 overflow-hidden">
                 <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-royal-blue/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
                 <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2" />
             </div>
@@ -66,17 +68,52 @@ export default function Hero() {
                                 Get a Free Cost Estimate
                                 <ArrowRight className="w-5 h-5" />
                             </a>
-                            <Link
-                                href="https://wa.me/971543097850"
-                                target="_blank"
-                                className="px-8 py-4 bg-white border border-gray-200 hover:border-green-500 text-navy font-bold rounded-lg transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 group"
-                            >
-                                {/* WhatsApp Icon */}
-                                <svg viewBox="0 0 24 24" className="w-5 h-5 text-green-500 fill-current group-hover:scale-110 transition-transform">
-                                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.592 2.654-.696c1.001.572 2.135.806 3.286.806 3.183 0 5.768-2.587 5.768-5.767s-2.585-5.767-5.768-5.767zm0 11.761c-3.305 0-5.993-2.687-5.993-5.994s2.687-5.994 5.993-5.994 5.994 2.687 5.994 5.994-2.688 5.994-5.994 5.994zm0-10.87c-2.688 0-4.876 2.187-4.876 4.876s2.187 4.876 4.876 4.876 4.876-2.188 4.876-4.876-2.188-4.876-4.876-4.876zM17.402 12.01l-1.428-3.056c-.198-.423-.521-.762-.914-.997-.406-.242-.862-.363-1.328-.363-.448 0-1.139.106-1.57.308-.419.196-1.895 1.066-2.095 1.258-.098.096-.153.21-.153.339 0 .285.421 1.258 1.157 2.453.766 1.242 1.623 1.848 1.956 2.018.847.433 1.772.486 2.604.209.522-.174 1.764-.811 1.773-.816.035-.018.058-.052.062-.092.005-.04-.012-.08-.046-.101zM11.968 1.05c-6.052 0-10.976 4.922-10.976 10.975 0 2.37.76 4.545 2.049 6.326l-1.956 7.143 7.308-1.917c1.725 1.156 3.805 1.848 6.052 1.848 6.052 0 10.976-4.925 10.976-10.977 0-6.052-4.924-10.975-10.976-10.975zm0 19.863c-1.961 0-3.803-.646-5.321-1.74l-.382-.274-3.665.961.979-3.571-.249-.396c-1.228-1.954-1.876-4.04-1.876-6.241 0-4.901 3.987-8.887 8.887-8.887 4.901 0 8.887 3.986 8.887 8.887 0 4.902-3.986 8.889-8.887 8.889z" fillRule="evenodd" />
-                                </svg>
-                                Chat with an Expert on WhatsApp
-                            </Link>
+                            <div className="relative">
+                                <button
+                                    onClick={() => setShowContactOptions(!showContactOptions)}
+                                    className="px-8 py-4 bg-white border border-gray-200 hover:border-gold/50 text-navy font-bold rounded-lg transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 group w-full sm:w-auto"
+                                >
+                                    Connect with an Expert
+                                    <ArrowRight className={`w-5 h-5 transition-transform ${showContactOptions ? "rotate-90" : ""}`} />
+                                </button>
+
+                                {showContactOptions && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: 10 }}
+                                        className="absolute top-full left-0 mt-2 w-full sm:w-64 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50"
+                                    >
+                                        <div className="p-2 space-y-1">
+                                            <a
+                                                href="tel:+97145488184"
+                                                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg text-navy font-medium transition-colors"
+                                            >
+                                                <div className="w-10 h-10 bg-royal-blue/10 rounded-full flex items-center justify-center flex-shrink-0">
+                                                    <Phone className="w-5 h-5 text-royal-blue" />
+                                                </div>
+                                                <div>
+                                                    <span className="block text-sm font-bold">Call Now</span>
+                                                    <span className="text-xs text-gray-500">+971 4 548 8184</span>
+                                                </div>
+                                            </a>
+                                            <a
+                                                href="https://wa.me/971543097850"
+                                                target="_blank"
+                                                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg text-navy font-medium transition-colors"
+                                            >
+                                                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                                    <MessageCircle className="w-5 h-5 text-green-600" />
+                                                </div>
+                                                <div>
+                                                    <span className="block text-sm font-bold">WhatsApp</span>
+                                                    <span className="text-xs text-gray-500">Chat with us</span>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </div>
                         </div>
                     </motion.div>
 
