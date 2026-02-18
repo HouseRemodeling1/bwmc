@@ -98,62 +98,64 @@ export default function Hero() {
                                 <CheckCircle2 className="w-5 h-5 text-green-500" />
                                 <span>Multi-currency Corporate Banking</span>
                             </div>
-                            <div className="flex flex-col sm:flex-row gap-4 relative">
-                                <div className="relative">
-                                    <button
-                                        onClick={() => setShowContactOptions(!showContactOptions)}
-                                        className="px-8 py-4 bg-navy hover:bg-royal-blue text-white font-bold rounded-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 w-full sm:w-auto"
-                                    >
-                                        Connect with an Expert
-                                        <ArrowRight className={`w-5 h-5 transition-transform ${showContactOptions ? "rotate-90" : ""}`} />
-                                    </button>
+                        </div>
 
-                                    {showContactOptions && (
-                                        <motion.div
-                                            initial={{ opacity: 0, y: 10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: 10 }}
-                                            className="absolute top-full left-0 mt-2 w-full sm:w-64 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50"
-                                        >
-                                            <div className="p-2 space-y-1">
-                                                <a
-                                                    href="tel:+97145488184"
-                                                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg text-navy font-medium transition-colors"
-                                                >
-                                                    <div className="w-10 h-10 bg-royal-blue/10 rounded-full flex items-center justify-center flex-shrink-0">
-                                                        <Phone className="w-5 h-5 text-royal-blue" />
-                                                    </div>
-                                                    <div>
-                                                        <span className="block text-sm font-bold">Call Now</span>
-                                                        <span className="text-xs text-gray-500">+971 4 548 8184</span>
-                                                    </div>
-                                                </a>
-                                                <a
-                                                    href="https://wa.me/971543097850"
-                                                    target="_blank"
-                                                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg text-navy font-medium transition-colors"
-                                                >
-                                                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                                        <MessageCircle className="w-5 h-5 text-green-600" />
-                                                    </div>
-                                                    <div>
-                                                        <span className="block text-sm font-bold">WhatsApp</span>
-                                                        <span className="text-xs text-gray-500">Chat with us</span>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </motion.div>
-                                    )}
-                                </div>
-
-                                <Link
-                                    href="/calculator"
-                                    className="px-8 py-4 bg-white border border-gray-200 hover:border-gold/50 text-navy font-bold rounded-lg transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 group"
+                        <div className="flex flex-col sm:flex-row gap-4 relative">
+                            <div className="relative">
+                                <button
+                                    onClick={() => setShowContactOptions(!showContactOptions)}
+                                    className="px-8 py-4 bg-navy hover:bg-royal-blue text-white font-bold rounded-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 w-full sm:w-auto"
                                 >
-                                    <Calculator className="w-5 h-5 text-gold group-hover:scale-110 transition-transform" />
-                                    Cost Calculator
-                                </Link>
+                                    Connect with an Expert
+                                    <ArrowRight className={`w-5 h-5 transition-transform ${showContactOptions ? "rotate-90" : ""}`} />
+                                </button>
+
+                                {showContactOptions && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: 10 }}
+                                        className="absolute top-full left-0 mt-2 w-full sm:w-64 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50"
+                                    >
+                                        <div className="p-2 space-y-1">
+                                            <a
+                                                href="tel:+97145488184"
+                                                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg text-navy font-medium transition-colors"
+                                            >
+                                                <div className="w-10 h-10 bg-royal-blue/10 rounded-full flex items-center justify-center flex-shrink-0">
+                                                    <Phone className="w-5 h-5 text-royal-blue" />
+                                                </div>
+                                                <div>
+                                                    <span className="block text-sm font-bold">Call Now</span>
+                                                    <span className="text-xs text-gray-500">+971 4 548 8184</span>
+                                                </div>
+                                            </a>
+                                            <a
+                                                href="https://wa.me/971543097850"
+                                                target="_blank"
+                                                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg text-navy font-medium transition-colors"
+                                            >
+                                                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                                    <MessageCircle className="w-5 h-5 text-green-600" />
+                                                </div>
+                                                <div>
+                                                    <span className="block text-sm font-bold">WhatsApp</span>
+                                                    <span className="text-xs text-gray-500">Chat with us</span>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </motion.div>
+                                )}
                             </div>
+
+                            <Link
+                                href="/calculator"
+                                className="px-8 py-4 bg-white border border-gray-200 hover:border-gold/50 text-navy font-bold rounded-lg transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 group"
+                            >
+                                <Calculator className="w-5 h-5 text-gold group-hover:scale-110 transition-transform" />
+                                Cost Calculator
+                            </Link>
+                        </div>
                     </motion.div>
 
                     {/* Right: Lead Capture Form */}

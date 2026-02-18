@@ -58,7 +58,6 @@ interface GoogleReview {
         displayName: string;
         uri: string;
         photoUri: string;
-        photoUri?: string;
     };
     publishTime: string;
 }
