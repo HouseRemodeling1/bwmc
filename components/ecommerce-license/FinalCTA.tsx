@@ -21,13 +21,13 @@ export default function FinalCTA() {
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                    <a
-                        href="#ecommerce-form"
+                    <Link
+                        href="/contact"
                         className="w-full sm:w-auto px-8 py-4 bg-gold hover:bg-yellow-500 text-navy font-bold rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 text-lg"
                     >
                         Book Free Consultation
                         <ArrowRight className="w-5 h-5" />
-                    </a>
+                    </Link>
                     <Link
                         href="https://wa.me/971543097850"
                         target="_blank"

@@ -56,13 +56,13 @@ export default function Hero() {
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <a
-                                href="#ecommerce-form"
+                            <Link
+                                href="/contact"
                                 className="px-8 py-4 bg-navy hover:bg-royal-blue text-white font-bold rounded-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                             >
                                 Get Free Consultation
                                 <ArrowRight className="w-5 h-5" />
-                            </a>
+                            </Link>
 
                             <div className="relative">
                                 <button
