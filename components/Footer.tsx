@@ -11,7 +11,7 @@ export default function Footer() {
     const isLandingPage = pathname === "/global-setup" || pathname === "/uae-setup" || pathname === "/ecommerce-license";
 
     return (
-        <footer className="bg-[#111] text-white pt-16">
+        <footer className={`${isLandingPage ? "bg-[#001B44]" : "bg-[#111] pt-16"} text-white`}>
             {!isLandingPage && (
                 <div className="max-w-7xl mx-auto px-6 lg:px-8 mb-16">
                     <div className="grid md:grid-cols-4 gap-12">
@@ -84,7 +84,7 @@ export default function Footer() {
             )}
 
             {/* Bottom Bar */}
-            <div className="bg-[#001B44] border-t border-white/5">
+            <div className={`bg-[#001B44] ${isLandingPage ? "border-t border-white/20" : "border-t border-white/5"}`}>
                 <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                         {/* Logo Area */}
