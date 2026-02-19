@@ -29,10 +29,10 @@ export default function Hero() {
                             <span className="text-sm font-bold tracking-wide uppercase">Launch Your Online Business in 24 Hours</span>
                         </div>
 
-                        <h1 className="text-3xl lg:text-5xl font-bold text-navy leading-tight mb-6">
-                            Start Your E-Commerce Business in Dubai from <br />
+                        <h1 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-navy leading-tight mb-6">
+                            Start Your E-Commerce Business <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-royal-blue to-purple-600">
-                                AED 3,999
+                                in Dubai from AED 3,999
                             </span>
                         </h1>
 

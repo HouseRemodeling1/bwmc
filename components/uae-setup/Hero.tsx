@@ -30,10 +30,10 @@ export default function Hero() {
                             <span className="text-sm font-bold tracking-wide uppercase">Trusted by 100+ Businesses Across the UAE</span>
                         </div>
 
-                        <h1 className="text-3xl lg:text-5xl font-bold text-navy leading-tight mb-6">
-                            Set Up Your UAE Business the Right Way — <br />
+                        <h1 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-navy leading-tight mb-6">
+                            Set Up Your UAE Business <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-royal-blue to-purple-600">
-                                Fast, Affordable & Fully Compliant
+                                the Right Way — Fast & Compliant
                             </span>
                         </h1>
 

@@ -75,9 +75,9 @@ export default function Hero() {
                         </div>
 
                         <h1 className="text-3xl lg:text-5xl font-bold text-navy leading-tight mb-6">
-                            Launch Your UAE <br />
+                            Launch Your UAE Business <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-royal-blue to-purple-600">
-                                Business from Anywhere.
+                                from Anywhere.
                             </span>
                         </h1>
 
