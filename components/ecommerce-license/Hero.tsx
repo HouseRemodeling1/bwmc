@@ -248,7 +248,7 @@ function HeroForm() {
                         <button
                             type="submit"
                             disabled={status === "submitting"}
-                            className="w-full bg-gold hover:bg-yellow-600 text-navy font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+                            className="w-full bg-gold hover:bg-yellow-600 text-navy font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 group !cursor-pointer disabled:!cursor-not-allowed disabled:opacity-70"
                         >
                             {status === "submitting" ? (
                                 <>
