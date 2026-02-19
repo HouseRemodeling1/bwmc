@@ -23,7 +23,7 @@ export default function FinalCTA() {
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                     <Link
                         href="/contact"
-                        className="w-full sm:w-auto px-8 py-4 bg-gold hover:bg-yellow-500 text-navy font-bold rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 text-lg"
+                        className="w-full sm:w-auto px-8 py-4 bg-white text-navy hover:bg-gray-100 font-bold rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 text-lg"
                     >
                         Book Free Consultation
                         <ArrowRight className="w-5 h-5" />
