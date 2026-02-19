@@ -21,6 +21,7 @@ export default function EcommerceLicensePage() {
 
       <main>
         <Hero />
+        <StatsStrip />
         <WhyEcommerce />
         <PackageInclusions />
         <UpsellServices />

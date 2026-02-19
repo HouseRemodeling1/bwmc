@@ -26,7 +26,7 @@ export default function Hero() {
                         transition={{ duration: 0.8 }}
                     >
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-navy/5 border border-navy/10 text-royal-blue mb-6">
-                            <span className="text-sm font-bold tracking-wide uppercase">Launch Your Online Business in 24 Hours</span>
+                            <span className="text-sm font-bold tracking-wide uppercase">Trusted by 100+ Businesses Across the UAE</span>
                         </div>
 
                         <h1 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-navy leading-tight mb-6">
