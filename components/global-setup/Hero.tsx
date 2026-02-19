@@ -74,16 +74,12 @@ export default function Hero() {
                             <span className="text-sm font-bold tracking-wide uppercase">Global Business Gateway</span>
                         </div>
 
-                        <h1 className="text-4xl lg:text-6xl font-bold text-navy leading-tight mb-6">
+                        <h1 className="text-3xl lg:text-5xl font-bold text-navy leading-tight mb-6">
                             Launch Your UAE <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-royal-blue to-purple-600">
                                 Business from Anywhere.
                             </span>
                         </h1>
-
-                        <p className="text-lg text-gray-600 mb-8 max-w-xl leading-relaxed font-medium">
-                            Unlock the UAE's thriving economy with 0% personal tax, 100% foreign ownership, and expert guidance. No need to relocate to get started.
-                        </p>
 
                         <div className="space-y-4 mb-10">
                             <div className="flex items-center gap-3 text-navy font-medium">

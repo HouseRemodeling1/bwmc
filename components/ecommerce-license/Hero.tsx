@@ -29,16 +29,12 @@ export default function Hero() {
                             <span className="text-sm font-bold tracking-wide uppercase">Launch Your Online Business in 24 Hours</span>
                         </div>
 
-                        <h1 className="text-4xl lg:text-6xl font-bold text-navy leading-tight mb-6">
+                        <h1 className="text-3xl lg:text-5xl font-bold text-navy leading-tight mb-6">
                             Start Your E-Commerce Business in Dubai from <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-royal-blue to-purple-600">
                                 AED 3,999
                             </span>
                         </h1>
-
-                        <p className="text-lg text-gray-600 mb-8 max-w-xl leading-relaxed font-medium">
-                            100% Online Process | No Hidden Fees | Free Consultation | Bank Account Assistance Included.
-                        </p>
 
                         <div className="space-y-4 mb-10">
                             <div className="flex items-center gap-3 text-navy font-medium">
