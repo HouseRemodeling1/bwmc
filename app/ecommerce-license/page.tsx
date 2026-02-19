@@ -3,6 +3,7 @@
 import Header from "@/components/Header";
 import FloatingWhatsApp from "@/components/global-setup/FloatingWhatsApp";
 import Hero from "@/components/ecommerce-license/Hero";
+import StatsStrip from "@/components/ecommerce-license/StatsStrip";
 import WhyEcommerce from "@/components/ecommerce-license/WhyEcommerce";
 import PackageInclusions from "@/components/ecommerce-license/PackageInclusions";
 import UpsellServices from "@/components/ecommerce-license/UpsellServices";
@@ -14,27 +15,27 @@ import FinalCTA from "@/components/ecommerce-license/FinalCTA";
 import Script from "next/script";
 
 export default function EcommerceLicensePage() {
-    return (
-        <div className="min-h-screen bg-gray-50 font-sans">
-            <Header />
+  return (
+    <div className="min-h-screen bg-gray-50 font-sans">
+      <Header />
 
-            <main>
-                <Hero />
-                <WhyEcommerce />
-                <PackageInclusions />
-                <UpsellServices />
-                <WhyChooseUs />
-                <ProcessSteps />
-                <Pricing />
-                <FAQ />
-                <FinalCTA />
-            </main>
+      <main>
+        <Hero />
+        <WhyEcommerce />
+        <PackageInclusions />
+        <UpsellServices />
+        <WhyChooseUs />
+        <ProcessSteps />
+        <Pricing />
+        <FAQ />
+        <FinalCTA />
+      </main>
 
-            <FloatingWhatsApp />
+      <FloatingWhatsApp />
 
-            {/* Google Ads Conversion Tracking */}
-            <Script id="google-ads-conversion" strategy="afterInteractive">
-                {`
+      {/* Google Ads Conversion Tracking */}
+      <Script id="google-ads-conversion" strategy="afterInteractive">
+        {`
           window.dataLayer = window.dataLayer || [];
           window.gtag = function(){window.dataLayer.push(arguments);}
           
@@ -51,7 +52,7 @@ export default function EcommerceLicensePage() {
             return false;
           }
         `}
-            </Script>
-        </div>
-    );
+      </Script>
+    </div>
+  );
 }
