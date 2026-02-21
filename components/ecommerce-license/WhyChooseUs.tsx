@@ -25,26 +25,25 @@ const features = [
         title: "Dedicated Advisor",
         description: "Personal support throughout the process."
     },
-    },
-{
-    icon: (
-        <div className="relative w-6 h-6">
-            <Image
-                src="/images/whatsapp-icon.png"
-                alt="WhatsApp"
-                fill
-                className="object-contain"
-            />
-        </div>
-    ),
+    {
+        icon: (
+            <div className="relative w-6 h-6">
+                <Image
+                    src="/images/whatsapp-icon.png"
+                    alt="WhatsApp"
+                    fill
+                    className="object-contain"
+                />
+            </div>
+        ),
         title: "Fast WhatsApp Support",
-            description: "Get answers instantly, anytime."
-},
-{
-    icon: <Sliders className="w-6 h-6 text-royal-blue" />,
+        description: "Get answers instantly, anytime."
+    },
+    {
+        icon: <Sliders className="w-6 h-6 text-royal-blue" />,
         title: "Ongoing Support",
-            description: "We help you grow even after setup."
-}
+        description: "We help you grow even after setup."
+    }
 ];
 
 export default function WhyChooseUs() {

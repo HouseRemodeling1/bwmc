@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Globe, CheckCircle2, Calculator, Loader2, Send, Check, Phone, MessageCircle } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Hero() {
     const [formData, setFormData] = useState({
