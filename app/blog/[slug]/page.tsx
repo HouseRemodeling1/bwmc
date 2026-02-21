@@ -230,17 +230,16 @@ export default async function BlogPost({
 
                 {/* Content Section */}
                 <article className="py-12 md:py-20 px-4 md:px-6 lg:px-8 bg-white">
-                    <div className="max-w-4xl mx-auto">
+                    <div className="max-w-3xl mx-auto">
                         <div
-                            style={{ color: "#000000" }}
-                            className="prose prose-base md:prose-lg lg:prose-xl max-w-none font-serif
-              prose-headings:text-black prose-headings:font-bold prose-headings:mb-6 prose-headings:mt-10 first:prose-headings:mt-0
-              prose-p:text-black prose-p:leading-[1.8] prose-p:mb-6 prose-p:text-justify
+                            className="prose prose-base md:prose-lg lg:prose-xl max-w-none
+              prose-headings:text-navy prose-headings:font-bold prose-headings:mb-6 prose-headings:mt-10 first:prose-headings:mt-0
+              prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-6
               prose-a:text-royal-blue prose-a:font-semibold prose-a:underline prose-a:decoration-sky-blue/40 prose-a:underline-offset-4 hover:prose-a:decoration-royal-blue
-              prose-strong:text-black prose-strong:font-bold
-              prose-ul:text-black prose-ul:my-6 prose-ul:space-y-3
-              prose-ol:text-black prose-ol:my-6 prose-ol:space-y-3
-              prose-li:text-black prose-li:leading-[1.8]
+              prose-strong:text-navy prose-strong:font-bold
+              prose-ul:text-gray-700 prose-ul:my-6 prose-ul:space-y-3
+              prose-ol:text-gray-700 prose-ol:my-6 prose-ol:space-y-3
+              prose-li:text-gray-700 prose-li:leading-relaxed
               prose-hr:border-gray-300 prose-hr:my-12
               prose-img:rounded-2xl prose-img:shadow-xl prose-img:my-10 prose-img:mx-auto
               prose-h1:text-3xl md:prose-h1:text-4xl
