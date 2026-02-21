@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Check, ArrowRight, MessageCircle } from "lucide-react";
+import Image from "next/image";
 
 const inclusions = [
     "Trade License Issuance",
@@ -46,7 +47,14 @@ export default function PackageInclusions() {
                                 <ArrowRight className="w-5 h-5" />
                             </a>
                             <a href="https://wa.me/971543097850" target="_blank" className="inline-flex items-center justify-center gap-2 bg-white/20 text-white border border-white/30 font-bold px-8 py-4 rounded-lg hover:bg-white/30 transition-all backdrop-blur-sm">
-                                <MessageCircle className="w-5 h-5 text-green-400" />
+                                <div className="relative w-6 h-6">
+                                    <Image
+                                        src="/images/whatsapp-icon.png"
+                                        alt="WhatsApp"
+                                        fill
+                                        className="object-contain"
+                                    />
+                                </div>
                                 WhatsApp Us
                             </a>
                         </div>

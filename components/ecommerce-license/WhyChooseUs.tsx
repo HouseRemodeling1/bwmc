@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Clock, Tag, Shield, UserCheck, MessageCircle, Sliders } from "lucide-react";
+import Image from "next/image";
 
 const features = [
     {
@@ -24,16 +25,26 @@ const features = [
         title: "Dedicated Advisor",
         description: "Personal support throughout the process."
     },
-    {
-        icon: <MessageCircle className="w-6 h-6 text-royal-blue" />,
-        title: "Fast WhatsApp Support",
-        description: "Get answers instantly, anytime."
     },
-    {
-        icon: <Sliders className="w-6 h-6 text-royal-blue" />,
+{
+    icon: (
+        <div className="relative w-6 h-6">
+            <Image
+                src="/images/whatsapp-icon.png"
+                alt="WhatsApp"
+                fill
+                className="object-contain"
+            />
+        </div>
+    ),
+        title: "Fast WhatsApp Support",
+            description: "Get answers instantly, anytime."
+},
+{
+    icon: <Sliders className="w-6 h-6 text-royal-blue" />,
         title: "Ongoing Support",
-        description: "We help you grow even after setup."
-    }
+            description: "We help you grow even after setup."
+}
 ];
 
 export default function WhyChooseUs() {

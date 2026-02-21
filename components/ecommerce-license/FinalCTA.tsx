@@ -33,7 +33,14 @@ export default function FinalCTA() {
                         target="_blank"
                         className="w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold rounded-lg backdrop-blur-sm transition-all flex items-center justify-center gap-2 text-lg"
                     >
-                        <MessageCircle className="w-5 h-5 text-green-500" />
+                        <div className="relative w-6 h-6">
+                            <Image
+                                src="/images/whatsapp-icon.png"
+                                alt="WhatsApp"
+                                fill
+                                className="object-contain"
+                            />
+                        </div>
                         WhatsApp Us Now
                     </Link>
                 </div>

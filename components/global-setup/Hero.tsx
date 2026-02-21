@@ -102,7 +102,14 @@ export default function Hero() {
                                 target="_blank"
                                 className="px-8 py-4 bg-white border border-gray-200 hover:border-gold/50 text-navy font-bold rounded-lg transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 group w-full sm:w-auto"
                             >
-                                <MessageCircle className="w-5 h-5 text-green-600" />
+                                <div className="relative w-6 h-6">
+                                    <Image
+                                        src="/images/whatsapp-icon.png"
+                                        alt="WhatsApp"
+                                        fill
+                                        className="object-contain"
+                                    />
+                                </div>
                                 WhatsApp Expert
                             </a>
 

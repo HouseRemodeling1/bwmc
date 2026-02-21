@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, Loader2, Phone, Mail, MapPin } from "lucide-react";
+import Image from "next/image";
 
 export default function UAESetupForm() {
     const [formData, setFormData] = useState({
@@ -86,8 +87,14 @@ export default function UAESetupForm() {
                             </div>
 
                             <div className="flex items-start gap-4">
-                                <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <img src="/whatsapp.svg" alt="WhatsApp" className="w-6 h-6" style={{ filter: "invert(1)" }} /> {/* Using image or icon */}
+                                <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0 relative">
+                                    <Image
+                                        src="/images/whatsapp-icon.png"
+                                        alt="WhatsApp"
+                                        width={24}
+                                        height={24}
+                                        className="object-contain"
+                                    />
                                 </div>
                                 <div>
                                     <h3 className="text-white font-bold text-lg">WhatsApp</h3>
