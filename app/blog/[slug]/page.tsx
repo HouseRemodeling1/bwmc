@@ -232,19 +232,20 @@ export default async function BlogPost({
                 <article className="py-12 md:py-20 px-4 md:px-6 lg:px-8 bg-white">
                     <div className="max-w-3xl mx-auto">
                         <div
-                            className="prose prose-base md:prose-lg lg:prose-xl max-w-none
-              prose-headings:text-navy prose-headings:font-bold prose-headings:mb-6 prose-headings:mt-10 first:prose-headings:mt-0
-              prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-6
-              prose-a:text-royal-blue prose-a:font-semibold prose-a:underline prose-a:decoration-sky-blue/40 prose-a:underline-offset-4 hover:prose-a:decoration-royal-blue
-              prose-strong:text-navy prose-strong:font-bold
-              prose-ul:text-gray-700 prose-ul:my-6 prose-ul:space-y-3
-              prose-ol:text-gray-700 prose-ol:my-6 prose-ol:space-y-3
-              prose-li:text-gray-700 prose-li:leading-relaxed
-              prose-hr:border-gray-300 prose-hr:my-12
-              prose-img:rounded-2xl prose-img:shadow-xl prose-img:my-10 prose-img:mx-auto
-              prose-h1:text-3xl md:prose-h1:text-4xl
-              prose-h2:text-2xl md:prose-h2:text-3xl
-              prose-h3:text-xl md:prose-h3:text-2xl"
+                            className="
+                            text-base md:text-lg lg:text-xl text-gray-700 leading-relaxed max-w-none font-sans
+                            [&_h1]:text-navy [&_h1]:font-bold [&_h1]:mb-6 [&_h1]:mt-10 [&_h1]:text-3xl md:[&_h1]:text-4xl first:[&_h1]:mt-0
+                            [&_h2]:text-navy [&_h2]:font-bold [&_h2]:mb-6 [&_h2]:mt-10 [&_h2]:text-2xl md:[&_h2]:text-3xl
+                            [&_h3]:text-navy [&_h3]:font-bold [&_h3]:mb-4 [&_h3]:mt-8 [&_h3]:text-xl md:[&_h3]:text-2xl
+                            [&_p]:mb-6 [&_p]:text-gray-700 [&_p]:leading-relaxed
+                            [&_a]:text-royal-blue [&_a]:font-semibold [&_a]:underline [&_a]:decoration-sky-blue/40 hover:[&_a]:decoration-royal-blue [&_a]:underline-offset-4
+                            [&_strong]:text-navy [&_strong]:font-bold
+                            [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-6 [&_ul]:space-y-3 [&_ul]:text-gray-700
+                            [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-6 [&_ol]:space-y-3 [&_ol]:text-gray-700
+                            [&_li]:leading-relaxed [&_li]:text-gray-700
+                            [&_hr]:border-t-2 [&_hr]:border-gray-200 [&_hr]:my-10
+                            [&_img]:rounded-2xl [&_img]:shadow-xl [&_img]:my-10 [&_img]:mx-auto
+                            "
                             dangerouslySetInnerHTML={{ __html: blog.content }}
                         />
 
