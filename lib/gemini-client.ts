@@ -1,46 +1,26 @@
-// ─── Direct Gemini API helper (runs 100% in the browser) ──────────────────────
-
-const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY ?? "";
-
-const GEMINI_ENDPOINT =
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${GEMINI_API_KEY}`;
-
-const GEN_CONFIG = {
-    temperature: 0.2,
-    topK: 32,
-    topP: 1,
-    maxOutputTokens: 8192,
-};
-
-/** Maps HTTP status codes to user-friendly messages */
-function statusMessage(status: number): string {
-    if (status === 400) return "Something went wrong reading your file. Try uploading a cleaner PDF or Excel version.";
-    if (status === 403) return "API key is invalid or not authorised. Please contact support.";
-    if (status === 429) return "Too many requests. Please wait 30 seconds and try again.";
-    return "Gemini is temporarily unavailable. Please try again in a moment.";
-}
+// ─── Gemini API helper (proxied through /api/gemini-proxy to avoid CORS) ─────
 
 /**
- * Fires a single content-generation request to Gemini 1.5 Pro.
- * Returns the raw text of the first candidate part.
+ * Calls Gemini 1.5 Pro via our own Next.js proxy route.
+ * Direct browser → googleapis.com calls are blocked by CORS.
+ * The proxy keeps the API key server-side only.
  */
 export async function callGemini(prompt: string): Promise<string> {
-    const body = {
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: GEN_CONFIG,
-    };
-
-    const res = await fetch(GEMINI_ENDPOINT, {
+    const res = await fetch("/api/gemini-proxy", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ prompt }),
     });
 
-    if (!res.ok) throw new Error(statusMessage(res.status));
-
     const data = await res.json();
-    return data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+
+    if (!res.ok || data.error) {
+        throw new Error(data.error || "Gemini is temporarily unavailable. Please try again.");
+    }
+
+    return data.text as string;
 }
+
 
 
 /**
@@ -84,18 +64,27 @@ function extractJSON(raw: string): string {
  * Auto-retries once before throwing a user-friendly error.
  */
 export async function callGeminiJSON<T>(prompt: string): Promise<T> {
+    let lastRaw = "";
     const attempt = async (): Promise<T> => {
-        const raw = await callGemini(prompt);
-        const jsonStr = extractJSON(raw);
+        lastRaw = await callGemini(prompt);
+        console.debug("[Gemini] raw text for JSON parsing:", lastRaw.slice(0, 500));
+        const jsonStr = extractJSON(lastRaw);
         return JSON.parse(jsonStr) as T;
     };
 
     try {
         return await attempt();
-    } catch {
+    } catch (firstErr) {
+        console.error("[Gemini] first JSON parse attempt failed:", firstErr, "\nRaw:", lastRaw.slice(0, 500));
         try {
             return await attempt();
-        } catch {
+        } catch (secondErr) {
+            console.error("[Gemini] second JSON parse attempt failed:", secondErr, "\nRaw:", lastRaw.slice(0, 500));
+            // If the underlying callGemini threw (e.g. safety block, network), surface that error
+            const msg = secondErr instanceof Error ? secondErr.message : String(secondErr);
+            if (!msg.includes("JSON") && !msg.includes("Incomplete") && !msg.includes("No JSON")) {
+                throw secondErr; // re-throw Gemini-level errors directly
+            }
             throw new Error("We had trouble reading the AI response. Please try uploading your file again.");
         }
     }
