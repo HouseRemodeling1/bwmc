@@ -1,9 +1,11 @@
 // ─── Gemini prompt builders ─────────────────────────────────────────────────────
 
 export function buildMainReportPrompt(extractedText: string): string {
-    return `You are a senior financial analyst with 20 years of experience working with SMEs in the UAE. Analyze the following financial data and return ONLY a valid JSON object. No markdown, no explanation, no backticks. Just raw JSON.
+    return `You are a senior financial analyst with 20 years of experience working with SMEs in the UAE.
 
-Financial Data:
+IMPORTANT: Your entire response must be a single valid JSON object. Do NOT include any text before or after the JSON. Do NOT use markdown, backticks, or code fences. Your response must start with { and end with }.
+
+Analyze this financial data:
 ${extractedText.slice(0, 10000)}
 
 Return this exact JSON structure:
@@ -62,9 +64,11 @@ Rules:
 }
 
 export function buildLeakagePrompt(extractedText: string): string {
-    return `You are a forensic accountant specializing in UAE SMEs. Analyze the following financial data for profit leakage. Return ONLY raw JSON, no markdown, no backticks.
+    return `You are a forensic accountant specializing in UAE SMEs.
 
-Financial Data:
+IMPORTANT: Your entire response must be a single valid JSON object. Do NOT include any text before or after the JSON. Do NOT use markdown, backticks, or code fences. Your response must start with { and end with }.
+
+Analyze this financial data for profit leakage:
 ${extractedText.slice(0, 10000)}
 
 Return this exact JSON structure:
@@ -137,7 +141,11 @@ export function buildSimulatorPrompt(
         ownerWithdrawal: number;
     }
 ): string {
-    return `You are a UAE-based financial advisor. A small business owner has modeled a financial scenario using a simulator. Return ONLY raw JSON, no markdown, no backticks.
+    return `You are a UAE-based financial advisor.
+
+IMPORTANT: Your entire response must be a single valid JSON object. Do NOT include any text before or after the JSON. Do NOT use markdown, backticks, or code fences. Your response must start with { and end with }.
+
+A small business owner has modeled a financial scenario. Analyze it.
 
 Original financial data:
 ${extractedText.slice(0, 4000)}

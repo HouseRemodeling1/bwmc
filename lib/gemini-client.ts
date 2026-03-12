@@ -44,19 +44,50 @@ export async function callGemini(prompt: string): Promise<string> {
 
 
 /**
+ * Extracts a JSON object from a raw string using bracket matching.
+ * Handles cases where Gemini adds preamble text, trailing commentary,
+ * imperfect markdown fences, or wraps JSON in explanation.
+ */
+function extractJSON(raw: string): string {
+    // 1. Strip markdown fences if present
+    const fenceStripped = raw
+        .replace(/^```json?\s*/im, "")
+        .replace(/\s*```\s*$/im, "")
+        .trim();
+
+    // 2. Find the outermost JSON object via bracket matching
+    const start = fenceStripped.indexOf("{");
+    if (start === -1) throw new Error("No JSON object found in response");
+
+    let depth = 0;
+    let inString = false;
+    let escape = false;
+
+    for (let i = start; i < fenceStripped.length; i++) {
+        const ch = fenceStripped[i];
+        if (escape) { escape = false; continue; }
+        if (ch === "\\" && inString) { escape = true; continue; }
+        if (ch === '"') { inString = !inString; continue; }
+        if (inString) continue;
+        if (ch === "{") depth++;
+        if (ch === "}") {
+            depth--;
+            if (depth === 0) return fenceStripped.slice(start, i + 1);
+        }
+    }
+    throw new Error("Incomplete JSON object in response");
+}
+
+/**
  * Calls Gemini and parses the response as JSON.
- * - Strips leading/trailing markdown fences (```json ... ```)
- * - Retries once automatically on JSON parse failure
- * Throws "We had trouble reading the AI response. Please try uploading your file again." after 2 failed parses.
+ * Uses bracket-matching extraction to tolerate preamble/trailing text.
+ * Auto-retries once before throwing a user-friendly error.
  */
 export async function callGeminiJSON<T>(prompt: string): Promise<T> {
     const attempt = async (): Promise<T> => {
         const raw = await callGemini(prompt);
-        const cleaned = raw
-            .replace(/^```json?\s*/i, "")
-            .replace(/\s*```\s*$/i, "")
-            .trim();
-        return JSON.parse(cleaned) as T;
+        const jsonStr = extractJSON(raw);
+        return JSON.parse(jsonStr) as T;
     };
 
     try {
@@ -69,6 +100,7 @@ export async function callGeminiJSON<T>(prompt: string): Promise<T> {
         }
     }
 }
+
 
 // ─── Browser-side file parsers ─────────────────────────────────────────────────
 
