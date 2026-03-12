@@ -100,8 +100,7 @@ export async function parseFileToText(file: File): Promise<string> {
         // Dynamically import pdfjs-dist to keep initial bundle light
         const pdfjsLib = await import("pdfjs-dist");
         // Use CDN worker to avoid Next.js worker-file copy issues
-        pdfjsLib.GlobalWorkerOptions.workerSrc =
-            `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 
         const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
         const pages: string[] = [];
