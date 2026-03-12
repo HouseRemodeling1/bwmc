@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { RotateCcw, Zap, TrendingUp, TrendingDown, Info, Loader2 } from "lucide-react";
+import { callGeminiJSON } from "@/lib/gemini-client";
+import { buildSimulatorPrompt } from "@/lib/gemini-prompts";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface SubScores { profitability: number; cashFlow: number; costEfficiency: number; growthTrend: number; }
@@ -45,6 +47,8 @@ interface Verdict {
 interface Props {
     report: FinancialReport;
     extractedSummary: string;
+    apiKey: string;
+    extractedText: string;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -222,7 +226,7 @@ function SimSlider({
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export default function WhatIfSimulator({ report, extractedSummary }: Props) {
+export default function WhatIfSimulator({ report, extractedSummary, apiKey, extractedText }: Props) {
     const [sliders, setSliders] = useState<Sliders>(DEFAULT_SLIDERS);
     const [verdict, setVerdict] = useState<Verdict | null>(null);
     const [verdictLoading, setVerdictLoading] = useState(false);
@@ -247,16 +251,15 @@ export default function WhatIfSimulator({ report, extractedSummary }: Props) {
         setVerdictLoading(true);
         setVerdictError(null);
         try {
-            const res = await fetch("/api/financial-health/simulate", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ report, sliders, simulatedMetrics: metrics, extractedSummary }),
-            });
-            const data = await res.json();
-            if (!res.ok || data.error) { setVerdictError(data.error || "Analysis failed."); return; }
-            setVerdict(data.verdict);
-        } catch {
-            setVerdictError("Network error. Please try again.");
+            const prompt = buildSimulatorPrompt(
+                extractedText || extractedSummary,
+                report,
+                sliders
+            );
+            const result = await callGeminiJSON<Verdict>(apiKey, prompt);
+            setVerdict(result);
+        } catch (err: unknown) {
+            setVerdictError(err instanceof Error ? err.message : "Analysis failed. Please try again.");
         } finally {
             setVerdictLoading(false);
         }
