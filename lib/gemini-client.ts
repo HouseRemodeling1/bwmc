@@ -1,7 +1,9 @@
 // ─── Direct Gemini API helper (runs 100% in the browser) ──────────────────────
 
-const GEMINI_ENDPOINT = (key: string) =>
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${key}`;
+const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY ?? "";
+
+const GEMINI_ENDPOINT =
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${GEMINI_API_KEY}`;
 
 const GEN_CONFIG = {
     temperature: 0.2,
@@ -13,7 +15,7 @@ const GEN_CONFIG = {
 /** Maps HTTP status codes to user-friendly messages */
 function statusMessage(status: number): string {
     if (status === 400) return "Something went wrong reading your file. Try uploading a cleaner PDF or Excel version.";
-    if (status === 403) return "Your API key seems invalid. Please check and re-enter it.";
+    if (status === 403) return "API key is invalid or not authorised. Please contact support.";
     if (status === 429) return "Too many requests. Please wait 30 seconds and try again.";
     return "Gemini is temporarily unavailable. Please try again in a moment.";
 }
@@ -21,27 +23,25 @@ function statusMessage(status: number): string {
 /**
  * Fires a single content-generation request to Gemini 1.5 Pro.
  * Returns the raw text of the first candidate part.
- * Throws an Error with a user-friendly message on non-200 responses.
  */
-export async function callGemini(apiKey: string, prompt: string): Promise<string> {
+export async function callGemini(prompt: string): Promise<string> {
     const body = {
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: GEN_CONFIG,
     };
 
-    const res = await fetch(GEMINI_ENDPOINT(apiKey), {
+    const res = await fetch(GEMINI_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
     });
 
-    if (!res.ok) {
-        throw new Error(statusMessage(res.status));
-    }
+    if (!res.ok) throw new Error(statusMessage(res.status));
 
     const data = await res.json();
     return data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
 }
+
 
 /**
  * Calls Gemini and parses the response as JSON.
@@ -49,9 +49,9 @@ export async function callGemini(apiKey: string, prompt: string): Promise<string
  * - Retries once automatically on JSON parse failure
  * Throws "We had trouble reading the AI response. Please try uploading your file again." after 2 failed parses.
  */
-export async function callGeminiJSON<T>(apiKey: string, prompt: string): Promise<T> {
+export async function callGeminiJSON<T>(prompt: string): Promise<T> {
     const attempt = async (): Promise<T> => {
-        const raw = await callGemini(apiKey, prompt);
+        const raw = await callGemini(prompt);
         const cleaned = raw
             .replace(/^```json?\s*/i, "")
             .replace(/\s*```\s*$/i, "")
@@ -62,7 +62,6 @@ export async function callGeminiJSON<T>(apiKey: string, prompt: string): Promise
     try {
         return await attempt();
     } catch {
-        // One automatic retry
         try {
             return await attempt();
         } catch {

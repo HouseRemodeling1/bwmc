@@ -47,7 +47,6 @@ interface Verdict {
 interface Props {
     report: FinancialReport;
     extractedSummary: string;
-    apiKey: string;
     extractedText: string;
 }
 
@@ -226,7 +225,7 @@ function SimSlider({
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export default function WhatIfSimulator({ report, extractedSummary, apiKey, extractedText }: Props) {
+export default function WhatIfSimulator({ report, extractedSummary, extractedText }: Props) {
     const [sliders, setSliders] = useState<Sliders>(DEFAULT_SLIDERS);
     const [verdict, setVerdict] = useState<Verdict | null>(null);
     const [verdictLoading, setVerdictLoading] = useState(false);
@@ -256,7 +255,7 @@ export default function WhatIfSimulator({ report, extractedSummary, apiKey, extr
                 report,
                 sliders
             );
-            const result = await callGeminiJSON<Verdict>(apiKey, prompt);
+            const result = await callGeminiJSON<Verdict>(prompt);
             setVerdict(result);
         } catch (err: unknown) {
             setVerdictError(err instanceof Error ? err.message : "Analysis failed. Please try again.");

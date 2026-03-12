@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
     Upload, FileText, Table, BarChart2, AlertTriangle, CheckCircle,
     ChevronRight, Download, Mail, RefreshCw, MessageCircle, Send,
-    TrendingUp, TrendingDown, Shield, ArrowRight, X, Activity, Eye, EyeOff, Key
+    TrendingUp, TrendingDown, Shield, ArrowRight, X, Activity
 } from "lucide-react";
 import WhatIfSimulator from "@/components/financial-health/WhatIfSimulator";
 import ProfitLeakageReport from "@/components/financial-health/ProfitLeakageReport";
@@ -141,11 +141,7 @@ export default function FinancialHealthClient() {
     const [extractedSummary, setExtractedSummary] = useState<string>("");
     const [extractedText, setExtractedText] = useState<string>(""); // cached for chat & simulator
 
-    // API Key state (in-memory only, never persisted)
-    const [apiKey, setApiKey] = useState<string>("");
-    const [apiKeyInput, setApiKeyInput] = useState<string>("");
-    const [apiKeySaved, setApiKeySaved] = useState(false);
-    const [showKeyInput, setShowKeyInput] = useState(false);
+    // API Key state removed — key sourced from NEXT_PUBLIC_GEMINI_API_KEY env var
 
     // Leakage state
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -159,8 +155,8 @@ export default function FinancialHealthClient() {
         runProcessingAnimation(async () => {
             try {
                 const [reportResult, leakageResult] = await Promise.allSettled([
-                    callGeminiJSON<FinancialReport>(apiKey, buildMainReportPrompt(text)),
-                    callGeminiJSON(apiKey, buildLeakagePrompt(text)),
+                    callGeminiJSON<FinancialReport>(buildMainReportPrompt(text)),
+                    callGeminiJSON(buildLeakagePrompt(text)),
                 ]);
 
                 if (reportResult.status === "rejected") {
@@ -217,7 +213,6 @@ export default function FinancialHealthClient() {
     };
 
     const analyzeFile = useCallback(async (file: File) => {
-        if (!apiKey) { setError("Please enter your Gemini API key to get started."); return; }
         setError(null);
         if (file.size > 10 * 1024 * 1024) { setError("File is too large. Maximum size is 10MB."); return; }
         try {
@@ -227,11 +222,9 @@ export default function FinancialHealthClient() {
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : "Failed to read your file. Please try a different format.");
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [apiKey]);
+    }, []);
 
     const analyzeManual = async () => {
-        if (!apiKey) { setError("Please enter your Gemini API key to get started."); return; }
         if (!manualForm.revenue && !manualForm.expenses) {
             setError("Please enter at least your monthly revenue and expenses."); return;
         }
@@ -268,7 +261,7 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
         setChatMessages(prev => [...prev.slice(-9), { role: "user", text: question }]);
         setChatLoading(true);
         try {
-            const answer = await callGemini(apiKey, buildChatPrompt(extractedText, report, question));
+            const answer = await callGemini(buildChatPrompt(extractedText, report, question));
             setChatMessages(prev => [...prev, { role: "ai", text: answer || "Sorry, I couldn't answer that." }]);
         } catch (err: unknown) {
             setChatMessages(prev => [...prev, { role: "ai", text: err instanceof Error ? err.message : "Sorry, I had trouble connecting." }]);
@@ -354,67 +347,6 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                     <div className="text-center mb-10">
                         <h2 className="text-3xl font-bold text-navy mb-3">Upload Your Financial Document</h2>
                         <p className="text-gray-600">PDF, Excel (.xlsx) or CSV — any standard financial document works.</p>
-                    </div>
-
-                    {/* ── API KEY PANEL ─────────────────────────────────── */}
-                    <div className="bg-white border border-gray-200 rounded-2xl p-5 mb-6 shadow-sm">
-                        <div className="flex items-center gap-2 mb-3">
-                            <div className="w-7 h-7 rounded-lg bg-royal-blue/10 flex items-center justify-center">
-                                <Key className="w-4 h-4 text-royal-blue" />
-                            </div>
-                            <span className="font-bold text-navy text-sm">Gemini API Key</span>
-                        </div>
-
-                        {!apiKeySaved ? (
-                            <>
-                                <label className="block text-xs font-medium text-gray-600 mb-2">
-                                    Enter your Gemini API Key to get started
-                                </label>
-                                <div className="flex gap-2">
-                                    <div className="relative flex-1">
-                                        <input
-                                            type={showKeyInput ? "text" : "password"}
-                                            value={apiKeyInput}
-                                            onChange={e => setApiKeyInput(e.target.value)}
-                                            onKeyDown={e => { if (e.key === "Enter" && apiKeyInput.trim()) { setApiKey(apiKeyInput.trim()); setApiKeySaved(true); } }}
-                                            placeholder="AIza..."
-                                            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-navy text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/20 focus:border-royal-blue pr-10"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowKeyInput(v => !v)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-navy"
-                                        >
-                                            {showKeyInput ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                        </button>
-                                    </div>
-                                    <button
-                                        onClick={() => { if (apiKeyInput.trim()) { setApiKey(apiKeyInput.trim()); setApiKeySaved(true); } }}
-                                        className="bg-royal-blue text-white font-semibold px-4 py-2.5 rounded-xl hover:bg-navy transition-colors text-sm whitespace-nowrap"
-                                    >
-                                        Save Key
-                                    </button>
-                                </div>
-                                <p className="text-xs text-gray-400 mt-2 flex items-center gap-1">
-                                    <Shield className="w-3 h-3 text-green-500" />
-                                    Your API key and financial data are used only to generate your report and are never stored or shared.
-                                </p>
-                            </>
-                        ) : (
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <CheckCircle className="w-4 h-4 text-green-500" />
-                                    <span className="text-sm font-semibold text-green-700">API Key active</span>
-                                    <span className="text-xs text-gray-400">({apiKey.slice(0, 6)}...{apiKey.slice(-4)})</span>
-                                </div>
-                                <button
-                                    onClick={() => { setApiKeySaved(false); setApiKeyInput(""); setApiKey(""); }}
-                                    className="text-xs text-royal-blue hover:text-navy underline underline-offset-2 font-medium"
-                                >
-                                    Change key
-                                </button>
-                            </div>
-                        )}
                     </div>
 
                     {error && (
@@ -844,7 +776,7 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.2, duration: 0.5 }}
                             >
-                                <WhatIfSimulator report={report} extractedSummary={extractedSummary} apiKey={apiKey} extractedText={extractedText} />
+                                <WhatIfSimulator report={report} extractedSummary={extractedSummary} extractedText={extractedText} />
                             </motion.div>
 
                             {/* ── SAVE & SHARE ─────────────────────────────── */}
