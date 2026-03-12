@@ -8,6 +8,7 @@ import {
     TrendingUp, TrendingDown, Shield, ArrowRight, X, Activity
 } from "lucide-react";
 import WhatIfSimulator from "@/components/financial-health/WhatIfSimulator";
+import ProfitLeakageReport from "@/components/financial-health/ProfitLeakageReport";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface SubScores { profitability: number; cashFlow: number; costEfficiency: number; growthTrend: number; }
@@ -137,6 +138,31 @@ export default function FinancialHealthClient() {
     const [emailSent, setEmailSent] = useState(false);
     const [extractedSummary, setExtractedSummary] = useState<string>("");
 
+    // Leakage state
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [leakageData, setLeakageData] = useState<any>(null);
+    const [leakageLoading, setLeakageLoading] = useState(false);
+    const [leakageError, setLeakageError] = useState<string | null>(null);
+
+    const fetchLeakage = async (reportData: FinancialReport, summaryText: string) => {
+        setLeakageLoading(true);
+        setLeakageError(null);
+        try {
+            const res = await fetch("/api/financial-health/leakage", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ report: reportData, extractedSummary: summaryText }),
+            });
+            const data = await res.json();
+            if (!res.ok || data.error) { setLeakageError(data.error || "Leakage analysis failed."); }
+            else { setLeakageData(data.leakage); }
+        } catch {
+            setLeakageError("Could not load profit leakage report.");
+        } finally {
+            setLeakageLoading(false);
+        }
+    };
+
     // Chat state
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
     const [chatInput, setChatInput] = useState("");
@@ -189,6 +215,8 @@ export default function FinancialHealthClient() {
                 setExtractedSummary(file.name);
                 setPageState("report");
                 setTimeout(() => reportRef.current?.scrollIntoView({ behavior: "smooth" }), 200);
+                // Run leakage analysis in parallel
+                fetchLeakage(data.report, file.name);
             } catch {
                 setError("Network error. Please check your connection and try again.");
                 setPageState("upload");
@@ -225,6 +253,8 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                 setExtractedSummary(text.slice(0, 500));
                 setPageState("report");
                 setTimeout(() => reportRef.current?.scrollIntoView({ behavior: "smooth" }), 200);
+                // Run leakage analysis in parallel
+                fetchLeakage(data.report, text.slice(0, 500));
             } catch {
                 setError("Network error. Please try again.");
                 setPageState("upload");
@@ -276,6 +306,8 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
         setShowManual(false);
         setEmailInput("");
         setEmailSent(false);
+        setLeakageData(null);
+        setLeakageError(null);
         setPageState("upload");
         setTimeout(() => uploadRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
     };
@@ -607,6 +639,19 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                                     </div>
                                 </SectionCard>
                             )}
+
+                            {/* 3D-PRO — Profit Leakage Report */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.1, duration: 0.4 }}
+                            >
+                                <ProfitLeakageReport
+                                    leakage={leakageData}
+                                    loading={leakageLoading}
+                                    error={leakageError}
+                                />
+                            </motion.div>
 
                             {/* 3E — Monthly Trend */}
                             {report.monthlyTrend.length > 1 && (() => {
