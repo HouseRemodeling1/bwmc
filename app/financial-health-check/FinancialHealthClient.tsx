@@ -5,8 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
     Upload, FileText, Table, BarChart2, AlertTriangle, CheckCircle,
     ChevronRight, Download, Mail, RefreshCw, MessageCircle, Send,
-    TrendingUp, TrendingDown, Minus, Shield, ArrowRight, X, Activity
+    TrendingUp, TrendingDown, Shield, ArrowRight, X, Activity
 } from "lucide-react";
+import WhatIfSimulator from "@/components/financial-health/WhatIfSimulator";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface SubScores { profitability: number; cashFlow: number; costEfficiency: number; growthTrend: number; }
@@ -749,6 +750,15 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                                     </button>
                                 </div>
                             </SectionCard>
+
+                            {/* ── WHAT-IF SIMULATOR ────────────────────────── */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.2, duration: 0.5 }}
+                            >
+                                <WhatIfSimulator report={report} extractedSummary={extractedSummary} />
+                            </motion.div>
 
                             {/* ── SAVE & SHARE ─────────────────────────────── */}
                             <div className="bg-navy rounded-2xl p-8 text-center print:hidden">
