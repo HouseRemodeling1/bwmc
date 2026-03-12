@@ -13,12 +13,13 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Missing prompt" }, { status: 400 });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
+        console.error("[gemini-proxy] GEMINI_API_KEY is not set in environment variables!");
         return NextResponse.json({ error: "Gemini API key not configured on server." }, { status: 500 });
     }
 
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`;
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     const body = {
         contents: [{ parts: [{ text: prompt }] }],
@@ -29,6 +30,8 @@ export async function POST(req: NextRequest) {
             maxOutputTokens: 8192,
         },
     };
+
+    console.log(`[gemini-proxy] Calling Gemini 1.5 Flash. Key prefix: ${apiKey.slice(0, 8)}... Prompt length: ${prompt.length}`);
 
     try {
         const res = await fetch(endpoint, {
