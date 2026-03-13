@@ -176,7 +176,7 @@ function RecoveryBox({ data }: { data: LeakageData["recoveryOpportunity"] }) {
             <p className="text-gray-600 mb-6">{data.narrative}</p>
 
             <div className="space-y-2 mb-5">
-                {data.breakdown.map((item, i) => (
+                {data.breakdown?.map((item, i) => (
                     <div key={i} className="flex items-center justify-between py-2.5 px-4 bg-white/70 rounded-xl border border-amber-100">
                         <div className="flex items-center gap-2">
                             <span className="w-5 h-5 rounded-full bg-amber-400 text-navy text-[10px] font-black flex items-center justify-center">{i + 1}</span>

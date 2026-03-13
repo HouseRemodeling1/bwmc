@@ -163,7 +163,7 @@ function StrategicRoadmapTimeline({ plan }: { plan: FinancialReport['actionPlan'
                         <span className="text-navy">{items.length} ACTIONS</span>
                     </h5>
                     <div className="space-y-3">
-                        {items.map((item, idx) => (
+                        {items?.map((item, idx) => (
                             <div key={idx} className="bg-white p-3 rounded-xl border border-gray-100 shadow-sm relative group overflow-hidden">
                                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-royal-blue/20 group-hover:bg-royal-blue transition-colors" />
                                 <div className="flex justify-between items-start mb-1.5">
@@ -591,7 +591,7 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                                     />
                                     
                                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                        {report.financialPerformance.keyMetrics.map((m, idx) => (
+                                        {report.financialPerformance.keyMetrics?.map((m, idx) => (
                                             <div key={idx} className="bg-gray-50 p-4 rounded-xl border border-gray-100">
                                                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{m.metric}</p>
                                                 <p className="text-xl font-black text-navy mb-1">{m.value}</p>
@@ -629,7 +629,7 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-gray-50">
-                                                {report.costIntelligence.costBreakdown.map((item, idx) => (
+                                                {(report.costIntelligence.costBreakdown || []).map((item, idx) => (
                                                     <tr key={idx} className="group">
                                                         <td className="py-4 font-bold text-navy text-sm">{item.category}</td>
                                                         <td className="py-4 text-sm text-gray-600 font-mono">AED {item.amount.toLocaleString()}</td>
@@ -650,7 +650,7 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                                         <div className="bg-red-50 p-5 rounded-2xl border border-red-100 mt-6">
                                             <h4 className="text-[10px] font-black text-red-600 uppercase tracking-widest mb-4">Hidden Fiscal Exposure Identified</h4>
                                             <div className="grid md:grid-cols-2 gap-4">
-                                                {report.costIntelligence.hiddenCosts.map((cost, idx) => (
+                                                {(report.costIntelligence.hiddenCosts || []).map((cost, idx) => (
                                                     <div key={idx} className="bg-white p-3 border border-red-200 rounded-xl shadow-sm">
                                                         <div className="flex justify-between items-start mb-1.5">
                                                             <span className="font-bold text-navy text-xs">{cost.description}</span>
@@ -688,7 +688,7 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                                     </div>
 
                                     <div className="grid md:grid-cols-3 gap-4">
-                                        {report.profitLeakage.topLeaks.map((leak, idx) => (
+                                        {(report.profitLeakage.topLeaks || []).map((leak, idx) => (
                                             <div key={idx} className="bg-white border border-gray-100 p-4 rounded-xl shadow-sm relative overflow-hidden">
                                                 <div className={`absolute top-0 left-0 w-full h-1 ${
                                                     leak.severity === 'critical' ? 'bg-red-500' : leak.severity === 'high' ? 'bg-amber-500' : 'bg-royal-blue'
@@ -710,7 +710,7 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                             <div className="grid md:grid-cols-2 gap-8">
                                 <SectionCard title="CFO Risk Assessment" icon={Shield}>
                                     <div className="space-y-6">
-                                        {report.riskAssessment.redFlags.map((flag, idx) => (
+                                        {(report.riskAssessment.redFlags || []).map((flag, idx) => (
                                             <div key={idx} className="p-4 bg-gray-50 rounded-xl border border-gray-100 relative group overflow-hidden">
                                                 <div className={`absolute left-0 top-0 bottom-0 w-1 ${
                                                     flag.severity === 'critical' ? 'bg-red-500' : 'bg-amber-400'
