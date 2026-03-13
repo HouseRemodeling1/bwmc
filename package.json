@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@supabase/supabase-js": "^2.99.1",
     "@types/nodemailer": "^7.0.4",
     "@types/pdf-parse": "^1.1.5",
     "@vercel/kv": "^3.0.0",

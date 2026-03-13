@@ -1,10 +1,14 @@
 import fs from "fs";
 import path from "path";
-import { createClient } from "@vercel/kv";
+import { createClient } from "@supabase/supabase-js";
 
-const kv = createClient({
-    url: process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || "",
-    token: process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || "",
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+
+const supabase = createClient(supabaseUrl, supabaseServiceRoleKey, {
+  auth: {
+    persistSession: false,
+  },
 });
 
 const blogsFilePath = path.join(process.cwd(), "public", "data", "blogs.json");
@@ -21,30 +25,40 @@ export interface Blog {
     slug: string;
     createdAt: string;
     updatedAt: string;
+    keywords?: string[];
+    relatedPosts?: string[];
+    relatedServices?: string[];
 }
 
 export async function getBlogs(): Promise<Blog[]> {
     try {
-        let blogs = await kv.get("blogs");
-        if (!blogs) {
+        const { data, error } = await supabase
+            .from("blogs")
+            .select("*")
+            .order("createdAt", { ascending: false });
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+            // If Supabase is empty, check for local data to sync/seed
             if (fs.existsSync(blogsFilePath)) {
                 const fileContents = fs.readFileSync(blogsFilePath, "utf8");
-                const data = JSON.parse(fileContents);
-                blogs = data.blogs || [];
-                // Seeding KV if empty
-                try {
-                    await kv.set("blogs", blogs);
-                } catch (e) {
-                    console.warn("Could not seed KV:", e);
+                const localData = JSON.parse(fileContents);
+                const localBlogs = localData.blogs || [];
+                
+                if (localBlogs.length > 0) {
+                    console.info("Seeding Supabase with local blogs...");
+                    await saveBlogs(localBlogs);
+                    return localBlogs;
                 }
-            } else {
-                blogs = [];
             }
+            return [];
         }
-        return blogs as Blog[];
+
+        return data as Blog[];
     } catch (error) {
-        console.error("Error in getBlogs (KV fail, fallback to local):", error);
-        if (fs.existsSync(blogsFilePath)) {
+        console.error("Error in getBlogs (Supabase fail, fallback to local if dev):", error);
+        if (process.env.NODE_ENV === 'development' && fs.existsSync(blogsFilePath)) {
             const fileContents = fs.readFileSync(blogsFilePath, "utf8");
             return JSON.parse(fileContents).blogs || [];
         }
@@ -53,30 +67,43 @@ export async function getBlogs(): Promise<Blog[]> {
 }
 
 export async function saveBlogs(blogs: Blog[]) {
-    // Production & Development: Always try KV
+    // This function is kept for compatibility with current API but optimized for Supabase
+    // Ideally, we should use individual upsert/delete functions
     try {
-        const hasKV = (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) || 
-                      (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
-        
-        if (hasKV) {
-            await kv.set("blogs", blogs);
-        }
+        if (!supabaseUrl || !supabaseServiceRoleKey) return;
+
+        const { error } = await supabase
+            .from("blogs")
+            .upsert(blogs, { onConflict: 'id' });
+
+        if (error) throw error;
     } catch (error) {
-        console.error("Failed to save to KV:", error);
-        if (process.env.NODE_ENV === 'production') {
-            throw new Error("Persistence error: Failed to save to KV database");
-        }
+        console.error("Failed to save to Supabase:", error);
+        throw new Error("Persistence error: Failed to save to Supabase");
     }
 
-    // Local file persistence (Always for consistency if possible, essential for Dev)
-    try {
-        // Ensure directory exists
-        const dir = path.dirname(blogsFilePath);
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
+    // Keep local file in sync only in development
+    if (process.env.NODE_ENV === 'development') {
+        try {
+            const dir = path.dirname(blogsFilePath);
+            if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+            fs.writeFileSync(blogsFilePath, JSON.stringify({ blogs }, null, 2));
+        } catch (error) {
+            console.error("Failed to sync to local file:", error);
         }
-        fs.writeFileSync(blogsFilePath, JSON.stringify({ blogs }, null, 2));
+    }
+}
+
+export async function deleteBlog(id: string) {
+    try {
+        const { error } = await supabase
+            .from("blogs")
+            .delete()
+            .eq("id", id);
+
+        if (error) throw error;
     } catch (error) {
-        console.error("Failed to save to local file:", error);
+        console.error("Failed to delete from Supabase:", error);
+        throw new Error("Persistence error: Failed to delete from Supabase");
     }
 }

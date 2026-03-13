@@ -17,7 +17,6 @@ export async function GET() {
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const blogs = await getBlogs();
 
         const newBlog: Blog = {
             id: Date.now().toString(),
@@ -27,8 +26,8 @@ export async function POST(request: NextRequest) {
             updatedAt: new Date().toISOString(),
         };
 
-        blogs.push(newBlog);
-        await saveBlogs(blogs);
+        // saveBlogs handles upsert, we just pass the new blog in an array
+        await saveBlogs([newBlog]);
 
         // Revalidate blog pages
         revalidatePath("/blog");
@@ -40,4 +39,5 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: error.message || "Failed to create blog" }, { status: 500 });
     }
 }
+
 

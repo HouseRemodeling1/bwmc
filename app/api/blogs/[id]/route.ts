@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getBlogs, saveBlogs, Blog } from "@/lib/blogs";
+import { getBlogs, saveBlogs, deleteBlog, Blog } from "@/lib/blogs";
 import { revalidatePath } from "next/cache";
 
 // GET single blog
@@ -30,22 +30,26 @@ export async function PUT(
     try {
         const { id } = await params;
         const body = await request.json();
+        
+        // We still need current blog to know the old slug for revalidation
         const blogs = await getBlogs();
-        const index = blogs.findIndex((b: Blog) => b.id === id);
+        const existingBlog = blogs.find((b: Blog) => b.id === id);
 
-        if (index === -1) {
+        if (!existingBlog) {
             return NextResponse.json({ error: "Blog not found" }, { status: 404 });
         }
 
-        const oldSlug = blogs[index].slug;
+        const oldSlug = existingBlog.slug;
 
-        blogs[index] = {
-            ...blogs[index],
+        const updatedBlog: Blog = {
+            ...existingBlog,
             ...body,
+            id, // Ensure ID doesn't change
             updatedAt: new Date().toISOString(),
         };
 
-        await saveBlogs(blogs);
+        // saveBlogs handles upsert
+        await saveBlogs([updatedBlog]);
 
         // Revalidate
         revalidatePath("/blog");
@@ -55,7 +59,7 @@ export async function PUT(
         }
         revalidatePath("/admin");
 
-        return NextResponse.json(blogs[index]);
+        return NextResponse.json(updatedBlog);
     } catch (error) {
         console.error("Update Blog Error:", error);
         return NextResponse.json({ error: "Failed to update blog" }, { status: 500 });
@@ -76,8 +80,7 @@ export async function DELETE(
             return NextResponse.json({ error: "Blog not found" }, { status: 404 });
         }
 
-        const filteredBlogs = blogs.filter((b: Blog) => b.id !== id);
-        await saveBlogs(filteredBlogs);
+        await deleteBlog(id);
 
         // Revalidate
         revalidatePath("/blog");
@@ -90,4 +93,3 @@ export async function DELETE(
         return NextResponse.json({ error: "Failed to delete blog" }, { status: 500 });
     }
 }
-
