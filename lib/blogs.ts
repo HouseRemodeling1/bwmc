@@ -56,19 +56,17 @@ export async function getBlogs(): Promise<Blog[]> {
         }
 
         return data as Blog[];
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error in getBlogs (Supabase fail, fallback to local if dev):", error);
         if (process.env.NODE_ENV === 'development' && fs.existsSync(blogsFilePath)) {
             const fileContents = fs.readFileSync(blogsFilePath, "utf8");
             return JSON.parse(fileContents).blogs || [];
         }
-        return [];
+        throw new Error(`Failed to fetch blogs: ${error.message || "Unknown error"}`);
     }
 }
 
 export async function saveBlogs(blogs: Blog[]) {
-    // This function is kept for compatibility with current API but optimized for Supabase
-    // Ideally, we should use individual upsert/delete functions
     try {
         if (!supabaseUrl || !supabaseServiceRoleKey) return;
 
@@ -77,12 +75,11 @@ export async function saveBlogs(blogs: Blog[]) {
             .upsert(blogs, { onConflict: 'id' });
 
         if (error) throw error;
-    } catch (error) {
+    } catch (error: any) {
         console.error("Failed to save to Supabase:", error);
-        throw new Error("Persistence error: Failed to save to Supabase");
+        throw new Error(`Persistence error: ${error.message || "Failed to save to Supabase"}. Please ensure you have run the SQL script in Supabase to create the 'blogs' table.`);
     }
 
-    // Keep local file in sync only in development
     if (process.env.NODE_ENV === 'development') {
         try {
             const dir = path.dirname(blogsFilePath);
@@ -102,8 +99,8 @@ export async function deleteBlog(id: string) {
             .eq("id", id);
 
         if (error) throw error;
-    } catch (error) {
+    } catch (error: any) {
         console.error("Failed to delete from Supabase:", error);
-        throw new Error("Persistence error: Failed to delete from Supabase");
+        throw new Error(`Persistence error: ${error.message || "Failed to delete from Supabase"}`);
     }
 }
