@@ -11,7 +11,7 @@ interface Blog {
     title: string;
     excerpt: string;
     published: boolean;
-    createdat: string;
+    createdAt: string;
 }
 
 export default function AdminDashboard() {
@@ -129,7 +129,7 @@ export default function AdminDashboard() {
                                         </div>
                                         <p className="text-gray-600 mb-3">{blog.excerpt}</p>
                                         <p className="text-sm text-gray-400">
-                                            Created: {new Date(blog.createdat).toLocaleDateString()}
+                                            Created: {new Date(blog.createdAt).toLocaleDateString()}
                                         </p>
                                     </div>
                                     <div className="flex gap-2 ml-4">

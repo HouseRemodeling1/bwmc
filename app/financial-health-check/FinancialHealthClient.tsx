@@ -5,33 +5,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
     Upload, FileText, Table, BarChart2, AlertTriangle, CheckCircle,
     ChevronRight, Download, Mail, RefreshCw, MessageCircle, Send,
-    TrendingUp, TrendingDown, Shield, ArrowRight, X, Activity
+    TrendingUp, TrendingDown, Shield, ArrowRight, X, Activity, Zap
 } from "lucide-react";
 import WhatIfSimulator from "@/components/financial-health/WhatIfSimulator";
 import ProfitLeakageReport from "@/components/financial-health/ProfitLeakageReport";
 import { callGemini, callGeminiJSON, parseFileToText } from "@/lib/gemini-client";
 import { buildMainReportPrompt, buildLeakagePrompt, buildChatPrompt } from "@/lib/gemini-prompts";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-interface SubScores { profitability: number; cashFlow: number; costEfficiency: number; growthTrend: number; }
-interface RedFlag { severity: "critical" | "warning" | "watch"; title: string; whyItMatters: string; whatToDo: string; }
-interface MoneyDrain { category: string; theirPercentage: number; industryAverage: number; }
-interface MonthlyTrend { month: string; revenue: number; expenses: number; }
-interface VatExposure { status: "safe" | "approaching" | "exceeded"; estimatedAnnualRevenue: number; explanation: string; }
-interface Recommendation { title: string; explanation: string; difficulty: "Easy" | "Medium" | "Needs Expert Help"; }
-
-interface FinancialReport {
-    healthScore: number;
-    subScores: SubScores;
-    summary: string;
-    redFlags: RedFlag[];
-    topMoneyDrains: MoneyDrain[];
-    monthlyTrend: MonthlyTrend[];
-    vatExposure: VatExposure;
-    cashRunwayMonths: number | null;
-    recommendations: Recommendation[];
-    pointsFromPerfect: number;
-}
+import {
+    FinancialReport, SubScoreDetail, SubScores, RedFlag, CostBreakdownItem,
+    WaterfallRow, LeakItem, StrategicRecommendation, ActionPlanItem
+} from "./financial-types";
 
 interface ChatMessage { role: "user" | "ai"; text: string; }
 
@@ -44,103 +28,169 @@ const PROCESSING_STEPS = [
 ];
 
 // ─── Helper Components ─────────────────────────────────────────────────────────
-function ScoreCircle({ score }: { score: number }) {
-    const [animated, setAnimated] = useState(0);
-    useEffect(() => {
-        const timer = setTimeout(() => setAnimated(score), 300);
-        return () => clearTimeout(timer);
-    }, [score]);
-    const radius = 70;
-    const circumference = 2 * Math.PI * radius;
-    const offset = circumference - (animated / 100) * circumference;
-    const color = score >= 71 ? "#22c55e" : score >= 41 ? "#f59e0b" : "#ef4444";
-    const label = score >= 71 ? "Healthy" : score >= 41 ? "Needs Attention" : "At Risk";
 
+function SectionCard({ title, icon: Icon, children, accentColor = "bg-royal-blue/10", textColor = "text-navy" }: { title: string; icon: React.ElementType; children: React.ReactNode; accentColor?: string; textColor?: string }) {
     return (
-        <div className="flex flex-col items-center gap-4">
-            <div className="relative w-48 h-48">
-                <svg className="w-full h-full -rotate-90" viewBox="0 0 180 180">
-                    <circle cx="90" cy="90" r={radius} fill="none" stroke="#e5e7eb" strokeWidth="14" />
-                    <circle
-                        cx="90" cy="90" r={radius} fill="none"
-                        stroke={color} strokeWidth="14"
-                        strokeDasharray={circumference}
-                        strokeDashoffset={offset}
-                        strokeLinecap="round"
-                        style={{ transition: "stroke-dashoffset 1.5s ease-out" }}
-                    />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-5xl font-bold text-navy">{animated}</span>
-                    <span className="text-sm text-gray-500">/ 100</span>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-8 last:mb-0">
+            <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-50 bg-gray-50/50">
+                <div className={`w-8 h-8 rounded-lg ${accentColor} flex items-center justify-center`}>
+                    <Icon className="w-4 h-4 text-royal-blue" />
                 </div>
-            </div>
-            <span className="px-4 py-1.5 rounded-full text-sm font-bold text-white" style={{ backgroundColor: color }}>{label}</span>
-        </div>
-    );
-}
-
-function ProgressBar({ value, label, color }: { value: number; label: string; color: string }) {
-    const [width, setWidth] = useState(0);
-    useEffect(() => { const t = setTimeout(() => setWidth(value), 500); return () => clearTimeout(t); }, [value]);
-    return (
-        <div className="space-y-1.5">
-            <div className="flex justify-between text-sm">
-                <span className="text-gray-600">{label}</span>
-                <span className="font-semibold text-navy">{value}</span>
-            </div>
-            <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full rounded-full transition-all duration-1000 ease-out" style={{ width: `${width}%`, backgroundColor: color }} />
-            </div>
-        </div>
-    );
-}
-
-function SeverityBadge({ severity }: { severity: string }) {
-    const config = {
-        critical: { color: "bg-red-100 text-red-700 border-red-200", label: "Critical" },
-        warning: { color: "bg-amber-100 text-amber-700 border-amber-200", label: "Warning" },
-        watch: { color: "bg-blue-100 text-blue-700 border-blue-200", label: "Watch" },
-    }[severity] ?? { color: "bg-gray-100 text-gray-700 border-gray-200", label: severity };
-    return <span className={`px-2.5 py-0.5 text-xs font-bold rounded-full border ${config.color}`}>{config.label}</span>;
-}
-
-function DifficultyBadge({ difficulty }: { difficulty: string }) {
-    const config: Record<string, string> = {
-        "Easy": "bg-green-100 text-green-700",
-        "Medium": "bg-amber-100 text-amber-700",
-        "Needs Expert Help": "bg-purple-100 text-purple-700",
-    };
-    return <span className={`px-2.5 py-0.5 text-xs font-bold rounded-full ${config[difficulty] || "bg-gray-100 text-gray-700"}`}>{difficulty}</span>;
-}
-
-function SectionCard({ title, icon: Icon, children }: { title: string; icon: React.ElementType; children: React.ReactNode }) {
-    return (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-50">
-                <div className="w-9 h-9 rounded-xl bg-royal-blue/10 flex items-center justify-center">
-                    <Icon className="w-5 h-5 text-royal-blue" />
-                </div>
-                <h3 className="font-bold text-navy text-lg">{title}</h3>
+                <h3 className={`font-bold ${textColor} text-base uppercase tracking-widest`}>{title}</h3>
             </div>
             <div className="p-6">{children}</div>
         </div>
     );
 }
 
-// ─── Main Component ─────────────────────────────────────────────────────────────
+function ScoreCard({ subScore, color }: { subScore: SubScoreDetail, color: string }) {
+    return (
+        <div className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm hover:border-royal-blue/30 transition-colors">
+            <div className="flex justify-between items-start mb-2">
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{subScore.label}</span>
+                <span className="text-xl font-black text-navy">{subScore.score}<span className="text-[10px] text-gray-400">/100</span></span>
+            </div>
+            <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden mb-3">
+                <div 
+                    className="h-full rounded-full transition-all duration-1000 ease-out" 
+                    style={{ width: `${subScore.score}%`, backgroundColor: color }} 
+                />
+            </div>
+            <p className="text-[10px] leading-relaxed text-gray-500 font-medium italic">"{subScore.commentary}"</p>
+        </div>
+    );
+}
+
+function StatusBadge({ status }: { status: "healthy" | "watch" | "critical" | string }) {
+    const s = status.toLowerCase();
+    const config = {
+        healthy: "bg-green-100 text-green-700 border-green-200",
+        safe: "bg-green-100 text-green-700 border-green-200",
+        watch: "bg-amber-100 text-amber-700 border-amber-200",
+        approaching: "bg-amber-100 text-amber-700 border-amber-200",
+        critical: "bg-red-100 text-red-700 border-red-200",
+        exceeded: "bg-red-100 text-red-700 border-red-200",
+    }[s] ?? "bg-gray-100 text-gray-700 border-gray-200";
+    
+    return (
+        <span className={`px-2 py-0.5 text-[9px] font-black rounded-full border uppercase tracking-tighter ${config}`}>
+            {status}
+        </span>
+    );
+}
+
+function CFOReportCover({ meta, summary, health }: { meta: FinancialReport['reportMeta'], summary: FinancialReport['executiveSummary'], health: FinancialReport['healthScore'] }) {
+    return (
+        <div className="bg-navy rounded-3xl p-10 text-white relative overflow-hidden mb-12 shadow-2xl">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-royal-blue/10 rounded-full -mr-20 -mt-20 blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-sky-blue/10 rounded-full -ml-10 -mb-10 blur-2xl" />
+            
+            <div className="relative z-10">
+                <div className="flex justify-between items-start mb-12">
+                    <div>
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="w-8 h-1 bg-sky-blue rounded-full" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-sky-blue">Confidential Briefing</span>
+                        </div>
+                        <h1 className="text-4xl font-black mb-1">Financial Health Case Briefing</h1>
+                        <p className="text-white/50 text-xs font-medium uppercase tracking-widest">{meta.periodAnalyzed} • Prepared {meta.reportDate}</p>
+                    </div>
+                    <div className="text-right">
+                        <div className="inline-block p-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
+                            <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Consolidated Health Grade</p>
+                            <div className="flex items-baseline gap-2">
+                                <span className={`text-6xl font-black ${
+                                    summary.grade === 'A' ? 'text-green-400' : summary.grade === 'B' ? 'text-amber-400' : 'text-red-400'
+                                }`}>{summary.grade}</span>
+                                <span className="text-xs text-white/30 font-medium">/ UAE SME Benchmark</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="bg-white/5 rounded-2xl p-6 border border-white/10 backdrop-blur-sm mb-12">
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-xl bg-sky-blue/20 flex items-center justify-center">
+                            <Zap className="w-5 h-5 text-sky-blue" />
+                        </div>
+                        <h2 className="text-xl font-bold text-white uppercase tracking-tight italic">"{summary.headline}"</h2>
+                    </div>
+                    <p className="text-white/70 leading-relaxed text-sm font-medium">{summary.narrative}</p>
+                </div>
+
+                <div className="grid md:grid-cols-4 gap-4">
+                    <ScoreCard subScore={health.subScores.profitability} color="#22c55e" />
+                    <ScoreCard subScore={health.subScores.cashFlow} color="#3b82f6" />
+                    <ScoreCard subScore={health.subScores.costEfficiency} color="#f59e0b" />
+                    <ScoreCard subScore={health.subScores.growthTrend} color="#8b5cf6" />
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function AdvancedInsightCard({ title, icon: Icon, value, status, children }: { title: string; icon: any; value: string | number | null; status?: string; children: React.ReactNode }) {
+    return (
+        <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all group">
+            <div className="flex justify-between items-start mb-4">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-royal-blue/5 flex items-center justify-center group-hover:bg-royal-blue group-hover:text-white transition-colors">
+                        <Icon className="w-5 h-5 text-royal-blue group-hover:text-white" />
+                    </div>
+                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest">{title}</h4>
+                </div>
+                {status && <StatusBadge status={status} />}
+            </div>
+            <div className="mb-3">
+                <span className="text-3xl font-black text-navy">{value ?? "N/A"}</span>
+            </div>
+            <p className="text-[11px] leading-relaxed text-gray-500 font-medium italic">"{children}"</p>
+        </div>
+    );
+}
+
+function StrategicRoadmapTimeline({ plan }: { plan: FinancialReport['actionPlan'] }) {
+    return (
+        <div className="grid md:grid-cols-3 gap-6">
+            {[
+                { month: 'Month 1', items: plan.month1, color: 'border-royal-blue' },
+                { month: 'Month 2', items: plan.month2, color: 'border-sky-blue' },
+                { month: 'Month 3', items: plan.month3, color: 'border-navy' }
+            ].map(({ month, items, color }) => (
+                <div key={month} className={`bg-gray-50/50 rounded-2xl p-5 border-t-4 ${color}`}>
+                    <h5 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 flex justify-between">
+                        {month}
+                        <span className="text-navy">{items.length} ACTIONS</span>
+                    </h5>
+                    <div className="space-y-3">
+                        {items.map((item, idx) => (
+                            <div key={idx} className="bg-white p-3 rounded-xl border border-gray-100 shadow-sm relative group overflow-hidden">
+                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-royal-blue/20 group-hover:bg-royal-blue transition-colors" />
+                                <div className="flex justify-between items-start mb-1.5">
+                                    <span className="text-[9px] font-bold text-royal-blue">{item.week ?? item.type}</span>
+                                </div>
+                                <p className="text-[11px] font-bold text-navy leading-tight mb-1">{item.action}</p>
+                                <p className="text-[9px] text-gray-500 leading-snug italic">"{item.why}"</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+}
+
 export default function FinancialHealthClient() {
     const [pageState, setPageState] = useState<PageState>("hero");
-    const [isDragging, setIsDragging] = useState(false);
-    const [showManual, setShowManual] = useState(false);
-    const [processingStep, setProcessingStep] = useState(0);
     const [report, setReport] = useState<FinancialReport | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [extractedText, setExtractedText] = useState("");
+    const [extractedSummary, setExtractedSummary] = useState("");
+    const [processingStep, setProcessingStep] = useState(0);
+    const [showManual, setShowManual] = useState(false);
     const [emailInput, setEmailInput] = useState("");
     const [emailSent, setEmailSent] = useState(false);
-    const [extractedSummary, setExtractedSummary] = useState<string>("");
-    const [extractedText, setExtractedText] = useState<string>(""); // cached for chat & simulator
-
     // API Key state removed — key sourced from NEXT_PUBLIC_GEMINI_API_KEY env var
 
     // Leakage state
@@ -149,37 +199,21 @@ export default function FinancialHealthClient() {
     const [leakageLoading, setLeakageLoading] = useState(false);
     const [leakageError, setLeakageError] = useState<string | null>(null);
 
-    // ── Core: run Main Report + Leakage in parallel ──────────────────────────
+    // ── Core: run Comprehensive CFO Analysis ─────────────────────────────────────
     const runAnalysis = async (text: string) => {
         setExtractedText(text);
         runProcessingAnimation(async () => {
             try {
-                const [reportResult, leakageResult] = await Promise.allSettled([
-                    callGeminiJSON<FinancialReport>(buildMainReportPrompt(text)),
-                    callGeminiJSON(buildLeakagePrompt(text)),
-                ]);
-
-                if (reportResult.status === "rejected") {
-                    setError(reportResult.reason?.message || "Analysis failed. Please try again.");
-                    setPageState("upload");
-                    return;
-                }
-
-                setReport(reportResult.value);
+                const reportResult = await callGeminiJSON<FinancialReport>(buildMainReportPrompt(text));
+                
+                setReport(reportResult);
                 setPageState("report");
                 setTimeout(() => reportRef.current?.scrollIntoView({ behavior: "smooth" }), 200);
-
-                if (leakageResult.status === "fulfilled") { setLeakageData(leakageResult.value); }
-                else { setLeakageError(leakageResult.reason?.message || "Leakage analysis failed."); }
             } catch (err: unknown) {
                 setError(err instanceof Error ? err.message : "Analysis failed. Please try again.");
                 setPageState("upload");
-            } finally {
-                setLeakageLoading(false);
             }
         });
-        setLeakageLoading(true);
-        setLeakageError(null);
     };
 
     // Chat state
@@ -514,228 +548,324 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                     >
                         <div className="max-w-4xl mx-auto space-y-8">
 
-                            {/* Header strip */}
-                            <div className="flex items-center justify-between flex-wrap gap-4">
-                                <div>
-                                    <h2 className="text-3xl font-bold text-navy">Your Financial Health Report</h2>
-                                    <p className="text-gray-500 mt-1">Generated on {new Date().toLocaleDateString("en-AE", { day: "numeric", month: "long", year: "numeric" })}</p>
+                            {/* CFO Cover Page & Executive Summary */}
+                            <CFOReportCover 
+                                meta={report.reportMeta} 
+                                summary={report.executiveSummary} 
+                                health={report.healthScore}
+                            />
+
+                            <div className="flex items-center justify-between flex-wrap gap-4 px-2">
+                                <div className="flex items-center gap-2">
+                                    <Shield className="w-3 h-3 text-royal-blue" />
+                                    <p className="text-[10px] text-gray-400 uppercase tracking-[0.2em]">BWMC FinSight AI • Reference #{Math.random().toString(36).substring(7).toUpperCase()}</p>
                                 </div>
                                 <button
                                     onClick={resetPage}
-                                    className="flex items-center gap-2 text-sm text-gray-500 hover:text-navy border border-gray-200 bg-white px-4 py-2 rounded-xl transition-colors print:hidden"
+                                    className="flex items-center gap-2 text-xs text-royal-blue font-bold px-4 py-2 hover:bg-royal-blue/5 rounded-lg transition-colors print:hidden"
                                 >
-                                    <RefreshCw className="w-4 h-4" />
-                                    Analyze Another File
+                                    <RefreshCw className="w-3 h-3" />
+                                    New Analysis
                                 </button>
                             </div>
 
-                            {/* 3A — Health Score */}
-                            <SectionCard title="Overall Health Score" icon={Activity}>
-                                <div className="flex flex-col md:flex-row items-center gap-10">
-                                    <ScoreCircle score={report.healthScore} />
-                                    <div className="flex-1 space-y-4 w-full">
-                                        <ProgressBar value={report.subScores.profitability} label="Profitability" color={subScoreColor(report.subScores.profitability)} />
-                                        <ProgressBar value={report.subScores.cashFlow} label="Cash Flow" color={subScoreColor(report.subScores.cashFlow)} />
-                                        <ProgressBar value={report.subScores.costEfficiency} label="Cost Efficiency" color={subScoreColor(report.subScores.costEfficiency)} />
-                                        <ProgressBar value={report.subScores.growthTrend} label="Growth Trend" color={subScoreColor(report.subScores.growthTrend)} />
+                            {/* Analyst Note */}
+                            <div className="bg-amber-50 border-l-4 border-amber-400 p-6 rounded-r-2xl shadow-sm">
+                                <div className="flex items-center gap-2 mb-2 text-amber-800 uppercase tracking-widest text-[10px] font-black">
+                                    <MessageCircle className="w-4 h-4" />
+                                    Analyst Observation (Marcus Al-Rashidi)
+                                </div>
+                                <p className="text-amber-900 font-serif italic text-lg leading-relaxed">
+                                    "{report.reportMeta.analystNote}"
+                                </p>
+                            </div>
+
+                            {/* Financial Performance Section */}
+                            <SectionCard title="Performance Intelligence" icon={BarChart2}>
+                                <div className="space-y-8">
+                                    <div 
+                                        className="text-gray-700 leading-relaxed space-y-4"
+                                        dangerouslySetInnerHTML={{ 
+                                            __html: report.financialPerformance.narrative.replace(/\*\*(.*?)\*\*/g, '<strong class="text-navy font-bold">$1</strong>').replace(/\n/g, '<br/>') 
+                                        }}
+                                    />
+                                    
+                                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                        {report.financialPerformance.keyMetrics.map((m, idx) => (
+                                            <div key={idx} className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{m.metric}</p>
+                                                <p className="text-xl font-black text-navy mb-1">{m.value}</p>
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-[9px] text-gray-500 italic">Target: {m.benchmark}</span>
+                                                    <StatusBadge status={m.status} />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="p-4 bg-royal-blue/5 rounded-xl border border-royal-blue/10">
+                                        <h4 className="text-[10px] font-black text-royal-blue uppercase tracking-widest mb-2 flex items-center gap-2">
+                                            <Zap className="w-3 h-3" />
+                                            Margin Bridge Story
+                                        </h4>
+                                        <p className="text-sm italic text-navy leading-relaxed font-serif">"{report.financialPerformance.marginBridge.narrative}"</p>
                                     </div>
                                 </div>
                             </SectionCard>
 
-                            {/* 3B — Plain English Summary */}
-                            <SectionCard title="What This Means For You" icon={MessageCircle}>
-                                <p className="text-gray-700 leading-relaxed text-[1.05rem]"
-                                    dangerouslySetInnerHTML={{
-                                        __html: report.summary.replace(
-                                            /\*\*(.*?)\*\*/g,
-                                            '<strong class="text-navy font-semibold">$1</strong>'
-                                        )
-                                    }}
-                                />
+                            {/* Cost Intelligence Section */}
+                            <SectionCard title="Cost Structure Intelligence" icon={Activity}>
+                                <div className="space-y-6">
+                                    <p className="text-gray-600 text-sm leading-relaxed mb-6 italic">"{report.costIntelligence.narrative}"</p>
+                                    
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left">
+                                            <thead>
+                                                <tr className="border-b border-gray-100">
+                                                    <th className="py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Category</th>
+                                                    <th className="py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Amount</th>
+                                                    <th className="py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Revenue %</th>
+                                                    <th className="py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-50">
+                                                {report.costIntelligence.costBreakdown.map((item, idx) => (
+                                                    <tr key={idx} className="group">
+                                                        <td className="py-4 font-bold text-navy text-sm">{item.category}</td>
+                                                        <td className="py-4 text-sm text-gray-600 font-mono">AED {item.amount.toLocaleString()}</td>
+                                                        <td className="py-4">
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="text-sm font-black text-navy">{item.percentOfRevenue}%</span>
+                                                                <span className="text-[9px] text-gray-400 italic">(Benchmark: {item.benchmark}%)</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="py-4"><StatusBadge status={item.status} /></td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    {report.costIntelligence.hiddenCosts.length > 0 && (
+                                        <div className="bg-red-50 p-5 rounded-2xl border border-red-100 mt-6">
+                                            <h4 className="text-[10px] font-black text-red-600 uppercase tracking-widest mb-4">Hidden Fiscal Exposure Identified</h4>
+                                            <div className="grid md:grid-cols-2 gap-4">
+                                                {report.costIntelligence.hiddenCosts.map((cost, idx) => (
+                                                    <div key={idx} className="bg-white p-3 border border-red-200 rounded-xl shadow-sm">
+                                                        <div className="flex justify-between items-start mb-1.5">
+                                                            <span className="font-bold text-navy text-xs">{cost.description}</span>
+                                                            <span className="text-red-600 font-black text-xs">AED {cost.estimatedAnnualImpact.toLocaleString()}/yr</span>
+                                                        </div>
+                                                        <p className="text-[10px] text-gray-500 italic">"{cost.insight}"</p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             </SectionCard>
 
-                            {/* 3C — Red Flags */}
-                            <SectionCard title="Red Flags" icon={AlertTriangle}>
-                                {report.redFlags.length === 0 ? (
-                                    <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl p-5">
-                                        <CheckCircle className="w-8 h-8 text-green-500 flex-shrink-0" />
-                                        <div>
-                                            <p className="font-bold text-green-800 text-lg">All Clear! 🎉</p>
-                                            <p className="text-green-700 text-sm mt-1">No significant financial red flags were detected in your data.</p>
+                            {/* Profit Leakage Section */}
+                            <SectionCard title="Recovery Matrix (Profit Leakage)" icon={TrendingDown}>
+                                <div className="space-y-8">
+                                    <p className="text-gray-600 text-sm leading-relaxed mb-6">
+                                        {report.profitLeakage.narrative}
+                                    </p>
+
+                                    <div className="bg-gray-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-10 -mt-10" />
+                                        <h4 className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] mb-6">Financial Recovery Opportunity</h4>
+                                        <div className="flex flex-col md:flex-row gap-12 items-center">
+                                            <div>
+                                                <p className="text-[10px] font-bold text-sky-blue uppercase mb-1">Total Leakage Recoverable</p>
+                                                <p className="text-5xl font-black text-white">AED {report.profitLeakage.recoveryOpportunity.monthlyAED.toLocaleString()}<span className="text-xs text-white/30 ml-2">/mo</span></p>
+                                                <p className="text-xl font-bold text-white/40 mt-1">AED {report.profitLeakage.recoveryOpportunity.annualAED.toLocaleString()}<span className="text-[10px] ml-1 uppercase">Annual potential</span></p>
+                                            </div>
+                                            <div className="bg-white/5 border border-white/10 p-5 rounded-xl backdrop-blur-sm flex-1">
+                                                <p className="text-sky-blue font-serif italic text-lg">"{report.profitLeakage.recoveryOpportunity.narrative}"</p>
+                                            </div>
                                         </div>
                                     </div>
-                                ) : (
-                                    <div className="space-y-4">
-                                        {report.redFlags.map((flag, i) => (
-                                            <div key={i} className="bg-gray-50 border border-gray-100 rounded-xl p-5">
-                                                <div className="flex items-start gap-3 mb-3">
-                                                    <SeverityBadge severity={flag.severity} />
-                                                    <p className="font-bold text-navy">{flag.title}</p>
+
+                                    <div className="grid md:grid-cols-3 gap-4">
+                                        {report.profitLeakage.topLeaks.map((leak, idx) => (
+                                            <div key={idx} className="bg-white border border-gray-100 p-4 rounded-xl shadow-sm relative overflow-hidden">
+                                                <div className={`absolute top-0 left-0 w-full h-1 ${
+                                                    leak.severity === 'critical' ? 'bg-red-500' : leak.severity === 'high' ? 'bg-amber-500' : 'bg-royal-blue'
+                                                }`} />
+                                                <div className="flex justify-between items-start mb-2">
+                                                    <span className="text-[10px] font-black text-gray-400">RANK #0{leak.rank}</span>
+                                                    <StatusBadge status={leak.severity} />
                                                 </div>
-                                                <p className="text-sm text-gray-600 mb-2"><span className="font-semibold text-gray-700">Why it matters: </span>{flag.whyItMatters}</p>
-                                                <p className="text-sm text-gray-600"><span className="font-semibold text-royal-blue">What to do: </span>{flag.whatToDo}</p>
+                                                <h5 className="font-bold text-navy text-sm mb-1">{leak.category}</h5>
+                                                <p className="text-[10px] text-red-500 font-black mb-3">AED {leak.monthlyAmount.toLocaleString()} LEAKED ({(leak.monthlyAmount / report.costIntelligence.costBreakdown.reduce((s,c) => s+c.amount, 0) * 100).toFixed(1)}% of Spend)</p>
+                                                <p className="text-[10px] text-gray-500 leading-relaxed font-serif italic">"{leak.cfoInsight}"</p>
                                             </div>
                                         ))}
                                     </div>
-                                )}
+                                </div>
                             </SectionCard>
 
-                            {/* 3D — Top Money Drains */}
-                            {report.topMoneyDrains.length > 0 && (
-                                <SectionCard title="Top Money Drains" icon={TrendingDown}>
-                                    <div className="space-y-5">
-                                        {report.topMoneyDrains.map((drain, i) => {
-                                            const isHigh = drain.theirPercentage > drain.industryAverage;
-                                            return (
-                                                <div key={i} className="space-y-2">
-                                                    <div className="flex items-center justify-between">
-                                                        <span className="font-medium text-navy">{drain.category}</span>
-                                                        <div className="flex items-center gap-2">
-                                                            <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${isHigh ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>
-                                                                {isHigh ? "Above avg" : "Below avg"}
-                                                            </span>
-                                                            {isHigh ? <TrendingUp className="w-4 h-4 text-red-500" /> : <TrendingDown className="w-4 h-4 text-green-500" />}
-                                                        </div>
-                                                    </div>
-                                                    <div className="relative h-8 bg-gray-100 rounded-lg overflow-hidden">
-                                                        <div
-                                                            className="absolute left-0 top-0 h-full rounded-lg transition-all duration-1000 flex items-center"
-                                                            style={{ width: `${Math.min(drain.theirPercentage, 100)}%`, backgroundColor: isHigh ? "#ef4444" : "#22c55e" }}
-                                                        >
-                                                            <span className="text-white text-xs font-bold pl-3">{drain.theirPercentage}%</span>
-                                                        </div>
-                                                        <div className="absolute top-0 h-full w-0.5 bg-navy/30" style={{ left: `${Math.min(drain.industryAverage, 100)}%` }} />
-                                                    </div>
-                                                    <p className="text-xs text-gray-400">Industry average: {drain.industryAverage}%</p>
+                            {/* Risk Assessment Section */}
+                            <div className="grid md:grid-cols-2 gap-8">
+                                <SectionCard title="CFO Risk Assessment" icon={Shield}>
+                                    <div className="space-y-6">
+                                        {report.riskAssessment.redFlags.map((flag, idx) => (
+                                            <div key={idx} className="p-4 bg-gray-50 rounded-xl border border-gray-100 relative group overflow-hidden">
+                                                <div className={`absolute left-0 top-0 bottom-0 w-1 ${
+                                                    flag.severity === 'critical' ? 'bg-red-500' : 'bg-amber-400'
+                                                }`} />
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <StatusBadge status={flag.severity} />
+                                                    <span className="font-bold text-navy text-xs">{flag.title}</span>
                                                 </div>
-                                            );
-                                        })}
+                                                <p className="text-[11px] text-gray-700 leading-relaxed mb-3 italic">"{flag.cfoObservation}"</p>
+                                                <div className="pt-2 border-t border-gray-200">
+                                                    <p className="text-[9px] font-black text-red-600 uppercase mb-1">Immediate Action Required:</p>
+                                                    <p className="text-[10px] font-bold text-navy">{flag.immediateAction}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+
+                                        <div className="p-4 bg-navy text-white rounded-xl shadow-lg">
+                                            <h5 className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-2">Cash Runway Assessment</h5>
+                                            <p className="text-3xl font-black mb-1">{report.riskAssessment.cashRunway.months} Months</p>
+                                            <p className="text-[11px] text-white/60 font-serif italic leading-relaxed">"{report.riskAssessment.cashRunway.narrative}"</p>
+                                        </div>
                                     </div>
                                 </SectionCard>
-                            )}
 
-                            {/* 3D-PRO — Profit Leakage Report */}
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.1, duration: 0.4 }}
-                            >
-                                <ProfitLeakageReport
-                                    leakage={leakageData}
-                                    loading={leakageLoading}
-                                    error={leakageError}
-                                />
-                            </motion.div>
-
-                            {/* 3E — Monthly Trend */}
-                            {report.monthlyTrend.length > 1 && (() => {
-                                const revenues = report.monthlyTrend.map(m => m.revenue);
-                                const bestIdx = revenues.indexOf(Math.max(...revenues));
-                                const worstIdx = revenues.indexOf(Math.min(...revenues));
-                                const max = Math.max(...report.monthlyTrend.flatMap(m => [m.revenue, m.expenses]));
-                                return (
-                                    <SectionCard title="Month-by-Month Trend" icon={TrendingUp}>
-                                        <div className="space-y-3">
-                                            {report.monthlyTrend.map((m, i) => (
-                                                <div key={i} className="flex items-center gap-3">
-                                                    <span className="w-14 text-xs text-gray-500 font-medium">{m.month}</span>
-                                                    <div className="flex-1 space-y-1">
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="h-4 bg-royal-blue/70 rounded-sm" style={{ width: `${(m.revenue / max) * 100}%`, minWidth: "4px" }} />
-                                                            <span className="text-xs text-gray-500">Rev {i === bestIdx && <span className="text-green-600 font-bold">↑ Best</span>}{i === worstIdx && <span className="text-red-600 font-bold">↓ Worst</span>}</span>
-                                                        </div>
-                                                        <div className="h-4 bg-red-400/60 rounded-sm" style={{ width: `${(m.expenses / max) * 100}%`, minWidth: "4px" }} />
-                                                    </div>
-                                                    <div className="text-right w-28 text-xs text-gray-500">
-                                                        <div className="text-royal-blue font-semibold">AED {m.revenue.toLocaleString()}</div>
-                                                        <div className="text-red-500">AED {m.expenses.toLocaleString()}</div>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                            <div className="flex gap-4 pt-2 text-xs text-gray-400">
-                                                <span className="flex items-center gap-1"><span className="w-3 h-3 bg-royal-blue/70 rounded-sm inline-block" /> Revenue</span>
-                                                <span className="flex items-center gap-1"><span className="w-3 h-3 bg-red-400/60 rounded-sm inline-block" /> Expenses</span>
+                                <SectionCard title="Tax & Compliance" icon={AlertTriangle}>
+                                    <div className="space-y-6">
+                                        <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                                            <div className="flex justify-between items-center mb-3">
+                                                <h5 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">VAT Exposure</h5>
+                                                <StatusBadge status={report.riskAssessment.vatExposure.status} />
                                             </div>
+                                            <div className="flex items-baseline gap-2 mb-2">
+                                                <span className="text-2xl font-black text-navy">AED {report.riskAssessment.vatExposure.estimatedAnnualRevenue.toLocaleString()}</span>
+                                                <span className="text-[10px] text-gray-400">/ Est. Annual Turnover</span>
+                                            </div>
+                                            <p className="text-[10px] text-gray-500 font-serif italic leading-relaxed">"{report.riskAssessment.vatExposure.narrative}"</p>
                                         </div>
-                                    </SectionCard>
-                                );
-                            })()}
 
-                            {/* 3F — VAT Exposure */}
-                            <SectionCard title="VAT Exposure Check" icon={Shield}>
-                                {(() => {
-                                    const v = report.vatExposure;
-                                    const config = {
-                                        safe: { color: "border-green-200 bg-green-50", dot: "bg-green-500", label: "Safe", text: "text-green-800" },
-                                        approaching: { color: "border-amber-200 bg-amber-50", dot: "bg-amber-500", label: "Approaching Threshold", text: "text-amber-800" },
-                                        exceeded: { color: "border-red-200 bg-red-50", dot: "bg-red-500", label: "Threshold Exceeded", text: "text-red-800" },
-                                    }[v.status];
-                                    return (
-                                        <div className={`border rounded-xl p-5 ${config.color}`}>
-                                            <div className="flex items-center gap-2 mb-3">
-                                                <span className={`w-3 h-3 rounded-full ${config.dot}`} />
-                                                <span className={`font-bold text-sm ${config.text}`}>{config.label}</span>
+                                        <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                                            <div className="flex justify-between items-center mb-3">
+                                                <h5 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Corporate Tax (9%)</h5>
+                                                <StatusBadge status={report.riskAssessment.corporateTaxExposure.status} />
                                             </div>
-                                            <p className={`text-2xl font-bold mb-1 ${config.text}`}>AED {v.estimatedAnnualRevenue.toLocaleString()}</p>
-                                            <p className="text-xs text-gray-500 mb-3">Estimated annual revenue vs. AED 375,000 threshold</p>
-                                            <div className="h-3 bg-white/50 rounded-full overflow-hidden">
-                                                <div className={`h-full rounded-full ${config.dot}`} style={{ width: `${Math.min((v.estimatedAnnualRevenue / 375000) * 100, 100)}%` }} />
-                                            </div>
-                                            <p className={`text-sm mt-3 ${config.text}`}>{v.explanation}</p>
+                                            <p className="text-[10px] text-gray-500 font-serif italic leading-relaxed">"{report.riskAssessment.corporateTaxExposure.narrative}"</p>
                                         </div>
-                                    );
-                                })()}
-                            </SectionCard>
+                                    </div>
+                                </SectionCard>
+                            </div>
 
-                            {/* 3G — Cash Runway */}
-                            {report.cashRunwayMonths !== null && (
-                                <SectionCard title="Cash Runway" icon={Activity}>
-                                    <div className="text-center py-3">
-                                        <p className="text-5xl font-bold text-navy mb-2">
-                                            {report.cashRunwayMonths} <span className="text-2xl font-normal text-gray-500">months</span>
+                            {/* Advanced Metrics Grid */}
+                            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                <AdvancedInsightCard 
+                                    title="Working Capital" 
+                                    icon={Activity} 
+                                    value={report.advancedMetrics.workingCapitalRatio.value?.toFixed(2)}
+                                    status={report.advancedMetrics.workingCapitalRatio.status}
+                                >
+                                    {report.advancedMetrics.workingCapitalRatio.narrative}
+                                </AdvancedInsightCard>
+                                <AdvancedInsightCard 
+                                    title="Operating Leverage" 
+                                    icon={TrendingUp} 
+                                    value={report.advancedMetrics.operatingLeverage.value}
+                                >
+                                    {report.advancedMetrics.operatingLeverage.narrative}
+                                </AdvancedInsightCard>
+                                <AdvancedInsightCard 
+                                    title="Revenue Quality" 
+                                    icon={Shield} 
+                                    value={`${report.advancedMetrics.revenueQualityScore.score}%`}
+                                >
+                                    {report.advancedMetrics.revenueQualityScore.narrative}
+                                </AdvancedInsightCard>
+                                <AdvancedInsightCard 
+                                    title="Seasonality" 
+                                    icon={Activity} 
+                                    value={report.advancedMetrics.seasonalityDetected ? "Detected" : "Stable"}
+                                >
+                                    {report.advancedMetrics.seasonalityNarrative || "No seasonal patterns detected in analyzed data."}
+                                </AdvancedInsightCard>
+                            </div>
+
+                            {/* Strategic Action Plan Section */}
+                            <SectionCard title="90-Day Execution Roadmap" icon={Zap} accentColor="bg-royal-blue/10">
+                                <div className="space-y-8">
+                                    <div className="bg-royal-blue/5 p-6 rounded-2xl border border-royal-blue/10">
+                                        <p className="text-royal-blue font-serif italic text-lg leading-relaxed">
+                                            "{report.actionPlan.narrative}"
                                         </p>
-                                        <p className="text-gray-600 mb-6">You have approximately <strong className="text-navy">{report.cashRunwayMonths} months of runway</strong> before cash reserves run out at current spending.</p>
-                                        <div className="h-5 bg-gray-100 rounded-full overflow-hidden max-w-sm mx-auto">
-                                            {(() => {
-                                                const pct = Math.min((report.cashRunwayMonths / 24) * 100, 100);
-                                                const color = pct > 60 ? "#22c55e" : pct > 30 ? "#f59e0b" : "#ef4444";
-                                                return <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${pct}%`, backgroundColor: color }} />;
-                                            })()}
-                                        </div>
-                                        <div className="flex justify-between text-xs text-gray-400 mt-1 max-w-sm mx-auto">
-                                            <span>0 mo</span><span>12 mo</span><span>24+ mo</span>
-                                        </div>
                                     </div>
-                                </SectionCard>
-                            )}
+                                    <StrategicRoadmapTimeline plan={report.actionPlan} />
+                                </div>
+                            </SectionCard>
 
-                            {/* 3H — Recommendations */}
-                            <SectionCard title="Top 5 Recommendations" icon={ChevronRight}>
+                            {/* Prioritized Recommendations */}
+                            <SectionCard title="Prioritized CFO Strategic Actions" icon={ArrowRight}>
                                 <div className="space-y-4">
-                                    {report.recommendations.map((rec, i) => (
-                                        <div key={i} className="flex gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
-                                            <span className="w-8 h-8 rounded-full bg-royal-blue text-white text-sm font-bold flex items-center justify-center flex-shrink-0">{i + 1}</span>
-                                            <div className="flex-1">
-                                                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                                    <p className="font-bold text-navy">{rec.title}</p>
-                                                    <DifficultyBadge difficulty={rec.difficulty} />
+                                    {report.strategicRecommendations.sort((a,b) => a.priority - b.priority).map((rec, idx) => (
+                                        <div key={idx} className="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm hover:border-royal-blue/30 transition-colors">
+                                            <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+                                                <div className="flex items-center gap-3">
+                                                    <span className="w-6 h-6 rounded bg-navy text-white text-[10px] flex items-center justify-center font-black">#0{rec.priority}</span>
+                                                    <h5 className="font-bold text-navy">{rec.title}</h5>
                                                 </div>
-                                                <p className="text-sm text-gray-600">{rec.explanation}</p>
+                                                <div className="flex gap-2">
+                                                    <span className="text-[9px] font-black text-royal-blue bg-royal-blue/5 px-2 py-1 rounded uppercase tracking-widest">{rec.timeframe}</span>
+                                                    <span className="text-[9px] font-black text-gray-400 bg-gray-100 px-2 py-1 rounded uppercase tracking-widest">Effort: {rec.effort}</span>
+                                                </div>
+                                            </div>
+                                            <p className="text-[11px] text-gray-700 leading-relaxed mb-4 italic">"{rec.cfoRationale}"</p>
+                                            <div className="pt-4 border-t border-gray-50 flex flex-col md:flex-row justify-between gap-4">
+                                                <div>
+                                                    <p className="text-[9px] font-black text-royal-blue uppercase mb-1">Specific Step:</p>
+                                                    <p className="text-[11px] font-bold text-navy leading-snug">{rec.specificAction}</p>
+                                                </div>
+                                                <div className="md:text-right">
+                                                    <p className="text-[9px] font-black text-green-600 uppercase mb-1">Expected ROI Impact:</p>
+                                                    <p className="text-[11px] font-bold text-navy leading-snug">{rec.expectedImpact}</p>
+                                                </div>
                                             </div>
                                         </div>
                                     ))}
                                 </div>
                             </SectionCard>
 
-                            {/* 3I — AI Chat */}
-                            <SectionCard title="Ask AI About Your Report" icon={MessageCircle}>
-                                <div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
+                            {/* ── WHAT-IF SIMULATOR ────────────────────────── */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.2, duration: 0.5 }}
+                                className="print:hidden"
+                            >
+                                <WhatIfSimulator report={report} extractedSummary={extractedSummary} extractedText={extractedText} />
+                                <div className="mt-8">
+                                    <ProfitLeakageReport
+                                        leakage={report.profitLeakage}
+                                        loading={false}
+                                        error={null}
+                                    />
+                                </div>
+                            </motion.div>
+
+                            {/* AI Chat Section */}
+                            <SectionCard title="Direct CFO Query Access" icon={MessageCircle} accentColor="bg-navy/5">
+                                <div className="space-y-3 mb-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                                     {chatMessages.length === 0 && (
-                                        <p className="text-gray-400 text-sm text-center py-4">Ask anything about your report...</p>
+                                        <div className="text-center py-8">
+                                            <p className="text-gray-400 text-xs italic font-serif">"I have studied your numbers. Ask me specifically about any metric or strategy in this report."</p>
+                                        </div>
                                     )}
                                     {chatMessages.map((msg, i) => (
                                         <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                                            <div className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm ${msg.role === "user" ? "bg-royal-blue text-white rounded-tr-none" : "bg-gray-100 text-gray-800 rounded-tl-none"}`}>
+                                            <div className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm ${
+                                                msg.role === "user" ? "bg-navy text-white rounded-tr-none shadow-md" : "bg-white border border-gray-100 text-gray-800 rounded-tl-none shadow-sm"
+                                            }`}>
                                                 {msg.text}
                                             </div>
                                         </div>
@@ -756,82 +886,82 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                                         value={chatInput}
                                         onChange={(e) => setChatInput(e.target.value)}
                                         onKeyDown={(e) => e.key === "Enter" && sendChat()}
-                                        placeholder="Ask anything about your report... e.g. Why is my margin low?"
+                                        placeholder="Type your question for Marcus Al-Rashidi..."
                                         disabled={chatLoading}
-                                        className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/20 focus:border-royal-blue disabled:opacity-50"
+                                        className="flex-1 border border-gray-100 bg-gray-50/50 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/20 focus:border-royal-blue transition-all"
                                     />
                                     <button
                                         onClick={sendChat}
                                         disabled={chatLoading || !chatInput.trim()}
-                                        className="bg-royal-blue text-white px-4 py-3 rounded-xl hover:bg-navy disabled:opacity-50 transition-colors"
+                                        className="bg-navy text-white px-5 py-3 rounded-xl hover:bg-black disabled:opacity-50 transition-all shadow-md active:scale-95"
                                     >
-                                        <Send className="w-5 h-5" />
+                                        <Send className="w-4 h-4" />
                                     </button>
                                 </div>
                             </SectionCard>
 
-                            {/* ── WHAT-IF SIMULATOR ────────────────────────── */}
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.2, duration: 0.5 }}
-                            >
-                                <WhatIfSimulator report={report} extractedSummary={extractedSummary} extractedText={extractedText} />
-                            </motion.div>
-
-                            {/* ── SAVE & SHARE ─────────────────────────────── */}
-                            <div className="bg-navy rounded-2xl p-8 text-center print:hidden">
-                                <p className="text-white/70 text-sm uppercase tracking-wide mb-2">Your Score Summary</p>
-                                <p className="text-2xl font-bold text-white mb-1">
-                                    Your business is{" "}
-                                    <span className="text-sky-blue">{report.pointsFromPerfect} points</span>{" "}
-                                    away from a perfect score.
-                                </p>
-                                <p className="text-white/70 mb-8">Our team can help you close exactly that gap.</p>
-
-                                <div className="flex flex-wrap gap-3 justify-center mb-8">
-                                    <button
-                                        onClick={handlePrint}
-                                        className="flex items-center gap-2 bg-white text-navy font-semibold px-6 py-3 rounded-xl hover:bg-gray-100 transition-colors shadow"
-                                    >
-                                        <Download className="w-5 h-5" />
-                                        Download PDF
-                                    </button>
-                                    <button
-                                        onClick={resetPage}
-                                        className="flex items-center gap-2 bg-white/10 border border-white/20 text-white font-semibold px-6 py-3 rounded-xl hover:bg-white/20 transition-colors"
-                                    >
-                                        <RefreshCw className="w-5 h-5" />
-                                        Analyze Another File
-                                    </button>
+                            {/* Final Closing Statement & Signature */}
+                            <div className="pt-20 pb-12 text-center space-y-6">
+                                <div className="w-32 h-px bg-gray-200 mx-auto" />
+                                <div className="space-y-2">
+                                    <p className="font-serif italic text-navy text-xl leading-relaxed max-w-2xl mx-auto">
+                                        "{report.closingStatement.narrative}"
+                                    </p>
                                 </div>
-
-                                {/* Email option */}
-                                {!emailSent ? (
-                                    <div className="flex gap-2 max-w-md mx-auto">
-                                        <input
-                                            type="email"
-                                            placeholder="Enter your email to receive this report"
-                                            value={emailInput}
-                                            onChange={(e) => setEmailInput(e.target.value)}
-                                            className="flex-1 px-4 py-3 rounded-xl text-navy text-sm focus:outline-none focus:ring-2 focus:ring-sky-blue"
-                                        />
-                                        <button
-                                            onClick={() => { if (emailInput) setEmailSent(true); }}
-                                            className="flex items-center gap-2 bg-sky-blue hover:bg-royal-blue text-white font-semibold px-5 py-3 rounded-xl transition-colors"
-                                        >
-                                            <Mail className="w-5 h-5" />
-                                            Send
-                                        </button>
+                                <div className="pt-6">
+                                    <div className="inline-block p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                        <div className="flex items-center gap-6">
+                                            <div className="text-left">
+                                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Potential 90-Day Score</p>
+                                                <p className="text-3xl font-black text-navy">{report.closingStatement.potentialScore}<span className="text-xs text-green-500 ml-1">↑ +{report.closingStatement.potentialScore - report.healthScore.overall}</span></p>
+                                            </div>
+                                            <ArrowRight className="text-gray-200 w-6 h-6" />
+                                            <div className="text-left">
+                                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] font-sans">Current Delta</p>
+                                                <p className="text-3xl font-black text-gray-400">{report.closingStatement.pointsFromPerfect} pts</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                ) : (
-                                    <div className="flex items-center justify-center gap-2 text-green-400">
-                                        <CheckCircle className="w-5 h-5" />
-                                        <span className="font-medium">Report link sent to {emailInput}!</span>
-                                    </div>
-                                )}
+                                </div>
+                                <div className="pt-12 text-center">
+                                    <p className="text-[10px] text-gray-400 uppercase tracking-[0.4em] font-black mb-1">Authenticated Advisory Sign-Off</p>
+                                    <p className="font-serif text- navy italic text-lg mb-1">{report.closingStatement.signOff}</p>
+                                    <p className="text-[9px] text-gray-300 max-w-sm mx-auto leading-relaxed mt-4">
+                                        This proprietary report was generated by BWMC FinSight AI Layer. Numerical analysis performed by BWMC UAE & GCC Advisory Panel. 2026 Copyright BWMC Dubai.
+                                    </p>
+                                </div>
                             </div>
 
+                            {/* ── SAVE & SHARE ─────────────────────────────── */}
+                            <div className="bg-navy rounded-3xl p-12 text-center print:hidden shadow-3xl relative overflow-hidden group">
+                                <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-sky-blue via-royal-blue to-navy animate-pulse" />
+                                <div className="relative z-10">
+                                    <p className="text-sky-blue text-[10px] uppercase tracking-[0.4em] font-black mb-4">Strategic Advisory Path</p>
+                                    <h3 className="text-4xl font-serif text-white mb-6 leading-tight max-w-3xl mx-auto">
+                                        Your business potential is clear, but the implementation gap is currently costing you <span className="text-sky-blue font-black underline decoration-sky-blue/30 underline-offset-8 italic">AED {report.profitLeakage.recoveryOpportunity.monthlyAED.toLocaleString()}</span> monthly.
+                                    </h3>
+                                    <p className="text-white/60 mb-10 max-w-xl mx-auto leading-relaxed text-sm">
+                                        Marcus and the BWMC senior team can work directly inside your finance function to recapture this leakage and stabilize your 90-day trajectory.
+                                    </p>
+
+                                    <div className="flex flex-wrap gap-5 justify-center">
+                                        <button
+                                            onClick={handlePrint}
+                                            className="flex items-center gap-3 bg-white text-navy font-black px-10 py-5 rounded-2xl hover:bg-sky-blue hover:text-navy transition-all shadow-2xl group active:scale-95"
+                                        >
+                                            <Download className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                                            Download CFO Briefing
+                                        </button>
+                                        <button
+                                            onClick={() => window.location.href = '/contact'}
+                                            className="flex items-center gap-3 bg-royal-blue text-white font-black px-10 py-5 rounded-2xl hover:bg-sky-blue hover:text-navy transition-all shadow-2xl active:scale-95"
+                                        >
+                                            <Mail className="w-5 h-5" />
+                                            Schedule Advisory Session
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </motion.div>
                 )}

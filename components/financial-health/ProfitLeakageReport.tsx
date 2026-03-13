@@ -5,43 +5,13 @@ import { motion, useInView } from "framer-motion";
 import { TrendingDown, AlertTriangle, Sparkles, CheckCircle } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-interface WaterfallRow {
-    label: string;
-    amount: number;
-    percentOfRevenue: number;
-    type: "revenue" | "deduction" | "subtotal" | "profit";
-}
-interface LeakItem {
-    rank: 1 | 2 | 3;
-    category: string;
-    monthlyAmount: number;
-    percentOfRevenue: number;
-    whyItsProblem: string;
-    industryStandard: string;
-    severity: "critical" | "high" | "medium";
-}
-interface BenchmarkRow {
-    metric: string;
-    yourValue: number;
-    uaeAverage: number;
-    healthyTarget: number;
-}
-interface LeakageData {
-    waterfallData: WaterfallRow[];
-    topLeaks: LeakItem[];
-    benchmarks: BenchmarkRow[];
-    benchmarkInsight: string;
-    recoveryOpportunity: {
-        totalMonthly: number;
-        totalAnnual: number;
-        breakdown: Array<{ leak: string; monthlyRecovery: number }>;
-    };
-    roadmap: {
-        month1: Array<{ action: string; type: "DIY" | "Needs Help" }>;
-        month2: Array<{ action: string; type: "DIY" | "Needs Help" }>;
-        month3: Array<{ action: string; type: "DIY" | "Needs Help" }>;
-    };
-}
+import { FinancialReport, WaterfallRow, LeakItem } from "../../app/financial-health-check/financial-types";
+
+type LeakageData = FinancialReport['profitLeakage'] & {
+    benchmarks?: Array<{ metric: string; yourValue: number; uaeAverage: number; healthyTarget: number; }>;
+    benchmarkInsight?: string;
+    roadmap?: FinancialReport['actionPlan'];
+};
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const fmt = (n: number) => `AED ${Math.abs(Math.round(n)).toLocaleString()}`;
@@ -94,7 +64,7 @@ function SkeletonLoader() {
 }
 
 // ─── Waterfall Row ────────────────────────────────────────────────────────────
-function WaterfallRow({ row, maxAbs, idx, total }: { row: WaterfallRow; maxAbs: number; idx: number; total: number }) {
+function WaterfallRowItem({ row, maxAbs, idx, total }: { row: WaterfallRow; maxAbs: number; idx: number; total: number }) {
     const [hovered, setHovered] = useState(false);
     const [animated, setAnimated] = useState(false);
     useEffect(() => { const t = setTimeout(() => setAnimated(true), idx * 80); return () => clearTimeout(t); }, [idx]);
@@ -201,9 +171,9 @@ function RecoveryBox({ data }: { data: LeakageData["recoveryOpportunity"] }) {
             </div>
 
             <p className="text-4xl md:text-5xl font-bold text-navy mb-2">
-                {fmt(data.totalMonthly)}<span className="text-xl font-normal text-gray-500">/month</span>
+                {fmt(data.monthlyAED)}<span className="text-xl font-normal text-gray-500">/month</span>
             </p>
-            <p className="text-gray-600 mb-6">This is how much additional profit you could recover if you brought your top 3 leaks to industry average.</p>
+            <p className="text-gray-600 mb-6">{data.narrative}</p>
 
             <div className="space-y-2 mb-5">
                 {data.breakdown.map((item, i) => (
@@ -218,8 +188,8 @@ function RecoveryBox({ data }: { data: LeakageData["recoveryOpportunity"] }) {
                 <div className="flex items-center justify-between py-3 px-4 bg-amber-100 rounded-xl border border-amber-300">
                     <span className="font-bold text-amber-900">Total Recovery Potential</span>
                     <div className="text-right">
-                        <div className="font-bold text-amber-900">{fmt(data.totalMonthly)}/month</div>
-                        <div className="text-xs text-amber-700">{fmt(data.totalAnnual)}/year</div>
+                        <div className="font-bold text-amber-900">{fmt(data.monthlyAED)}/month</div>
+                        <div className="text-xs text-amber-700">{fmt(data.annualAED)}/year</div>
                     </div>
                 </div>
             </div>
@@ -270,10 +240,10 @@ export default function ProfitLeakageReport({ leakage, loading, error }: Props) 
         </div>
     );
 
-    const maxAbs = Math.max(...leakage.waterfallData.map(r => Math.abs(r.amount)));
-    const monthlyRevenue = leakage.waterfallData.find(r => r.type === "revenue")?.amount ?? 1;
+    const maxAbs = Math.max(...(leakage.waterfallData || []).map((r: any) => Math.abs(r.amount || 0)));
+    const monthlyRevenue = (leakage.waterfallData || []).find((r: any) => r.type === "revenue")?.amount ?? 1;
 
-    const roadmapMonths: Array<{ label: string; key: keyof typeof leakage.roadmap; color: string }> = [
+    const roadmapMonths: Array<{ label: string; key: "month1" | "month2" | "month3"; color: string }> = [
         { label: "Month 1 — Quick Wins", key: "month1", color: "border-t-green-400" },
         { label: "Month 2 — Build Momentum", key: "month2", color: "border-t-blue-400" },
         { label: "Month 3 — Lock It In", key: "month3", color: "border-t-purple-400" },
@@ -297,16 +267,15 @@ export default function ProfitLeakageReport({ leakage, loading, error }: Props) 
             <div className="p-6 space-y-10">
                 {/* Subtitle */}
                 <p className="text-gray-600">
-                    Your revenue looks healthy — but where is the profit actually going?{" "}
-                    <strong className="text-navy">Here&apos;s exactly what&apos;s eating it.</strong>
+                    {leakage.narrative}
                 </p>
 
                 {/* ── STEP 1: Waterfall ──────────────────────────────────── */}
                 <div>
                     <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Step 1 — Revenue Waterfall</p>
                     <div className="space-y-1.5">
-                        {leakage.waterfallData.map((row, i) => (
-                            <WaterfallRow key={i} row={row} maxAbs={maxAbs} idx={i} total={leakage.waterfallData.length} />
+                        {(leakage.waterfallData || []).map((row: any, i: number) => (
+                            <WaterfallRowItem key={i} row={row} maxAbs={maxAbs} idx={i} total={leakage.waterfallData.length} />
                         ))}
                     </div>
                     <p className="text-xs text-gray-400 mt-3 italic">Hover each row to see what it means in plain English.</p>
@@ -316,8 +285,8 @@ export default function ProfitLeakageReport({ leakage, loading, error }: Props) 
                 <div>
                     <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Step 2 — Your Top 3 Profit Leaks</p>
                     <div className="grid md:grid-cols-3 gap-4">
-                        {leakage.topLeaks.map((leak) => {
-                            const cfg = SEVERITY_CONFIG[leak.severity];
+                        {(leakage.topLeaks || []).map((leak: any) => {
+                            const cfg = SEVERITY_CONFIG[leak.severity as keyof typeof SEVERITY_CONFIG] || SEVERITY_CONFIG.medium;
                             return (
                                 <div key={leak.rank} className={`border border-l-4 ${cfg.border} border-gray-100 rounded-xl p-5 space-y-3`}>
                                     <div className="flex items-center justify-between">
@@ -331,8 +300,8 @@ export default function ProfitLeakageReport({ leakage, loading, error }: Props) 
                                         <p className="text-2xl font-black text-red-600">{fmt(leak.monthlyAmount)}<span className="text-sm font-normal text-gray-500">/mo</span></p>
                                         <p className="text-xs text-gray-500">{pct(leak.percentOfRevenue)} of your revenue</p>
                                     </div>
-                                    <p className="text-xs text-gray-600 leading-relaxed">{leak.whyItsProblem}</p>
-                                    <p className="text-xs text-gray-500 bg-gray-50 rounded-lg px-3 py-2"><span className="font-semibold">Industry standard:</span> {leak.industryStandard}</p>
+                                    <p className="text-xs text-gray-600 leading-relaxed">{leak.cfoInsight}</p>
+                                    <p className="text-xs text-gray-500 bg-gray-50 rounded-lg px-3 py-2"><span className="font-semibold">Industry benchmark:</span> {leak.industryBenchmark}</p>
                                 </div>
                             );
                         })}
@@ -353,7 +322,7 @@ export default function ProfitLeakageReport({ leakage, loading, error }: Props) 
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50">
-                                {leakage.benchmarks.map((row, i) => {
+                                {(leakage.benchmarks || []).map((row: any, i: number) => {
                                     const diff = row.yourValue - row.uaeAverage;
                                     const isGood = diff >= 0;
                                     const isNear = Math.abs(diff) <= 5;
@@ -392,30 +361,32 @@ export default function ProfitLeakageReport({ leakage, loading, error }: Props) 
                 </div>
 
                 {/* ── STEP 5: 90-Day Roadmap ────────────────────────────── */}
-                <div>
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Step 5 — Fix It Roadmap</p>
-                    <h4 className="font-bold text-navy mb-4">How to Stop the Leaks — Your 90-Day Plan</h4>
-                    <div className="grid md:grid-cols-3 gap-4">
-                        {roadmapMonths.map(({ label, key, color }) => (
-                            <div key={key} className={`border-t-4 ${color} border border-gray-100 rounded-xl p-5`}>
-                                <p className="font-bold text-navy text-sm mb-4">{label}</p>
-                                <div className="space-y-3">
-                                    {leakage.roadmap[key].map((item, i) => (
-                                        <div key={i} className="flex items-start gap-2">
-                                            <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
-                                            <div className="flex-1">
-                                                <p className="text-xs text-gray-700 leading-relaxed">{item.action}</p>
-                                                <span className={`inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${item.type === "DIY" ? "bg-green-100 text-green-700" : "bg-purple-100 text-purple-700"}`}>
-                                                    {item.type}
-                                                </span>
+                {leakage.roadmap && (
+                    <div>
+                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Step 5 — Fix It Roadmap</p>
+                        <h4 className="font-bold text-navy mb-4">How to Stop the Leaks — Your 90-Day Plan</h4>
+                        <div className="grid md:grid-cols-3 gap-4">
+                            {roadmapMonths.map(({ label, key, color }) => (
+                                <div key={key} className={`border-t-4 ${color} border border-gray-100 rounded-xl p-5`}>
+                                    <p className="font-bold text-navy text-sm mb-4">{label}</p>
+                                    <div className="space-y-3">
+                                        {(leakage.roadmap?.[key] || []).map((item: any, i: number) => (
+                                            <div key={i} className="flex items-start gap-2">
+                                                <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                                                <div className="flex-1">
+                                                    <p className="text-xs text-gray-700 leading-relaxed">{item.action}</p>
+                                                    <span className={`inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${item.type === "DIY" ? "bg-green-100 text-green-700" : "bg-purple-100 text-purple-700"}`}>
+                                                        {item.type}
+                                                    </span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {/* Footnote */}
                 <p className="text-xs text-gray-400 text-center border-t border-gray-100 pt-4">

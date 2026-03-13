@@ -61,7 +61,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         .filter(blog => blog.published)
         .map(blog => ({
             url: `${baseUrl}/blog/${blog.slug}`,
-            lastModified: new Date(blog.updatedat),
+            lastModified: new Date(blog.updatedAt),
             changeFrequency: 'monthly' as const,
             priority: 0.7,
         }))

@@ -225,9 +225,9 @@ export function generateBlogMetadata(blog: {
     slug: string;
     category: string;
     author: string;
-    createdat: string;
-    updatedat: string;
-    coverimage: string;
+    createdAt: string;
+    updatedAt: string;
+    coverImage: string;
     keywords?: string[];
 }): Metadata {
     return generateMetadata({
@@ -235,12 +235,12 @@ export function generateBlogMetadata(blog: {
         description: blog.excerpt,
         keywords: blog.keywords || [blog.category, "UAE", "BWMC"],
         path: `/blog/${blog.slug}`,
-        image: blog.coverimage.startsWith("http")
-            ? blog.coverimage
-            : `${SITE_URL}${blog.coverimage}`,
+        image: blog.coverImage.startsWith("http")
+            ? blog.coverImage
+            : `${SITE_URL}${blog.coverImage}`,
         type: "article",
-        publishedTime: blog.createdat,
-        modifiedTime: blog.updatedat,
+        publishedTime: blog.createdAt,
+        modifiedTime: blog.updatedAt,
         author: blog.author,
         section: blog.category,
     });

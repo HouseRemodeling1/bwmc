@@ -13,7 +13,7 @@ export default function NewBlog() {
         title: "",
         excerpt: "",
         content: "",
-        coverimage: "",
+        coverImage: "",
         category: "Business",
         author: "BWMC Team",
         published: false,
@@ -117,8 +117,8 @@ export default function NewBlog() {
                             </label>
                             <input
                                 type="url"
-                                value={formData.coverimage}
-                                onChange={(e) => setFormData({ ...formData, coverimage: e.target.value })}
+                                value={formData.coverImage}
+                                onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-transparent outline-none"
                                 placeholder="https://example.com/image.jpg"
                             />

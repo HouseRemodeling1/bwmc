@@ -7,14 +7,9 @@ import { callGeminiJSON } from "@/lib/gemini-client";
 import { buildSimulatorPrompt } from "@/lib/gemini-prompts";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-interface SubScores { profitability: number; cashFlow: number; costEfficiency: number; growthTrend: number; }
-interface FinancialReport {
-    healthScore: number;
-    subScores: SubScores;
-    vatExposure: { status: "safe" | "approaching" | "exceeded"; estimatedAnnualRevenue: number; explanation: string; };
-    cashRunwayMonths: number | null;
-    monthlyTrend: Array<{ month: string; revenue: number; expenses: number; }>;
-}
+import { FinancialReport, SubScoreDetail } from "../../app/financial-health-check/financial-types";
+
+interface SubScores { profitability: SubScoreDetail; cashFlow: SubScoreDetail; costEfficiency: SubScoreDetail; growthTrend: SubScoreDetail; }
 
 interface Sliders {
     revenueGrowth: number;
@@ -63,15 +58,16 @@ function runwayToScore(months: number | null): number {
 }
 
 function deriveBases(report: FinancialReport) {
-    const annualRevenue = report.vatExposure.estimatedAnnualRevenue || 0;
+    const annualRevenue = report.riskAssessment.vatExposure.estimatedAnnualRevenue || 0;
     const monthlyRevenue = annualRevenue / 12;
     // Derive expenses from profitability score: profitMargin = profScore / 300
-    const profitMargin = clamp(report.subScores.profitability / 300, 0, 0.99);
+    const profitMargin = clamp(report.healthScore.subScores.profitability.score / 300, 0, 0.99);
     const monthlyProfit = monthlyRevenue * profitMargin;
     const monthlyExpenses = Math.max(0, monthlyRevenue - monthlyProfit);
     // Use monthlyTrend if available and richer
-    if (report.monthlyTrend && report.monthlyTrend.length > 0) {
-        const last = report.monthlyTrend[report.monthlyTrend.length - 1];
+    const trend = report.financialPerformance.monthlyTrend;
+    if (trend && trend.length > 0) {
+        const last = trend[trend.length - 1];
         if (last.revenue > 0) {
             const rev = last.revenue;
             const exp = last.expenses;
@@ -100,7 +96,7 @@ function recalculate(report: FinancialReport, sliders: Sliders, bases: ReturnTyp
     const newProfitabilityScore = clamp(profitMargin * 300, 0, 100);
 
     // Cash runway: collection speed improvement extends runway
-    const baseRunway = report.cashRunwayMonths;
+    const baseRunway = report.riskAssessment.cashRunway.months;
     let newRunway: number | null = baseRunway;
     if (baseRunway !== null) {
         const runwayMultiplier = 1 + (sliders.collectionDays / 30) * 0.4 + (sliders.ownerWithdrawal / 100) * 0.3;
@@ -130,7 +126,7 @@ function recalculate(report: FinancialReport, sliders: Sliders, bases: ReturnTyp
 
     return {
         healthScore: clamp(newHealthScore, 0, 100),
-        delta: clamp(newHealthScore, 0, 100) - report.healthScore,
+        delta: clamp(newHealthScore, 0, 100) - report.healthScore.overall,
         monthlyProfit: Math.round(adjProfit),
         baseMontlyProfit: Math.round(baseMontlyProfit),
         cashRunway: newRunway !== null ? Math.round(newRunway * 10) / 10 : null,
@@ -394,8 +390,8 @@ export default function WhatIfSimulator({ report, extractedSummary, extractedTex
                             <p className="text-xs text-gray-500 font-medium mb-1">Cash Runway</p>
                             {metrics.cashRunway !== null ? (
                                 <div className="flex items-end gap-2 flex-wrap">
-                                    {report.cashRunwayMonths !== null && (
-                                        <span className="text-sm text-gray-400 line-through">{report.cashRunwayMonths} mo</span>
+                                    {report.riskAssessment.cashRunway.months !== null && (
+                                        <span className="text-sm text-gray-400 line-through">{report.riskAssessment.cashRunway.months} mo</span>
                                     )}
                                     <span className={`text-xl font-bold ${metrics.cashRunway >= 6 ? "text-green-600" : metrics.cashRunway >= 3 ? "text-amber-600" : "text-red-600"}`}>
                                         <AnimatedNumber value={metrics.cashRunway} suffix=" months" />

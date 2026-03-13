@@ -67,11 +67,11 @@ export default async function BlogPost({
     const articleSchema = generateArticleSchema({
         headline: blog.title,
         description: blog.excerpt,
-        image: blog.coverimage.startsWith("http")
-            ? blog.coverimage
-            : `https://bwmc.ae${blog.coverimage}`,
-        datePublished: blog.createdat,
-        dateModified: blog.updatedat,
+        image: blog.coverImage.startsWith("http")
+            ? blog.coverImage
+            : `https://bwmc.ae${blog.coverImage}`,
+        datePublished: blog.createdAt,
+        dateModified: blog.updatedAt,
         authorName: blog.author,
         authorUrl: "https://bwmc.ae/about",
         publisherName: "BWMC",
@@ -83,9 +83,9 @@ export default async function BlogPost({
     });
 
     // Get related posts
-    const relatedPosts = blog.relatedposts
+    const relatedPosts = blog.relatedPosts
         ? allBlogs
-            .filter((b) => blog.relatedposts?.includes(b.slug))
+            .filter((b) => blog.relatedPosts?.includes(b.slug))
             .slice(0, 3)
             .map((b) => ({
                 title: b.title,
@@ -104,8 +104,8 @@ export default async function BlogPost({
             }));
 
     // Add related services if specified
-    const relatedServices = blog.relatedservices
-        ? blog.relatedservices.map((service) => {
+    const relatedServices = blog.relatedServices
+        ? blog.relatedServices.map((service) => {
             const serviceMap: { [key: string]: { title: string; description: string } } = {
                 "business-setup": {
                     title: "Business Setup Services",
@@ -178,7 +178,7 @@ export default async function BlogPost({
                         <div className="flex items-center gap-4 text-sm text-white/70 mb-4 flex-wrap">
                             <span className="flex items-center gap-1">
                                 <Calendar className="w-4 h-4" />
-                                {new Date(blog.createdat).toLocaleDateString("en-US", {
+                                {new Date(blog.createdAt).toLocaleDateString("en-US", {
                                     year: "numeric",
                                     month: "long",
                                     day: "numeric",
@@ -205,10 +205,10 @@ export default async function BlogPost({
                 </section>
 
                 {/* Cover Image */}
-                {blog.coverimage && (
+                {blog.coverImage && (
                     <section className="relative h-96 bg-gray-100">
                         <Image
-                            src={blog.coverimage}
+                            src={blog.coverImage}
                             alt={`${blog.title} - BWMC Blog`}
                             fill
                             className="object-cover"
