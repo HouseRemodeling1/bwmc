@@ -29,22 +29,30 @@ export async function callGemini(prompt: string): Promise<string> {
  * imperfect markdown fences, or wraps JSON in explanation.
  */
 function extractJSON(raw: string): string {
-    // 1. Strip markdown fences if present
-    const fenceStripped = raw
-        .replace(/^```json?\s*/im, "")
-        .replace(/\s*```\s*$/im, "")
+    if (!raw || !raw.trim()) throw new Error("Empty response from AI");
+
+    // 1. Strip markdown fences and conversational noise more aggressively
+    let cleaned = raw
+        .replace(/^[\s\S]*?```(?:json)?/im, "") // Strip everything before the first ```json or ```
+        .replace(/```[\s\S]*?$/im, "")         // Strip everything after the first closing ```
         .trim();
 
-    // 2. Find the outermost JSON object via bracket matching
-    const start = fenceStripped.indexOf("{");
-    if (start === -1) throw new Error("No JSON object found in response");
+    // 2. If no fences were found, try to find the first '{' and last '}'
+    const start = cleaned.indexOf("{");
+    if (start === -1) {
+        // Try again on the raw string just in case the cleaning was too aggressive
+        const rawStart = raw.indexOf("{");
+        if (rawStart === -1) throw new Error("No JSON object found in response");
+        cleaned = raw;
+    }
 
+    const firstBrace = cleaned.indexOf("{");
     let depth = 0;
     let inString = false;
     let escape = false;
 
-    for (let i = start; i < fenceStripped.length; i++) {
-        const ch = fenceStripped[i];
+    for (let i = firstBrace; i < cleaned.length; i++) {
+        const ch = cleaned[i];
         if (escape) { escape = false; continue; }
         if (ch === "\\" && inString) { escape = true; continue; }
         if (ch === '"') { inString = !inString; continue; }
@@ -52,10 +60,10 @@ function extractJSON(raw: string): string {
         if (ch === "{") depth++;
         if (ch === "}") {
             depth--;
-            if (depth === 0) return fenceStripped.slice(start, i + 1);
+            if (depth === 0) return cleaned.slice(firstBrace, i + 1);
         }
     }
-    throw new Error("Incomplete JSON object in response");
+    throw new Error("Incomplete JSON object in response (missing closing brace)");
 }
 
 /**
@@ -79,7 +87,8 @@ export async function callGeminiJSON<T>(prompt: string): Promise<T> {
         try {
             return await attempt();
         } catch (secondErr) {
-            console.error("[Gemini] second JSON parse attempt failed:", secondErr, "\nRaw:", lastRaw.slice(0, 500));
+            console.error("[Gemini] second JSON parse attempt failed:", secondErr);
+            console.error("[Gemini] Attempted to parse this string:", lastRaw.slice(0, 5000)); // Log more of it
             // If the underlying callGemini threw (e.g. safety block, network), surface that error
             const msg = secondErr instanceof Error ? secondErr.message : String(secondErr);
             if (!msg.includes("JSON") && !msg.includes("Incomplete") && !msg.includes("No JSON")) {

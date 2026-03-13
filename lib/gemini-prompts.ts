@@ -43,9 +43,12 @@ ${extractedText.slice(0, 15000)}
 
 ---
 
-RETURN ONLY A VALID JSON OBJECT.
-No markdown. No backticks. No explanation before or after.
-Just the raw JSON starting with { and ending with }
+RETURN ONLY A PURE AND CLEAN VALID JSON OBJECT.
+- ABSOLUTELY NO markdown backticks (e.g., \`\`\`json).
+- NO conversational text before or after the JSON.
+- NO explanation or preamble.
+- Ensure all strings are escaped correctly.
+- The very first character MUST be { and the last character MUST be }.
 
 Use this exact structure:
 
@@ -260,7 +263,9 @@ QUALITY CHECK — before finalizing your JSON ask yourself:
 3. Is every recommendation specific enough to act on today?
 4. Would a non-accountant understand every single sentence?
 5. Does the report tell a coherent story from start to finish?
-6. Are specific months and specific AED amounts referenced throughout?`;
+6. Are specific months and specific AED amounts referenced throughout?
+
+FINAL REMINDER: RETURN ONLY RAW JSON. NO MARKDOWN. NO BACKTICKS. START WITH { AND END WITH }.`;
 }
 
 export function buildLeakagePrompt(extractedText: string): string {
