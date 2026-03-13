@@ -7,20 +7,18 @@ import { blogMetadata } from "@/lib/metadata";
 
 export const metadata = blogMetadata;
 
-import fs from "fs";
-import path from "path";
+import { getBlogs, Blog } from "@/lib/blogs";
 
-async function getBlogs() {
-    const filePath = path.join(process.cwd(), "public", "data", "blogs.json");
-    const fileContents = fs.readFileSync(filePath, "utf8");
-    const data = JSON.parse(fileContents);
-    return data.blogs
-        .filter((blog: any) => blog.published)
-        .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+async function getPublishedBlogs() {
+    const blogs = await getBlogs();
+    return blogs
+        .filter((blog: Blog) => blog.published)
+        .sort((a: Blog, b: Blog) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 }
 
+
 export default async function BlogPage() {
-    const blogs = await getBlogs();
+    const blogs = await getPublishedBlogs();
 
     return (
         <main className="min-h-screen">

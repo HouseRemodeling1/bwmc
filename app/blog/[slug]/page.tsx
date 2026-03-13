@@ -8,39 +8,18 @@ import RelatedContent from "@/components/RelatedContent";
 import { generateBlogMetadata, estimateReadingTime } from "@/lib/metadata";
 import { generateArticleSchema } from "@/lib/schema";
 
-import fs from "fs";
-import path from "path";
-
-interface Blog {
-    id: string;
-    title: string;
-    excerpt: string;
-    content: string;
-    coverImage: string;
-    category: string;
-    author: string;
-    published: boolean;
-    slug: string;
-    createdAt: string;
-    updatedAt: string;
-    keywords?: string[];
-    relatedPosts?: string[];
-    relatedServices?: string[];
-}
+import { getBlogs, Blog } from "@/lib/blogs";
 
 async function getBlog(slug: string): Promise<Blog | undefined> {
-    const filePath = path.join(process.cwd(), "public", "data", "blogs.json");
-    const fileContents = fs.readFileSync(filePath, "utf8");
-    const data = JSON.parse(fileContents);
-    return data.blogs.find((blog: Blog) => blog.slug === slug && blog.published);
+    const blogs = await getBlogs();
+    return blogs.find((blog: Blog) => blog.slug === slug && blog.published);
 }
 
 async function getAllBlogs(): Promise<Blog[]> {
-    const filePath = path.join(process.cwd(), "public", "data", "blogs.json");
-    const fileContents = fs.readFileSync(filePath, "utf8");
-    const data = JSON.parse(fileContents);
-    return data.blogs.filter((blog: Blog) => blog.published);
+    const blogs = await getBlogs();
+    return blogs.filter((blog: Blog) => blog.published);
 }
+
 
 export async function generateMetadata({
     params,

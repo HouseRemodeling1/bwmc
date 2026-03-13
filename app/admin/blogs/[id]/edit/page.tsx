@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowLeft, Save } from "lucide-react";
 
-export default async function EditBlog({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
+export default function EditBlog({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = React.use(params);
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -19,23 +19,26 @@ export default async function EditBlog({ params }: { params: Promise<{ id: strin
         category: "Business",
         author: "BWMC Team",
         published: false,
+        slug: ""
     });
 
     useEffect(() => {
-        fetchBlog();
-    }, []);
+        const fetchBlog = async () => {
+            try {
+                const res = await fetch(`/api/blogs/${id}`);
+                if (!res.ok) throw new Error("Failed to load blog");
+                const data = await res.json();
+                setFormData(data);
+            } catch (error) {
+                console.error("Fetch Blog error:", error);
+                alert("Failed to load blog");
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    const fetchBlog = async () => {
-        try {
-            const res = await fetch(`/api/blogs/${id}`);
-            const data = await res.json();
-            setFormData(data);
-        } catch (error) {
-            alert("Failed to load blog");
-        } finally {
-            setLoading(false);
-        }
-    };
+        fetchBlog();
+    }, [id]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -132,6 +135,19 @@ export default async function EditBlog({ params }: { params: Promise<{ id: strin
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Slug (URL Path)
+                            </label>
+                            <input
+                                type="text"
+                                value={formData.slug}
+                                onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-transparent outline-none"
+                                placeholder="e.g. my-blog-post"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Cover Image URL
                             </label>
                             <input
@@ -139,6 +155,7 @@ export default async function EditBlog({ params }: { params: Promise<{ id: strin
                                 value={formData.coverImage}
                                 onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-transparent outline-none"
+                                placeholder="https://example.com/image.jpg"
                             />
                         </div>
 
