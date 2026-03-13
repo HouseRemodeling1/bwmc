@@ -66,37 +66,51 @@ function extractJSON(raw: string): string {
     throw new Error("Incomplete JSON object in response (missing closing brace)");
 }
 
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 /**
  * Calls Gemini and parses the response as JSON.
  * Uses bracket-matching extraction to tolerate preamble/trailing text.
- * Auto-retries once before throwing a user-friendly error.
+ * Auto-retries with exponential backoff on both parse and API errors.
  */
 export async function callGeminiJSON<T>(prompt: string): Promise<T> {
     let lastRaw = "";
-    const attempt = async (): Promise<T> => {
-        lastRaw = await callGemini(prompt);
-        console.debug("[Gemini] raw text for JSON parsing:", lastRaw.slice(0, 500));
-        const jsonStr = extractJSON(lastRaw);
-        return JSON.parse(jsonStr) as T;
+    const maxRetries = 2;
+
+    const attempt = async (retryCount = 0): Promise<T> => {
+        try {
+            lastRaw = await callGemini(prompt);
+            console.debug(`[Gemini] Attempt ${retryCount + 1} raw response:`, lastRaw.slice(0, 300));
+            const jsonStr = extractJSON(lastRaw);
+            return JSON.parse(jsonStr) as T;
+        } catch (err: any) {
+            const isLastAttempt = retryCount >= maxRetries;
+            const msg = err instanceof Error ? err.message : String(err);
+            const isRateLimit = msg.includes("429") || msg.includes("Too many requests");
+
+            console.error(`[Gemini] Attempt ${retryCount + 1} failed:`, msg);
+
+            if (isLastAttempt) {
+                // If it's the last attempt and it's a parse error, give a friendly message
+                if (msg.includes("JSON") || msg.includes("brace") || msg.includes("No JSON")) {
+                    console.error("[Gemini] Final attempt failed to parse JSON. Raw:", lastRaw);
+                    throw new Error("We had trouble reading the AI response. Please try uploading your file again.");
+                }
+                throw err;
+            }
+
+            // Exponential backoff: 2s, 5s... with jitter
+            // Wait longer (10s+) for rate limits
+            const baseDelay = isRateLimit ? 10000 : 2000;
+            const delay = baseDelay * Math.pow(2, retryCount) + Math.random() * 1000;
+            
+            console.warn(`[Gemini] Retrying in ${Math.round(delay)}ms...`);
+            await sleep(delay);
+            return attempt(retryCount + 1);
+        }
     };
 
-    try {
-        return await attempt();
-    } catch (firstErr) {
-        console.error("[Gemini] first JSON parse attempt failed:", firstErr, "\nRaw:", lastRaw.slice(0, 500));
-        try {
-            return await attempt();
-        } catch (secondErr) {
-            console.error("[Gemini] second JSON parse attempt failed:", secondErr);
-            console.error("[Gemini] Attempted to parse this string:", lastRaw.slice(0, 5000)); // Log more of it
-            // If the underlying callGemini threw (e.g. safety block, network), surface that error
-            const msg = secondErr instanceof Error ? secondErr.message : String(secondErr);
-            if (!msg.includes("JSON") && !msg.includes("Incomplete") && !msg.includes("No JSON")) {
-                throw secondErr; // re-throw Gemini-level errors directly
-            }
-            throw new Error("We had trouble reading the AI response. Please try uploading your file again.");
-        }
-    }
+    return attempt();
 }
 
 

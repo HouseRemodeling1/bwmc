@@ -60,7 +60,9 @@ export async function POST(req: NextRequest) {
                     return NextResponse.json({ error: `API key rejected (403): ${geminiMsg}` }, { status: 403 });
                 }
                 if (res.status === 429) {
-                    return NextResponse.json({ error: "Too many requests. Please wait 30 seconds and try again." }, { status: 429 });
+                    // Don't die on 429, try next model!
+                    lastError = "Too many requests. Please wait 30 seconds and try again.";
+                    continue;
                 }
                 if (res.status === 400) {
                     return NextResponse.json({ error: `Bad request (400): ${geminiMsg}` }, { status: 400 });
