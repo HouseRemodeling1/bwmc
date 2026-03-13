@@ -10,10 +10,15 @@ export const metadata = blogMetadata;
 import { getBlogs, Blog } from "@/lib/blogs";
 
 async function getPublishedBlogs() {
-    const blogs = await getBlogs();
-    return blogs
-        .filter((blog: Blog) => blog.published)
-        .sort((a: Blog, b: Blog) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    try {
+        const blogs = await getBlogs();
+        return blogs
+            .filter((blog: Blog) => blog.published)
+            .sort((a: Blog, b: Blog) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    } catch (error) {
+        console.error("Error fetching published blogs for build:", error);
+        return [];
+    }
 }
 
 

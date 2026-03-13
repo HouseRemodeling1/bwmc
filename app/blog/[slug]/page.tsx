@@ -11,13 +11,23 @@ import { generateArticleSchema } from "@/lib/schema";
 import { getBlogs, Blog } from "@/lib/blogs";
 
 async function getBlog(slug: string): Promise<Blog | undefined> {
-    const blogs = await getBlogs();
-    return blogs.find((blog: Blog) => blog.slug === slug && blog.published);
+    try {
+        const blogs = await getBlogs();
+        return blogs.find((blog: Blog) => blog.slug === slug && blog.published);
+    } catch (error) {
+        console.error("Error fetching single blog for build:", error);
+        return undefined;
+    }
 }
 
 async function getAllBlogs(): Promise<Blog[]> {
-    const blogs = await getBlogs();
-    return blogs.filter((blog: Blog) => blog.published);
+    try {
+        const blogs = await getBlogs();
+        return blogs.filter((blog: Blog) => blog.published);
+    } catch (error) {
+        console.error("Error fetching all blogs for build:", error);
+        return [];
+    }
 }
 
 

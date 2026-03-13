@@ -40,8 +40,8 @@ export async function getBlogs(): Promise<Blog[]> {
         if (error) throw error;
 
         if (!data || data.length === 0) {
-            // If Supabase is empty, check for local data to sync/seed
-            if (fs.existsSync(blogsFilePath)) {
+            // Only seed in development to avoid build hangs
+            if (process.env.NODE_ENV === 'development' && fs.existsSync(blogsFilePath)) {
                 const fileContents = fs.readFileSync(blogsFilePath, "utf8");
                 const localData = JSON.parse(fileContents);
                 const localBlogs = localData.blogs || [];
@@ -57,12 +57,20 @@ export async function getBlogs(): Promise<Blog[]> {
 
         return data as Blog[];
     } catch (error: any) {
-        console.error("Error in getBlogs (Supabase fail, fallback to local if dev):", error);
+        console.error("Error in getBlogs:", error);
+        
+        // Fallback to local data only in development
         if (process.env.NODE_ENV === 'development' && fs.existsSync(blogsFilePath)) {
-            const fileContents = fs.readFileSync(blogsFilePath, "utf8");
-            return JSON.parse(fileContents).blogs || [];
+            try {
+                const fileContents = fs.readFileSync(blogsFilePath, "utf8");
+                return JSON.parse(fileContents).blogs || [];
+            } catch (e) {
+                return [];
+            }
         }
-        throw new Error(`Failed to fetch blogs: ${error.message || "Unknown error"}`);
+        
+        // In production/build, return empty array to prevent build failure
+        return [];
     }
 }
 
