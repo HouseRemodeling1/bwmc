@@ -14,7 +14,7 @@ async function getPublishedBlogs() {
         const blogs = await getBlogs();
         return blogs
             .filter((blog: Blog) => blog.published)
-            .sort((a: Blog, b: Blog) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+            .sort((a: Blog, b: Blog) => new Date(b.createdat).getTime() - new Date(a.createdat).getTime());
     } catch (error) {
         console.error("Error fetching published blogs for build:", error);
         return [];
@@ -54,10 +54,10 @@ export default async function BlogPage() {
                                     key={blog.id}
                                     className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow group"
                                 >
-                                    {blog.coverImage && (
+                                    {blog.coverimage && (
                                         <div className="relative h-48 overflow-hidden">
                                             <Image
-                                                src={blog.coverImage}
+                                                src={blog.coverimage}
                                                 alt={blog.title}
                                                 fill
                                                 className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -68,7 +68,7 @@ export default async function BlogPage() {
                                         <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
                                             <span className="flex items-center gap-1">
                                                 <Calendar className="w-4 h-4" />
-                                                {new Date(blog.createdAt).toLocaleDateString()}
+                                                {new Date(blog.createdat).toLocaleDateString()}
                                             </span>
                                             <span className="px-3 py-1 bg-royal-blue/10 text-royal-blue rounded-full text-xs font-semibold">
                                                 {blog.category}

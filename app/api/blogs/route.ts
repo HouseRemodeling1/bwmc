@@ -22,8 +22,8 @@ export async function POST(request: NextRequest) {
             id: Date.now().toString(),
             ...body,
             slug: body.slug || body.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            createdat: new Date().toISOString(),
+            updatedat: new Date().toISOString(),
         };
 
         // saveBlogs handles upsert, we just pass the new blog in an array

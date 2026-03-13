@@ -45,7 +45,7 @@ export async function PUT(
             ...existingBlog,
             ...body,
             id, // Ensure ID doesn't change
-            updatedAt: new Date().toISOString(),
+            updatedat: new Date().toISOString(),
         };
 
         // saveBlogs handles upsert

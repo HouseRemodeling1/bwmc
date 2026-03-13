@@ -6,16 +6,16 @@ create table if not exists blogs (
   title text not null,
   excerpt text not null,
   content text not null,
-  coverImage text,
+  coverimage text,
   category text not null,
   author text not null,
   published boolean default false,
   slug text unique not null,
-  createdAt timestamp with time zone default now(),
-  updatedAt timestamp with time zone default now(),
+  createdat timestamp with time zone default now(),
+  updatedat timestamp with time zone default now(),
   keywords text[],
-  relatedPosts text[],
-  relatedServices text[]
+  relatedposts text[],
+  relatedservices text[]
 );
 
 -- Set up Row Level Security (RLS)

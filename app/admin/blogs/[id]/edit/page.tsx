@@ -15,7 +15,7 @@ export default function EditBlog({ params }: { params: Promise<{ id: string }> }
         title: "",
         excerpt: "",
         content: "",
-        coverImage: "",
+        coverimage: "",
         category: "Business",
         author: "BWMC Team",
         published: false,
@@ -152,8 +152,8 @@ export default function EditBlog({ params }: { params: Promise<{ id: string }> }
                             </label>
                             <input
                                 type="url"
-                                value={formData.coverImage}
-                                onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
+                                value={formData.coverimage}
+                                onChange={(e) => setFormData({ ...formData, coverimage: e.target.value })}
                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-transparent outline-none"
                                 placeholder="https://example.com/image.jpg"
                             />

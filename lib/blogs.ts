@@ -18,16 +18,16 @@ export interface Blog {
     title: string;
     excerpt: string;
     content: string;
-    coverImage: string;
+    coverimage: string;
     category: string;
     author: string;
     published: boolean;
     slug: string;
-    createdAt: string;
-    updatedAt: string;
+    createdat: string;
+    updatedat: string;
     keywords?: string[];
-    relatedPosts?: string[];
-    relatedServices?: string[];
+    relatedposts?: string[];
+    relatedservices?: string[];
 }
 
 export async function getBlogs(): Promise<Blog[]> {
@@ -35,21 +35,42 @@ export async function getBlogs(): Promise<Blog[]> {
         const { data, error } = await supabase
             .from("blogs")
             .select("*")
-            .order("createdAt", { ascending: false });
+            .order("createdat", { ascending: false });
 
         if (error) throw error;
 
         if (!data || data.length === 0) {
             // Only seed in development to avoid build hangs
             if (process.env.NODE_ENV === 'development' && fs.existsSync(blogsFilePath)) {
-                const fileContents = fs.readFileSync(blogsFilePath, "utf8");
-                const localData = JSON.parse(fileContents);
-                const localBlogs = localData.blogs || [];
-                
-                if (localBlogs.length > 0) {
-                    console.info("Seeding Supabase with local blogs...");
-                    await saveBlogs(localBlogs);
-                    return localBlogs;
+                try {
+                    const fileContents = fs.readFileSync(blogsFilePath, "utf8");
+                    const localData = JSON.parse(fileContents);
+                    const localBlogs = localData.blogs || [];
+                    
+                    if (localBlogs.length > 0) {
+                        console.info("Seeding Supabase with local blogs...");
+                        // Map local camelCase to lowercase for seeding
+                        const mappedBlogs = localBlogs.map((b: any) => ({
+                            id: b.id,
+                            title: b.title,
+                            excerpt: b.excerpt,
+                            content: b.content,
+                            coverimage: b.coverImage || b.coverimage,
+                            category: b.category,
+                            author: b.author,
+                            published: b.published,
+                            slug: b.slug,
+                            createdat: b.createdAt || b.createdat,
+                            updatedat: b.updatedAt || b.updatedat,
+                            keywords: b.keywords,
+                            relatedposts: b.relatedPosts || b.relatedposts,
+                            relatedservices: b.relatedServices || b.relatedservices
+                        }));
+                        await saveBlogs(mappedBlogs);
+                        return mappedBlogs;
+                    }
+                } catch (seedError) {
+                    console.error("Seeding failed:", seedError);
                 }
             }
             return [];
@@ -63,7 +84,24 @@ export async function getBlogs(): Promise<Blog[]> {
         if (process.env.NODE_ENV === 'development' && fs.existsSync(blogsFilePath)) {
             try {
                 const fileContents = fs.readFileSync(blogsFilePath, "utf8");
-                return JSON.parse(fileContents).blogs || [];
+                const localBlogs = JSON.parse(fileContents).blogs || [];
+                // Map local camelCase to lowercase for fallback
+                return localBlogs.map((b: any) => ({
+                    id: b.id,
+                    title: b.title,
+                    excerpt: b.excerpt,
+                    content: b.content,
+                    coverimage: b.coverImage || b.coverimage,
+                    category: b.category,
+                    author: b.author,
+                    published: b.published,
+                    slug: b.slug,
+                    createdat: b.createdAt || b.createdat,
+                    updatedat: b.updatedAt || b.updatedat,
+                    keywords: b.keywords,
+                    relatedposts: b.relatedPosts || b.relatedposts,
+                    relatedservices: b.relatedServices || b.relatedservices
+                }));
             } catch (e) {
                 return [];
             }
@@ -85,13 +123,14 @@ export async function saveBlogs(blogs: Blog[]) {
         if (error) throw error;
     } catch (error: any) {
         console.error("Failed to save to Supabase:", error);
-        throw new Error(`Persistence error: ${error.message || "Failed to save to Supabase"}. Please ensure you have run the SQL script in Supabase to create the 'blogs' table.`);
+        throw new Error(`Persistence error: ${error.message || "Failed to save to Supabase"}. Please ensure you have run the SQL script in Supabase to create the 'blogs' table with lowercase columns.`);
     }
 
     if (process.env.NODE_ENV === 'development') {
         try {
             const dir = path.dirname(blogsFilePath);
             if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+            // We can keep camelCase in the JSON if we want, but for consistency let's use the new interface
             fs.writeFileSync(blogsFilePath, JSON.stringify({ blogs }, null, 2));
         } catch (error) {
             console.error("Failed to sync to local file:", error);
