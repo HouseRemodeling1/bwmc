@@ -11,24 +11,25 @@ export async function POST(request) {
     const zohoLead = {
       data: [
         {
-          First_Name:  firstName,
-          Last_Name:   lastName,
-          Phone:       leadData.phone,
-          Company:     leadData.companyName,
-          Lead_Source: "FinSight AI Tool",
-          Lead_Status: "New",
-          Description: buildDescription(reportData),
-          FinSight_Health_Score:  String(reportData.healthScore.overall),
-          FinSight_Grade:         reportData.executiveSummary.grade,
-          FinSight_Recovery_AED:  String(reportData.profitLeakage
-                                    .recoveryOpportunity.monthlyAED),
-          FinSight_Top_Red_Flag:  reportData.riskAssessment
-                                    .redFlags[0]?.title || "",
-          FinSight_VAT_Status:    reportData.riskAssessment
-                                    .vatExposure.status,
-          FinSight_Cash_Runway:   String(reportData.riskAssessment
-                                    .cashRunway.months || ""),
-          FinSight_Revenue_Range: leadData.revenueRange || "",
+          First_Name:              firstName,
+          Last_Name:               lastName || ".",
+          Phone:                   leadData.phone,
+          Company:                 leadData.companyName,
+          Lead_Source:             "FinSight AI Tool",
+          Lead_Status:             "New",
+          Description:             buildDescription(reportData),
+          FinSight_Health_Score:   String(reportData.healthScore?.overall || ""),
+          FinSight_Grade:          reportData.executiveSummary?.grade || "",
+          FinSight_Recovery_AED:   String(reportData.profitLeakage
+                                     ?.recoveryOpportunity
+                                     ?.monthlyAED || ""),
+          FinSight_Top_Red_Flag:   reportData.riskAssessment
+                                     ?.redFlags?.[0]?.title || "",
+          FinSight_VAT_Status:     reportData.riskAssessment
+                                     ?.vatExposure?.status || "",
+          FinSight_Cash_Runway:    String(reportData.riskAssessment
+                                     ?.cashRunway?.months || ""),
+          FinSight_Revenue_Range:  leadData.revenueRange || "",
         }
       ]
     };
