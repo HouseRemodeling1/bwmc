@@ -182,6 +182,172 @@ function StrategicRoadmapTimeline({ plan }: { plan: FinancialReport['actionPlan'
 }
 
 
+const SAMPLE_REPORT: FinancialReport = {
+    reportMeta: {
+        companyName: "Nova Trading LLC",
+        periodAnalyzed: "January – August 2024",
+        dataConfidence: "High",
+        confidenceReason: "8 months of complete data",
+        reportDate: "September 2024",
+        analystNote: "Strong revenue growth but profit is being heavily eroded by three controllable cost categories."
+    },
+    executiveSummary: {
+        grade: "C",
+        gradeReason: "Revenue healthy but margin critically below sector average",
+        headline: "You are generating AED 185,000 monthly but keeping only AED 14,800 of it",
+        narrative: "Nova Trading has demonstrated consistent revenue growth of 12% across the analysis period, which is a genuine strength in the current UAE trading environment. However, the business is retaining just 8% of every dirham earned — against a sector average of 15% — meaning the growth is largely benefiting costs rather than the owner. The primary threat is a compounding cost structure where salaries, owner withdrawals and marketing have expanded faster than revenue in each consecutive quarter. Addressing the top three cost leaks identified in this report could recover AED 28,400 per month without touching revenue at all."
+    },
+    healthScore: {
+        overall: 61,
+        grade: "C",
+        subScores: {
+            profitability: { score: 48, label: "Below Average", commentary: "Net margin of 8% sits 7 points below the UAE trading sector average of 15%. Gross margin is healthy at 40% — the problem is operational cost absorption between gross and net." },
+            cashFlow: { score: 65, label: "Moderate", commentary: "Cash generation is positive but thinning month on month as cost commitments grow. At current trajectory runway pressure will emerge within 2 quarters." },
+            costEfficiency: { score: 52, label: "Needs Attention", commentary: "Three cost lines are running above sector benchmarks simultaneously — salary ratio, owner withdrawals and marketing — a combination that compounds margin pressure." },
+            growthTrend: { score: 74, label: "Positive", commentary: "Revenue grew consistently from AED 142,000 in January to AED 185,000 in August — a 30% improvement over 8 months that signals real market traction." }
+        }
+    },
+    financialPerformance: {
+        narrative: "Nova Trading is at a critical inflection point. While top-line growth is impressive, the 'bridge' between gross and net profit is collapsing under the weight of escalating operational overheads.",
+        keyMetrics: [
+            { metric: "Monthly Revenue", value: "AED 185,000", benchmark: "AED 160,000", status: "healthy", gap: "+15%" },
+            { metric: "Net Profit Margin", value: "8.0%", benchmark: "15.0%", status: "critical", gap: "-7%" },
+            { metric: "OPEX Ratio", value: "32.0%", benchmark: "25.0%", status: "watch", gap: "+7%" },
+            { metric: "Gross Margin", value: "60.0%", benchmark: "55.0%", status: "healthy", gap: "+5%" }
+        ],
+        marginBridge: {
+            narrative: "Your strong 60% gross margin is being consumed by a 52% operating cost load, leaving only 8% at the bottom. The leak is occurring post-gross profit."
+        }
+    },
+    costIntelligence: {
+        narrative: "Analysis identifies three primary zones of cost inflation that are decoupled from revenue growth.",
+        costBreakdown: [
+            { category: "Salaries & Staff", amount: 45000, percentOfRevenue: 24.3, benchmark: 21, status: "watch", commentary: "Staff costs expanded mid-year without revenue offset." },
+            { category: "Marketing & Ads", amount: 16000, percentOfRevenue: 8.6, benchmark: 5, status: "critical", commentary: "Spend has doubled with unclear attribution." },
+            { category: "Owner Withdrawals", amount: 30000, percentOfRevenue: 16.2, benchmark: 11, status: "critical", commentary: "Largest controllable leak in the business." }
+        ],
+        hiddenCosts: []
+    },
+    profitLeakage: {
+        narrative: "Nova Trading is generating a healthy gross profit of AED 111,000 per month — but by the time operational costs, salaries and owner withdrawals are accounted for, only AED 14,800 remains. This is not a revenue problem. The business is winning customers and growing its top line. The issue is entirely on the cost side, where three categories have expanded beyond sector norms and are collectively absorbing AED 28,400 per month more than they should.",
+        waterfallData: [
+            { label: "Total Revenue", amount: 185000, percentOfRevenue: 100, type: "revenue" },
+            { label: "Cost of Sales", amount: -74000, percentOfRevenue: 40, type: "deduction" },
+            { label: "Gross Profit", amount: 111000, percentOfRevenue: 60, type: "subtotal" },
+            { label: "Salaries & Staff", amount: -45000, percentOfRevenue: 24.3, type: "deduction" },
+            { label: "Operations & Rent", amount: -18000, percentOfRevenue: 9.7, type: "deduction" },
+            { label: "Marketing & Ads", amount: -16000, percentOfRevenue: 8.6, type: "deduction" },
+            { label: "Owner Withdrawals", amount: -30000, percentOfRevenue: 16.2, type: "deduction" },
+            { label: "Other Costs", amount: -7200, percentOfRevenue: 3.9, type: "deduction" },
+            { label: "Net Profit", amount: 14800, percentOfRevenue: 8, type: "profit" }
+        ],
+        topLeaks: [
+            { rank: 1, category: "Owner Withdrawals", monthlyAmount: 30000, percentOfRevenue: 16.2, cfoInsight: "At 16.2% of revenue, owner withdrawals are the single largest controllable cost leak. Sector benchmark is 10-12% — bringing this in line would recover AED 7,800 per month immediately.", industryBenchmark: "10-12% of revenue", severity: "critical" },
+            { rank: 2, category: "Marketing Spend", monthlyAmount: 16000, percentOfRevenue: 8.6, cfoInsight: "Marketing is running at 8.6% of revenue against a sector average of 5%. Without a clear cost-per-acquisition metric, this spend is uncontrolled. Optimising to benchmark recovers AED 6,700 per month.", industryBenchmark: "5% of revenue", severity: "high" },
+            { rank: 3, category: "Salary Ratio", monthlyAmount: 45000, percentOfRevenue: 24.3, cfoInsight: "Staff costs at 24.3% are approaching the 25% warning threshold. The mid-year salary increase has not yet translated into proportional revenue growth — this needs a 90-day performance review.", industryBenchmark: "20-22% of revenue", severity: "high" }
+        ],
+        recoveryOpportunity: {
+            monthlyAED: 28400,
+            annualAED: 340800,
+            narrative: "Bringing the three identified cost leaks to sector benchmarks would recover AED 28,400 per month — without acquiring a single new customer or changing the pricing structure. Annualised, this represents AED 340,800 in additional retained profit.",
+            breakdown: [
+                { leak: "Owner Withdrawals", monthlyRecovery: 7800 },
+                { leak: "Marketing Optimization", monthlyRecovery: 6700 },
+                { leak: "Salary Efficiency", monthlyRecovery: 13900 }
+            ]
+        }
+    },
+    riskAssessment: {
+        narrative: "The business faces immediate regulatory and liquidity risks that must be addressed to protect the growth achieved to date.",
+        redFlags: [
+            {
+                severity: "critical",
+                title: "Owner withdrawals at 16% of revenue",
+                cfoObservation: "Owner withdrawals totalled AED 202,000 over 8 months — consuming 16% of total revenue against a recommended ceiling of 15%. This is the single largest controllable leak in the business.",
+                consequence: "At current withdrawal rates, the business cannot build a meaningful cash reserve — leaving it vulnerable to any unexpected cost or revenue dip.",
+                immediateAction: "Cap monthly owner withdrawals at AED 22,000 until net margin exceeds 12%."
+            },
+            {
+                severity: "warning",
+                title: "Marketing costs doubled in 8 months",
+                cfoObservation: "Marketing spend grew from AED 8,500 in January to AED 16,000 in August — an 88% increase — while revenue grew 30% in the same period. The return on this spend is not yet justified by revenue acceleration.",
+                consequence: "Unchecked marketing inflation will push the operating expense ratio above 30% within two quarters.",
+                immediateAction: "Require a cost-per-acquisition calculation before approving any further marketing budget increases."
+            },
+            {
+                severity: "warning",
+                title: "Salary costs jumped 18% mid-year",
+                cfoObservation: "Staff costs increased from AED 38,000 to AED 45,000 between April and May — an 18% jump — with no corresponding revenue spike in the same period.",
+                consequence: "If the new headcount does not generate measurable revenue uplift within 90 days, the salary ratio will permanently compress margins.",
+                immediateAction: "Set a 90-day revenue target for the expanded team and review in October."
+            }
+        ],
+        vatExposure: {
+            status: "exceeded",
+            estimatedAnnualRevenue: 1924000,
+            threshold: 375000,
+            narrative: "Nova Trading's annualised revenue of approximately AED 1.92M significantly exceeds the UAE VAT registration threshold of AED 375,000. VAT registration is mandatory and non-compliance carries substantial penalties from the FTA."
+        },
+        corporateTaxExposure: {
+            status: "approaching",
+            threshold: 375000,
+            rate: "9%",
+            narrative: "With profits projected over AED 375k annually, corporate tax planning is required."
+        },
+        cashRunway: {
+            months: 4,
+            narrative: "At the current net profit level of AED 14,800 per month against fixed monthly commitments of AED 121,000, the business has approximately 4 months of runway if revenue were to stop. This is below the recommended minimum of 6 months."
+        }
+    },
+    advancedMetrics: {
+        workingCapitalRatio: {
+            value: 1.2,
+            benchmark: 1.5,
+            status: "watch",
+            narrative: "Working capital is slightly tight, limiting reinvestment capability."
+        },
+        operatingLeverage: {
+            value: "Medium",
+            narrative: "Fixed costs are significant, meaning profits will accelerate quickly once the cost leaks are plugged."
+        },
+        revenueQualityScore: {
+            score: 75,
+            recurringVsOneOff: "Mixed",
+            concentration: "Low",
+            narrative: "Revenue is well-distributed but lacks a high percentage of recurring contracts."
+        },
+        seasonalityDetected: true,
+        seasonalityNarrative: "Slight uptick in Q2 trading observed."
+    },
+    strategicRecommendations: [
+        { priority: 1, title: "Cap owner withdrawals immediately", cfoRationale: "This is the fastest and most impactful action available. Reducing monthly withdrawals from AED 30,000 to AED 22,000 recovers AED 7,800 per month with zero operational disruption.", specificAction: "Set a standing instruction to limit owner withdrawal to AED 22,000 per month starting next month. Review after 3 months.", expectedImpact: "AED 7,800/month recovered — net margin improves from 8% to 12%", timeframe: "This week", effort: "Low", impact: "High" },
+        { priority: 2, title: "Audit marketing spend ROI", cfoRationale: "Marketing doubled in 8 months with no clear revenue attribution. Before spending another dirham, establish what each AED is returning.", specificAction: "List every active marketing channel. Calculate revenue attributed to each. Cut any channel that cannot demonstrate a return within 60 days.", expectedImpact: "AED 4,000–6,700/month recovered", timeframe: "This month", effort: "Medium", impact: "High" },
+        { priority: 3, title: "Register for VAT immediately", cfoRationale: "With annualised revenue of AED 1.92M, VAT registration is not optional. FTA penalties for late registration can reach AED 20,000.", specificAction: "Contact a UAE VAT consultant this week and begin the FTA registration process. Deadline is immediate.", expectedImpact: "Avoids penalties of AED 10,000–20,000", timeframe: "This week", effort: "Low", impact: "High" },
+        { priority: 4, title: "Set 90-day revenue targets for new hires", cfoRationale: "The salary increase in April added AED 7,000/month in fixed costs. These hires need to demonstrably contribute to revenue growth.", specificAction: "Assign each new team member a measurable revenue or efficiency target. Review performance in October.", expectedImpact: "Protects AED 7,000/month in salary investment", timeframe: "This month", effort: "Low", impact: "Medium" },
+        { priority: 5, title: "Build a 6-month cash reserve", cfoRationale: "Current runway of 4 months is below the recommended minimum. One slow month could create serious liquidity pressure.", specificAction: "Ring-fence AED 10,000 per month into a separate business reserve account until 6 months of operating costs are covered.", expectedImpact: "Eliminates liquidity risk within 6 months", timeframe: "Next 90 days", effort: "Low", impact: "High" }
+    ],
+    actionPlan: {
+        narrative: "Focus on cost containment in Month 1 to stabilize margin, followed by efficiency audits in Month 2.",
+        month1: [
+            { action: "Cap owner withdrawals at AED 22k", type: "DIY", why: "Stops the largest cash leak immediately." },
+            { action: "Initiate VAT registration", type: "Needs Expert Help", why: "Mandatory compliance requirement." }
+        ],
+        month2: [
+            { action: "Perform marketing ROI audit", type: "DIY", why: "Identifies non-performing spend." },
+            { action: "Review staff productivity vs targets", type: "DIY", why: "Ensures mid-year hires are ROI positive." }
+        ],
+        month3: [
+            { action: "Review Q3 financial performance", type: "Needs Expert Help", why: "Verify effectiveness of cost controls." }
+        ]
+    },
+    closingStatement: {
+        narrative: "Nova Trading is a genuinely growing business with real market traction — but it is leaving AED 28,400 on the table every single month through three controllable cost leaks. The priority is not more revenue — it is keeping more of the revenue already being earned. Act on the top three recommendations this month and this business will look materially different by year end.",
+        pointsFromPerfect: 39,
+        potentialScore: 78,
+        signOff: "This report was prepared by FinSight AI, BWMC's proprietary financial intelligence engine. For a personal advisory session contact BWMC."
+    }
+};
+
 export default function FinancialHealthClient() {
     const [pageState, setPageState] = useState<PageState>("hero");
     const [report, setReport] = useState<FinancialReport | null>(null);
@@ -197,7 +363,9 @@ export default function FinancialHealthClient() {
     // Premium Lock State
     const [isUnlocked, setIsUnlocked] = useState(false);
     const [isSkipped, setIsSkipped] = useState(false);
+    const [isViewingSample, setIsViewingSample] = useState(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
+
 
     // Load session state on mount
     useEffect(() => {
@@ -221,8 +389,17 @@ export default function FinancialHealthClient() {
     const [leakageLoading, setLeakageLoading] = useState(false);
     const [leakageError, setLeakageError] = useState<string | null>(null);
 
+    const handleViewSample = () => {
+        setIsViewingSample(true);
+        setReport(SAMPLE_REPORT);
+        setPageState("report");
+        setExtractedSummary("Sample Report: Nova Trading LLC");
+        setTimeout(() => reportRef.current?.scrollIntoView({ behavior: "smooth" }), 200);
+    };
+
     // ── Core: run Comprehensive CFO Analysis ─────────────────────────────────────
     const runAnalysis = async (text: string) => {
+        setIsViewingSample(false);
         setExtractedText(text);
         runProcessingAnimation(async () => {
             try {
@@ -338,6 +515,7 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
         setLeakageError(null);
         setExtractedText("");
         setExtractedSummary("");
+        setIsViewingSample(false);
         setPageState("upload");
         setTimeout(() => uploadRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
     };
@@ -388,15 +566,13 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
 
                         {/* Dual Action Buttons */}
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
-                            <a
-                                href="/sample-report-nova-trading.pdf"
-                                target="_blank"
-                                rel="noopener noreferrer"
+                            <button
+                                onClick={handleViewSample}
                                 className="inline-flex items-center justify-center gap-2 bg-[#D4AF37] hover:bg-[#B5952F] text-navy font-bold px-8 py-4 rounded-xl transition-all shadow-lg hover:shadow-[#D4AF37]/30 hover:shadow-2xl transform hover:-translate-y-0.5 text-lg w-full sm:w-auto"
                             >
                                 <FileText className="w-5 h-5" />
                                 View Sample Report →
-                            </a>
+                            </button>
                             <button
                                 onClick={scrollToUpload}
                                 className="inline-flex items-center justify-center gap-2 bg-transparent hover:bg-white/5 border-2 border-white/30 hover:border-white/60 text-white font-bold px-8 py-4 rounded-xl transition-all w-full sm:w-auto text-lg"
@@ -580,9 +756,28 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
-                        className="py-12 px-6 lg:px-8 bg-gray-50 print:py-4 print:px-4"
+                        className="py-12 px-6 lg:px-8 bg-gray-50 print:py-4 print:px-4 relative"
                         id="report-content"
                     >
+                        {isViewingSample && (
+                            <div className="sticky top-4 z-50 mb-8 max-w-4xl mx-auto">
+                                <div className="bg-[#D4AF37] text-navy font-bold p-4 rounded-2xl shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4 border-2 border-white/20 backdrop-blur-md">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-full bg-navy/10 flex items-center justify-center">
+                                            <Activity className="w-4 h-4 text-navy" />
+                                        </div>
+                                        <p className="text-sm">👁 You are viewing a sample report — Nova Trading LLC, Dubai</p>
+                                    </div>
+                                    <button 
+                                        onClick={scrollToUpload}
+                                        className="bg-navy text-white hover:bg-black font-bold px-6 py-2 rounded-xl text-xs transition-all shadow-lg active:scale-95 flex items-center gap-2"
+                                    >
+                                        Analyse My Own Business
+                                        <ArrowRight className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                         <div className="max-w-4xl mx-auto space-y-8">
 
                             {/* CFO Cover Page & Executive Summary */}
@@ -727,7 +922,7 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
 
                             {/* ── CONSTANT: Determine if this is a sample based on the company name ── */}
                             {(() => {
-                                const isSample = report.reportMeta.companyName.toLowerCase().includes("nova trading");
+                                const isSample = isViewingSample || report.reportMeta.companyName?.toLowerCase().includes("nova trading");
                                 const showLock = !isSample && !isUnlocked;
                                 const contentClass = showLock && !isSkipped ? "filter blur-md pointer-events-none select-none opacity-60 transition-all duration-700 mt-8" : "transition-all duration-700 mt-8";
                                 
