@@ -949,9 +949,7 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                                                     </div>
                                                 ) : (
                                                     <LockForm 
-                                                        healthScore={report.healthScore.overall} 
-                                                        grade={report.executiveSummary.grade} 
-                                                        topRedFlag={report.riskAssessment.redFlags?.[0]?.title ?? "Unknown Risk"} 
+                                                        reportData={report} 
                                                         onUnlock={(n) => { setIsUnlocked(true); setToastMessage(`Welcome ${n.split(' ')[0]} — your full report is unlocked`); }}
                                                         onSkip={() => setIsSkipped(true)}
                                                     />

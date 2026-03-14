@@ -3,15 +3,15 @@
 import { useState } from "react";
 import { Shield, ArrowRight, CheckCircle } from "lucide-react";
 
+import { FinancialReport } from "../../app/financial-health-check/financial-types";
+
 interface LockFormProps {
-    healthScore: number;
-    grade: string;
-    topRedFlag: string;
+    reportData: FinancialReport;
     onUnlock: (name: string) => void;
     onSkip: () => void;
 }
 
-export default function LockForm({ healthScore, grade, topRedFlag, onUnlock, onSkip }: LockFormProps) {
+export default function LockForm({ reportData, onUnlock, onSkip }: LockFormProps) {
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("+971 ");
     const [company, setCompany] = useState("");
@@ -32,26 +32,20 @@ export default function LockForm({ healthScore, grade, topRedFlag, onUnlock, onS
         if (!validate()) return;
         setLoading(true);
         try {
-            const webhookUrl = process.env.NEXT_PUBLIC_LEADS_WEBHOOK_URL;
-            if (webhookUrl) {
-                await fetch(webhookUrl, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        timestamp: new Date().toISOString(),
+            await fetch("/api/zoho-lead", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    leadData: {
                         name,
                         phone,
                         companyName: company,
-                        healthScore,
-                        grade,
-                        topRedFlag,
-                        source: "finsight-tool-unlock",
-                    }),
-                    mode: "no-cors",
-                });
-            }
+                    },
+                    reportData
+                }),
+            });
         } catch (e) {
-            console.error("Webhook submission failed, but unlocking anyway", e);
+            console.error("Zoho lead submission failed, but unlocking anyway", e);
         } finally {
             setLoading(false);
             console.log("unlock_form_submitted");
