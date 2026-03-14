@@ -11,6 +11,7 @@ import WhatIfSimulator from "@/components/financial-health/WhatIfSimulator";
 import ProfitLeakageReport from "@/components/financial-health/ProfitLeakageReport";
 import { callGemini, callGeminiJSON, parseFileToText } from "@/lib/gemini-client";
 import { buildMainReportPrompt, buildLeakagePrompt, buildChatPrompt } from "@/lib/gemini-prompts";
+import LockForm from "@/components/financial-health/LockForm";
 
 import {
     FinancialReport, SubScoreDetail, SubScores, RedFlag, CostBreakdownItem,
@@ -180,6 +181,7 @@ function StrategicRoadmapTimeline({ plan }: { plan: FinancialReport['actionPlan'
     );
 }
 
+
 export default function FinancialHealthClient() {
     const [pageState, setPageState] = useState<PageState>("hero");
     const [report, setReport] = useState<FinancialReport | null>(null);
@@ -191,7 +193,27 @@ export default function FinancialHealthClient() {
     const [showManual, setShowManual] = useState(false);
     const [emailInput, setEmailInput] = useState("");
     const [emailSent, setEmailSent] = useState(false);
-    // API Key state removed — key sourced from NEXT_PUBLIC_GEMINI_API_KEY env var
+
+    // Premium Lock State
+    const [isUnlocked, setIsUnlocked] = useState(false);
+    const [isSkipped, setIsSkipped] = useState(false);
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+    // Load session state on mount
+    useEffect(() => {
+        const returningName = sessionStorage.getItem("bwmc_unlockedName");
+        if (returningName) {
+            setIsUnlocked(true);
+        }
+    }, []);
+
+    // Dismiss toast after 4s
+    useEffect(() => {
+        if (toastMessage) {
+            const t = setTimeout(() => setToastMessage(null), 4000);
+            return () => clearTimeout(t);
+        }
+    }, [toastMessage]);
 
     // Leakage state
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -355,7 +377,7 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                         </p>
 
                         {/* Trust badges */}
-                        <div className="flex flex-wrap items-center justify-center gap-4 mb-10">
+                        <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
                             {["No signup required", "Your data is never stored", "Results in under 30 seconds"].map((badge) => (
                                 <div key={badge} className="flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-2 rounded-full">
                                     <CheckCircle className="w-4 h-4 text-green-400" />
@@ -364,13 +386,28 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                             ))}
                         </div>
 
-                        <button
-                            onClick={scrollToUpload}
-                            className="inline-flex items-center gap-2 bg-sky-blue hover:bg-royal-blue text-white font-bold px-10 py-4 rounded-xl transition-all shadow-lg hover:shadow-sky-blue/30 hover:shadow-2xl transform hover:-translate-y-0.5 text-lg"
-                        >
-                            Analyze My Financials
-                            <ArrowRight className="w-5 h-5" />
-                        </button>
+                        {/* Dual Action Buttons */}
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
+                            <a
+                                href="/sample-report-nova-trading.pdf"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center justify-center gap-2 bg-[#D4AF37] hover:bg-[#B5952F] text-navy font-bold px-8 py-4 rounded-xl transition-all shadow-lg hover:shadow-[#D4AF37]/30 hover:shadow-2xl transform hover:-translate-y-0.5 text-lg w-full sm:w-auto"
+                            >
+                                <FileText className="w-5 h-5" />
+                                View Sample Report →
+                            </a>
+                            <button
+                                onClick={scrollToUpload}
+                                className="inline-flex items-center justify-center gap-2 bg-transparent hover:bg-white/5 border-2 border-white/30 hover:border-white/60 text-white font-bold px-8 py-4 rounded-xl transition-all w-full sm:w-auto text-lg"
+                            >
+                                Analyse My Business
+                                <ArrowRight className="w-5 h-5" />
+                            </button>
+                        </div>
+                        <p className="text-sm font-medium text-white/60">
+                            See exactly what your report will look like before uploading anything.
+                        </p>
                     </motion.div>
                 </div>
             </section>
@@ -646,24 +683,105 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                                         </table>
                                     </div>
 
-                                    {report.costIntelligence.hiddenCosts.length > 0 && (
-                                        <div className="bg-red-50 p-5 rounded-2xl border border-red-100 mt-6">
-                                            <h4 className="text-[10px] font-black text-red-600 uppercase tracking-widest mb-4">Hidden Fiscal Exposure Identified</h4>
-                                            <div className="grid md:grid-cols-2 gap-4">
-                                                {(report.costIntelligence.hiddenCosts || []).map((cost, idx) => (
-                                                    <div key={idx} className="bg-white p-3 border border-red-200 rounded-xl shadow-sm">
-                                                        <div className="flex justify-between items-start mb-1.5">
-                                                            <span className="font-bold text-navy text-xs">{cost.description}</span>
-                                                            <span className="text-red-600 font-black text-xs">AED {cost.estimatedAnnualImpact.toLocaleString()}/yr</span>
+                                    {/* Expose Top 2 Red Flags Above the Blur Wall */}
+                                    {report.riskAssessment.redFlags && report.riskAssessment.redFlags.length > 0 && (
+                                        <div className="mt-12 mb-6">
+                                            <div className="flex items-center gap-3 mb-6">
+                                                <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
+                                                    <Shield className="w-5 h-5 text-red-600" />
+                                                </div>
+                                                <h3 className="font-bold text-navy text-base uppercase tracking-widest">Immediate Risks Identified</h3>
+                                            </div>
+                                            <div className="grid md:grid-cols-2 gap-6">
+                                                {report.riskAssessment.redFlags.slice(0, 2).map((flag, idx) => (
+                                                    <div key={idx} className="p-5 bg-red-50/50 rounded-2xl border border-red-100 shadow-sm relative overflow-hidden">
+                                                        <div className={`absolute left-0 top-0 bottom-0 w-1 ${flag.severity === 'critical' ? 'bg-red-500' : 'bg-amber-400'}`} />
+                                                        <div className="flex justify-between items-start mb-3">
+                                                            <span className="font-bold text-navy text-sm">{flag.title}</span>
+                                                            <StatusBadge status={flag.severity} />
                                                         </div>
-                                                        <p className="text-[10px] text-gray-500 italic">"{cost.insight}"</p>
+                                                        <p className="text-xs text-gray-700 leading-relaxed italic mb-4">"{flag.cfoObservation}"</p>
                                                     </div>
                                                 ))}
                                             </div>
                                         </div>
                                     )}
+
+                                    {/* Profit Leakage Teaser */}
+                                    <div className="mt-8">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                                                <AlertTriangle className="w-5 h-5 text-amber-600" />
+                                            </div>
+                                            <h3 className="font-bold text-navy text-base uppercase tracking-widest">Profit Leakage Warning</h3>
+                                        </div>
+                                        <p className="text-gray-600 font-medium leading-relaxed italic">
+                                            {report.profitLeakage.narrative.split('.')[0]}.
+                                        </p>
+                                        <p className="text-navy font-black mt-3">
+                                            Your top 3 profit leaks are costing you AED {report.profitLeakage.recoveryOpportunity.monthlyAED.toLocaleString()} every month...
+                                        </p>
+                                    </div>
                                 </div>
                             </SectionCard>
+
+                            {/* ── CONSTANT: Determine if this is a sample based on the company name ── */}
+                            {(() => {
+                                const isSample = report.reportMeta.companyName.toLowerCase().includes("nova trading");
+                                const showLock = !isSample && !isUnlocked;
+                                const contentClass = showLock && !isSkipped ? "filter blur-md pointer-events-none select-none opacity-60 transition-all duration-700 mt-8" : "transition-all duration-700 mt-8";
+                                
+                                return (
+                                    <div className="relative">
+                                        {showLock && !isSkipped && (
+                                            <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-gray-50/0 to-gray-50 z-10" />
+                                        )}
+                                        
+                                        {showLock && (
+                                            <div className={`transition-all duration-500 ${isSkipped ? 'fixed bottom-4 left-0 right-0 z-50 px-4 pointer-events-auto' : 'absolute top-20 left-0 right-0 z-20 px-4'}`}>
+                                                {isSkipped ? (
+                                                    <div className="max-w-3xl mx-auto bg-navy text-white rounded-2xl shadow-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-2 border-[#D4AF37]">
+                                                        <div className="flex items-center gap-3">
+                                                            <Shield className="w-6 h-6 text-[#D4AF37]" />
+                                                            <p className="font-bold text-sm">Unlock your full report — enter 3 details</p>
+                                                        </div>
+                                                        <button 
+                                                            onClick={(() => setIsSkipped(false)) as any} 
+                                                            className="bg-[#D4AF37] hover:bg-[#B5952F] text-navy font-bold px-6 py-2 rounded-xl text-sm transition-colors whitespace-nowrap"
+                                                        >
+                                                            Unlock Now
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <LockForm 
+                                                        healthScore={report.healthScore.overall} 
+                                                        grade={report.executiveSummary.grade} 
+                                                        topRedFlag={report.riskAssessment.redFlags?.[0]?.title ?? "Unknown Risk"} 
+                                                        onUnlock={(n) => { setIsUnlocked(true); setToastMessage(`Welcome ${n.split(' ')[0]} — your full report is unlocked`); }}
+                                                        onSkip={() => setIsSkipped(true)}
+                                                    />
+                                                )}
+                                            </div>
+                                        )}
+
+                                        <div className={contentClass}>
+                                            {/* Cost Intelligence Section - Hidden Costs (Moved here) */}
+                                            {report.costIntelligence.hiddenCosts.length > 0 && (
+                                                <div className="bg-red-50 p-5 rounded-2xl border border-red-100 mb-8 shadow-sm">
+                                                    <h4 className="text-[10px] font-black text-red-600 uppercase tracking-widest mb-4">Hidden Fiscal Exposure Identified</h4>
+                                                    <div className="grid md:grid-cols-2 gap-4">
+                                                        {(report.costIntelligence.hiddenCosts || []).map((cost, idx) => (
+                                                            <div key={idx} className="bg-white p-3 border border-red-200 rounded-xl shadow-sm">
+                                                                <div className="flex justify-between items-start mb-1.5">
+                                                                    <span className="font-bold text-navy text-xs">{cost.description}</span>
+                                                                    <span className="text-red-600 font-black text-xs">AED {cost.estimatedAnnualImpact.toLocaleString()}/yr</span>
+                                                                </div>
+                                                                <p className="text-[10px] text-gray-500 italic">"{cost.insight}"</p>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
 
                             {/* Profit Leakage Section */}
                             <SectionCard title="Recovery Matrix (Profit Leakage)" icon={TrendingDown}>
@@ -710,7 +828,7 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                             <div className="grid md:grid-cols-2 gap-8">
                                 <SectionCard title="CFO Risk Assessment" icon={Shield}>
                                     <div className="space-y-6">
-                                        {(report.riskAssessment.redFlags || []).map((flag, idx) => (
+                                        {(report.riskAssessment.redFlags?.slice(2) || []).map((flag, idx) => (
                                             <div key={idx} className="p-4 bg-gray-50 rounded-xl border border-gray-100 relative group overflow-hidden">
                                                 <div className={`absolute left-0 top-0 bottom-0 w-1 ${
                                                     flag.severity === 'critical' ? 'bg-red-500' : 'bg-amber-400'
@@ -899,13 +1017,17 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                                     </button>
                                 </div>
                             </SectionCard>
+                                        </div>
+                                    </div>
+                                );
+                            })()}
 
                             {/* Final Closing Statement & Signature */}
                             <div className="pt-20 pb-12 text-center space-y-6">
                                 <div className="w-32 h-px bg-gray-200 mx-auto" />
                                 <div className="space-y-2">
                                     <p className="font-serif italic text-navy text-xl leading-relaxed max-w-2xl mx-auto">
-                                        "{report.closingStatement.narrative}"
+                                        &quot;{report.closingStatement.narrative}&quot;
                                     </p>
                                 </div>
                                 <div className="pt-6">
@@ -925,9 +1047,9 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                                 </div>
                                 <div className="pt-12 text-center">
                                     <p className="text-[10px] text-gray-400 uppercase tracking-[0.4em] font-black mb-1">Authenticated Advisory Sign-Off</p>
-                                    <p className="font-serif text- navy italic text-lg mb-1">{report.closingStatement.signOff}</p>
+                                    <p className="font-serif text-navy italic text-lg mb-1">{report.closingStatement.signOff}</p>
                                     <p className="text-[9px] text-gray-300 max-w-sm mx-auto leading-relaxed mt-4">
-                                        This proprietary report was generated by BWMC FinSight AI Layer. Numerical analysis performed by BWMC UAE & GCC Advisory Panel. 2026 Copyright BWMC Dubai.
+                                        This proprietary report was generated by BWMC FinSight AI Layer. Numerical analysis performed by BWMC UAE &amp; GCC Advisory Panel. 2026 Copyright BWMC Dubai.
                                     </p>
                                 </div>
                             </div>

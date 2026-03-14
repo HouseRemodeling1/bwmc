@@ -65,6 +65,7 @@ export interface ActionPlanItem {
 
 export interface FinancialReport {
     reportMeta: {
+        companyName: string;
         periodAnalyzed: string;
         dataConfidence: "Low" | "Medium" | "High";
         confidenceReason: string;
