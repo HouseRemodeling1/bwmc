@@ -3,6 +3,7 @@ export async function POST(request) {
     const { leadData, reportData } = await request.json();
 
     const accessToken = await getZohoAccessToken();
+    console.log("Access token:", accessToken ? "OK" : "MISSING", accessToken?.slice(0,10));
 
     const nameParts = leadData.name.trim().split(" ");
     const firstName = nameParts[0];
@@ -47,7 +48,8 @@ export async function POST(request) {
     );
 
     const result = await zohoResponse.json();
-    console.log("Zoho response:", JSON.stringify(result));
+    console.log("Zoho HTTP status:", zohoResponse.status);
+    console.log("Zoho result:", JSON.stringify(result));
 
     return Response.json({ success: true, result });
 
