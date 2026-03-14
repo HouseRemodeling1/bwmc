@@ -32,7 +32,7 @@ export default function LockForm({ reportData, onUnlock, onSkip }: LockFormProps
         if (!validate()) return;
         setLoading(true);
         try {
-            await fetch("/api/zoho-lead", {
+            await fetch("/api/leads", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
