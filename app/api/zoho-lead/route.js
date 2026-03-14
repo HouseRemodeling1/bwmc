@@ -74,37 +74,41 @@ async function getZohoAccessToken() {
 }
 
 function buildDescription(reportData) {
-  return `
+  try {
+    return `
 FINSIGHT AI REPORT
 ==================
-Health Score: ${reportData.healthScore.overall}/100
-Grade: ${reportData.executiveSummary.grade}
+Health Score: ${reportData?.healthScore?.overall ?? "N/A"}/100
+Grade: ${reportData?.executiveSummary?.grade ?? "N/A"}
 
 HEADLINE
-${reportData.executiveSummary.headline}
+${reportData?.executiveSummary?.headline ?? "No headline"}
 
 SUMMARY
-${reportData.executiveSummary.narrative}
+${reportData?.executiveSummary?.narrative ?? "No summary"}
 
 RED FLAGS
-${reportData.riskAssessment.redFlags.map((f, i) =>
-  `${i+1}. [${f.severity.toUpperCase()}] ${f.title}
-   ${f.cfoObservation}
-   Action: ${f.immediateAction}`
+${(reportData?.riskAssessment?.redFlags || []).map((f, i) =>
+  `${i+1}. [${f?.severity?.toUpperCase() ?? "WATCH"}] ${f?.title ?? "Unknown Risk"}
+   ${f?.cfoObservation ?? ""}
+   Action: ${f?.immediateAction ?? ""}`
 ).join('\n\n')}
 
 PROFIT LEAKAGE
-Recovery: AED ${reportData.profitLeakage
-  .recoveryOpportunity.monthlyAED.toLocaleString()}/month
-${reportData.profitLeakage.narrative}
+Recovery: AED ${reportData?.profitLeakage?.recoveryOpportunity?.monthlyAED?.toLocaleString() ?? "0"}/month
+${reportData?.profitLeakage?.narrative ?? ""}
 
 TOP RECOMMENDATIONS
-${reportData.strategicRecommendations.map((r, i) =>
-  `${i+1}. ${r.title} — ${r.expectedImpact} (${r.timeframe})`
+${(reportData?.strategicRecommendations || []).map((r, i) =>
+  `${i+1}. ${r?.title ?? ""} — ${r?.expectedImpact ?? ""} (${r?.timeframe ?? ""})`
 ).join('\n')}
 
-VAT: ${reportData.riskAssessment.vatExposure.status}
-Cash Runway: ${reportData.riskAssessment.cashRunway.months} months
-Points from perfect: ${reportData.closingStatement.pointsFromPerfect}
-  `.trim();
+VAT: ${reportData?.riskAssessment?.vatExposure?.status ?? "Unknown"}
+Cash Runway: ${reportData?.riskAssessment?.cashRunway?.months ?? "Unknown"} months
+Points from perfect: ${reportData?.closingStatement?.pointsFromPerfect ?? "N/A"}
+    `.trim();
+  } catch (err) {
+    console.error("Error building Zoho description:", err);
+    return "Error generating report summary.";
+  }
 }
