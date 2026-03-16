@@ -180,6 +180,16 @@ export default function RootLayout({
         {children}
         <ChatBot />
         <Footer />
+        <Script id="zoho-salesiq-init" strategy="afterInteractive">
+          {`
+            window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}};
+          `}
+        </Script>
+        <Script
+          id="zsiqscript"
+          src="https://salesiq.zohopublic.com/widget?wc=siq5edf502fe7af711e3753b6a51dc39d9e21840148c09ecebfbfb95adbc5b79a4256a469d8de632f5cc6703bfc35f241f70e3106a1edcc76319169a20719409f6d"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
