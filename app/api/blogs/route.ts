@@ -3,9 +3,16 @@ import { getBlogs, saveBlogs, Blog } from "@/lib/blogs";
 import { revalidatePath } from "next/cache";
 
 // GET all blogs
-export async function GET() {
+export async function GET(request: NextRequest) {
     try {
-        const blogs = await getBlogs();
+        const { searchParams } = new URL(request.url);
+        const authorId = searchParams.get("authorId");
+        
+        let blogs = await getBlogs();
+        if (authorId) {
+            blogs = blogs.filter(b => b.authorId === authorId);
+        }
+        
         return NextResponse.json(blogs);
     } catch (error) {
         console.error("GET Blogs Error:", error);

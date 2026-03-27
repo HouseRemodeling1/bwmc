@@ -8,11 +8,13 @@ interface Author {
   id: string; name: string; bio: string; avatar: string;
   role: string; linkedin?: string; twitter?: string;
   instagram?: string; website?: string;
+  username?: string; password_hash?: string;
 }
 
 const empty = (): Omit<Author, "id"> => ({
   name: "", bio: "", avatar: "", role: "Writer",
   linkedin: "", twitter: "", instagram: "", website: "",
+  username: "", password_hash: ""
 });
 
 export default function AuthorsPage() {
@@ -98,9 +100,9 @@ export default function AuthorsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
                 ["name", "Full Name *"], ["role", "Role (e.g. Tax Advisor)"],
-                ["avatar", "Avatar Image URL"], ["website", "Website URL"],
-                ["linkedin", "LinkedIn URL"], ["twitter", "Twitter / X URL"],
-                ["instagram", "Instagram URL"],
+                ["username", "Username (for login)"], ["avatar", "Avatar Image URL"], 
+                ["website", "Website URL"], ["linkedin", "LinkedIn URL"], 
+                ["twitter", "Twitter / X URL"], ["instagram", "Instagram URL"],
               ].map(([field, label]) => (
                 <div key={field}>
                   <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
@@ -111,6 +113,18 @@ export default function AuthorsPage() {
                   />
                 </div>
               ))}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Password {editing?.id ? "(leave blank to keep current)" : "*"}
+                </label>
+                <input
+                  type="password"
+                  value={(editing as any)?.password || ""}
+                  onChange={e => setEditing({ ...editing, password: e.target.value } as any)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none"
+                  placeholder={editing?.id ? "Leave blank to keep current password" : "Set a password"}
+                />
+              </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
                 <textarea

@@ -67,3 +67,33 @@ begin
         create policy "Allow public read access" on blogs for select using (true);
     end if;
 end $$;
+
+
+-- 3. Author Authentication (Login System)
+-- Add login credentials to authors table
+alter table authors add column if not exists username text unique;
+alter table authors add column if not exists password_hash text;
+
+-- Author sessions table
+create table if not exists author_sessions (
+  id text primary key default gen_random_uuid()::text,
+  "authorId" text references authors(id) on delete cascade,
+  token text unique not null,
+  "createdAt" timestamptz default now(),
+  "expiresAt" timestamptz default now() + interval '7 days'
+);
+
+-- Sessions RLS
+alter table author_sessions enable row level security;
+
+do $$
+begin
+    if not exists (select 1 from pg_policies where policyname = 'Service role full access on sessions') then
+        create policy "Service role full access on sessions" on author_sessions
+          as permissive for all
+          to service_role
+          using (true)
+          with check (true);
+    end if;
+end $$;
+
