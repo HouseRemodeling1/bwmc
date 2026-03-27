@@ -73,23 +73,25 @@ export default function AuthorsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pt-24">
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/admin" className="inline-flex items-center gap-2 text-gray-600 hover:text-royal-blue transition-colors">
             <ArrowLeft className="w-5 h-5" /> Back to Dashboard
           </Link>
-          <button
-            onClick={() => setEditing({ name: "", bio: "", avatar: "", role: "Writer", linkedin: "", twitter: "", instagram: "", website: "" })}
-            className="flex items-center gap-2 bg-gradient-to-r from-royal-blue to-sky-blue text-white font-semibold px-5 py-2 rounded-lg hover:shadow-lg transition-all"
-          >
-            <Plus className="w-4 h-4" /> New Author
-          </button>
         </div>
       </header>
 
       <main className="max-w-5xl mx-auto px-6 py-8">
-        <h1 className="text-3xl font-bold text-navy mb-8">Authors</h1>
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold text-navy">Authors</h1>
+          <button
+            onClick={() => setEditing({ name: "", bio: "", avatar: "", role: "Writer", linkedin: "", twitter: "", instagram: "", website: "", username: "", password_hash: "" })}
+            className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-royal-blue to-sky-blue text-white font-semibold px-5 py-3 rounded-lg hover:shadow-lg transition-all"
+          >
+            <Plus className="w-5 h-5" /> New Author
+          </button>
+        </div>
 
         {/* Edit / Create Form */}
         {editing && (
@@ -166,7 +168,14 @@ export default function AuthorsPage() {
         ) : authors.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-xl border-2 border-dashed border-gray-300">
             <User className="w-14 h-14 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500">No authors yet. Add your first author above.</p>
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">No authors yet</h3>
+            <p className="text-gray-500 mb-6">Add your first author to get started.</p>
+            <button
+              onClick={() => setEditing({ name: "", bio: "", avatar: "", role: "Writer", linkedin: "", twitter: "", instagram: "", website: "", username: "", password_hash: "" })}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-royal-blue to-sky-blue text-white font-semibold px-6 py-3 rounded-lg hover:shadow-lg transition-all"
+            >
+              <Plus className="w-5 h-5" /> Create Author
+            </button>
           </div>
         ) : (
           <div className="grid gap-4">
