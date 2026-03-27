@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowLeft, Save } from "lucide-react";
+import SeoAgent from "@/components/SeoAgent";
 
 export default function AuthorEditBlog({ params }: { params: Promise<{ id: string }> }) {
     const { id } = React.use(params);
@@ -15,6 +16,8 @@ export default function AuthorEditBlog({ params }: { params: Promise<{ id: strin
     const [formData, setFormData] = useState({
         title: "", excerpt: "", content: "", coverImage: "",
         category: "Business", published: false, slug: "", authorId: "",
+        metaTitle: "", metaDescription: "", focusKeyword: "",
+        keywords: [] as string[], seoScore: 0, readingTime: 0,
     });
 
     useEffect(() => {
@@ -135,6 +138,20 @@ export default function AuthorEditBlog({ params }: { params: Promise<{ id: strin
                                 <option>Audit</option>
                                 <option>Technology</option>
                             </select>
+                        </div>
+
+                        {/* AI SEO Agent */}
+                        <div className="pt-4">
+                            <SeoAgent
+                                formData={{ 
+                                    title: formData.title, 
+                                    excerpt: formData.excerpt, 
+                                    content: formData.content, 
+                                    category: formData.category, 
+                                    slug: formData.slug 
+                                }}
+                                onApply={(fields) => setFormData(prev => ({ ...prev, ...fields as any }))}
+                            />
                         </div>
 
                         <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">

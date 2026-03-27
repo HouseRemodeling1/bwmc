@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowLeft, Save } from "lucide-react";
+import SeoAgent from "@/components/SeoAgent";
 
 export default function EditBlog({ params }: { params: Promise<{ id: string }> }) {
     const { id } = React.use(params);
@@ -20,7 +21,13 @@ export default function EditBlog({ params }: { params: Promise<{ id: string }> }
         author: "BWMC Team",
         authorId: "",
         published: false,
-        slug: ""
+        slug: "",
+        metaTitle: "",
+        metaDescription: "",
+        focusKeyword: "",
+        keywords: [] as string[],
+        seoScore: 0,
+        readingTime: 0,
     });
     
     const [authors, setAuthors] = useState<{ id: string; name: string }[]>([]);
@@ -88,7 +95,7 @@ export default function EditBlog({ params }: { params: Promise<{ id: string }> }
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 pt-24">
             <header className="bg-white border-b border-gray-200">
                 <div className="max-w-4xl mx-auto px-6 py-4">
                     <Link
@@ -208,6 +215,14 @@ export default function EditBlog({ params }: { params: Promise<{ id: string }> }
                                     ))}
                                 </select>
                             </div>
+                        </div>
+
+                        {/* AI SEO Agent */}
+                        <div>
+                            <SeoAgent
+                                formData={{ title: formData.title, excerpt: formData.excerpt, content: formData.content, category: formData.category, slug: formData.slug }}
+                                onApply={(fields) => setFormData(prev => ({ ...prev, ...fields as any }))}
+                            />
                         </div>
 
                         <div className="flex items-center gap-3">

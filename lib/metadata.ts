@@ -229,12 +229,19 @@ export function generateBlogMetadata(blog: {
     updatedAt: string;
     coverImage: string;
     keywords?: string[];
+    metaTitle?: string;
+    metaDescription?: string;
+    canonicalUrl?: string;
 }): Metadata {
+    const title = blog.metaTitle || blog.title;
+    const description = blog.metaDescription || blog.excerpt;
+    const url = blog.canonicalUrl || `${SITE_URL}/blog/${blog.slug}`;
+
     return generateMetadata({
-        title: blog.title,
-        description: blog.excerpt,
+        title,
+        description,
         keywords: blog.keywords || [blog.category, "UAE", "BWMC"],
-        path: `/blog/${blog.slug}`,
+        path: `/blog/${blog.slug}`, // The generateMetadata tool will prepend SITE_URL, but we use the constructed url for canonical
         image: blog.coverImage.startsWith("http")
             ? blog.coverImage
             : `${SITE_URL}${blog.coverImage}`,

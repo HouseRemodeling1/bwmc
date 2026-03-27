@@ -64,10 +64,10 @@ export default async function BlogPost({
 
     const author = blog.authorId ? await getAuthorById(blog.authorId) : null;
     const allBlogs = await getAllBlogs();
-    const readingTime = estimateReadingTime(blog.content);
+    const readingTime = (blog as any).readingTime ? `${(blog as any).readingTime} min read` : estimateReadingTime(blog.content);
 
     // Generate Article Schema
-    const articleSchema = generateArticleSchema({
+    const articleSchema = (blog as any).structuredData || generateArticleSchema({
         headline: blog.title,
         description: blog.excerpt,
         image: blog.coverImage.startsWith("http")

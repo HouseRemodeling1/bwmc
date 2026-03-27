@@ -45,6 +45,14 @@ export async function POST(request: NextRequest) {
         revalidatePath("/blog");
         revalidatePath("/admin");
 
+        if (newBlog.published && newBlog.slug) {
+            fetch(`${process.env.NEXT_PUBLIC_SITE_URL || "https://bwmc.ae"}/api/seo-agent/ping-google`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ slug: newBlog.slug }),
+            }).catch(() => {});
+        }
+
         return NextResponse.json(newBlog, { status: 201 });
     } catch (error: any) {
         console.error("Create Blog Error:", error);

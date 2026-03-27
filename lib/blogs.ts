@@ -12,6 +12,14 @@ export interface Blog {
   keywords?: string[];
   relatedPosts?: string[];
   relatedServices?: string[];
+  metaTitle?: string;
+  metaDescription?: string;
+  focusKeyword?: string;
+  seoScore?: number;
+  readingTime?: number;
+  canonicalUrl?: string;
+  ogImage?: string;
+  structuredData?: any;
   createdAt: string;
   updatedAt: string;
 }

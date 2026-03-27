@@ -64,6 +64,15 @@ export async function PUT(
         }
         revalidatePath("/admin");
 
+        // If newly published, ping search engines
+        if (updatedBlog.published && !existingBlog.published && updatedBlog.slug) {
+            fetch(`${process.env.NEXT_PUBLIC_SITE_URL || "https://bwmc.ae"}/api/seo-agent/ping-google`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ slug: updatedBlog.slug }),
+            }).catch(() => {});
+        }
+
         return NextResponse.json(updatedBlog);
     } catch (error) {
         console.error("Update Blog Error:", error);

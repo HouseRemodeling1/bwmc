@@ -97,3 +97,14 @@ begin
     end if;
 end $$;
 
+
+-- 4. SEO Automation Columns (Blogs)
+-- Add columns for auto-generated SEO metadata
+alter table blogs 
+  add column if not exists "metaTitle" text,
+  add column if not exists "metaDescription" text,
+  add column if not exists "focusKeyword" text,
+  add column if not exists "seoScore" integer default 0,
+  add column if not exists "readingTime" integer default 0,
+  add column if not exists "canonicalUrl" text,
+  add column if not exists "ogImage" text;
