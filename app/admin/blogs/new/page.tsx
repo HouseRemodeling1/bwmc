@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -16,8 +16,24 @@ export default function NewBlog() {
         coverImage: "",
         category: "Business",
         author: "BWMC Team",
+        authorId: "",
         published: false,
     });
+    
+    const [authors, setAuthors] = useState<{ id: string; name: string }[]>([]);
+
+    useEffect(() => {
+        const fetchAuthors = async () => {
+            try {
+                const res = await fetch("/api/authors");
+                const data = await res.json();
+                setAuthors(data);
+            } catch (error) {
+                console.error("Failed to fetch authors:", error);
+            }
+        };
+        fetchAuthors();
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -146,12 +162,16 @@ export default function NewBlog() {
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Author
                                 </label>
-                                <input
-                                    type="text"
-                                    value={formData.author}
-                                    onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                                <select
+                                    value={formData.authorId || ""}
+                                    onChange={(e) => setFormData({ ...formData, authorId: e.target.value })}
                                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-transparent outline-none"
-                                />
+                                >
+                                    <option value="">— Select Author —</option>
+                                    {authors.map(a => (
+                                        <option key={a.id} value={a.id}>{a.name}</option>
+                                    ))}
+                                </select>
                             </div>
                         </div>
 

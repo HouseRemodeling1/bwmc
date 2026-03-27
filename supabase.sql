@@ -1,6 +1,34 @@
--- SQL for creating the blogs table in Supabase
+-- Master SQL for BWMC Blog System (Blogs + Authors)
 -- Run this in the Supabase SQL Editor
 
+-- 1. Authors Table
+create table if not exists authors (
+  id text primary key default gen_random_uuid()::text,
+  name text not null,
+  bio text,
+  avatar text,
+  role text default 'Writer',
+  linkedin text,
+  twitter text,
+  instagram text,
+  website text,
+  "createdAt" timestamptz default now()
+);
+
+-- Authors RLS
+alter table authors enable row level security;
+
+do $$
+begin
+    if not exists (select 1 from pg_policies where policyname = 'Public can read authors') then
+        create policy "Public can read authors" on authors for select using (true);
+    end if;
+    if not exists (select 1 from pg_policies where policyname = 'Service role full access on authors') then
+        create policy "Service role full access on authors" on authors for all using (true);
+    end if;
+end $$;
+
+-- 2. Blogs Table
 create table if not exists blogs (
   id text primary key,
   title text not null,
@@ -11,20 +39,27 @@ create table if not exists blogs (
   author text not null,
   published boolean default false,
   slug text unique not null,
-  "createdAt" timestamp with time zone default now(),
-  "updatedAt" timestamp with time zone default now(),
+  "createdAt" timestamptz default now(),
+  "updatedAt" timestamptz default now(),
   keywords text[],
   "relatedPosts" text[],
   "relatedServices" text[]
 );
 
--- Set up Row Level Security (RLS)
--- For a simple blog, we can allow public read access
+-- Add authorId to blogs if it doesn't exist
+do $$
+begin
+    if not exists (select 1 from information_schema.columns where table_name='blogs' and column_name='authorId') then
+        alter table blogs add column "authorId" text references authors(id) on delete set null;
+    end if;
+end $$;
+
+-- Blogs RLS
 alter table blogs enable row level security;
 
-create policy "Allow public read access"
-  on blogs for select
-  using (true);
-
--- For admin operations, we will use the service_role key to bypass RLS,
--- so we don't need additional policies for now.
+do $$
+begin
+    if not exists (select 1 from pg_policies where policyname = 'Allow public read access') then
+        create policy "Allow public read access" on blogs for select using (true);
+    end if;
+end $$;

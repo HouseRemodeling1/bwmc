@@ -74,13 +74,22 @@ export default function AdminDashboard() {
                         <h2 className="text-3xl font-bold text-navy mb-2">Your Blogs</h2>
                         <p className="text-gray-600">Manage and create blog posts</p>
                     </div>
-                    <Link
-                        href="/admin/blogs/new"
-                        className="flex items-center gap-2 bg-gradient-to-r from-royal-blue to-sky-blue text-white font-semibold px-6 py-3 rounded-lg hover:shadow-lg transition-all"
-                    >
-                        <Plus className="w-5 h-5" />
-                        New Blog
-                    </Link>
+                    <div className="flex items-center gap-4">
+                        <Link
+                            href="/admin/authors"
+                            className="flex items-center gap-2 border border-royal-blue text-royal-blue font-semibold px-6 py-3 rounded-lg hover:bg-royal-blue hover:text-white transition-all"
+                        >
+                            <Plus className="w-5 h-5" />
+                            Manage Authors
+                        </Link>
+                        <Link
+                            href="/admin/blogs/new"
+                            className="flex items-center gap-2 bg-gradient-to-r from-royal-blue to-sky-blue text-white font-semibold px-6 py-3 rounded-lg hover:shadow-lg transition-all"
+                        >
+                            <Plus className="w-5 h-5" />
+                            New Blog
+                        </Link>
+                    </div>
                 </div>
 
                 {loading ? (

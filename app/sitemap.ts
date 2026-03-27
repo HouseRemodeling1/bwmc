@@ -1,10 +1,24 @@
 import { MetadataRoute } from 'next'
-import blogsData from '@/public/data/blogs.json'
+import { getBlogs } from '@/lib/blogs'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://bwmc.ae'
+    let blogPages: MetadataRoute.Sitemap = []
+    
+    try {
+        const blogs = await getBlogs()
+        blogPages = blogs
+            .filter(blog => blog.published)
+            .map(blog => ({
+                url: `${baseUrl}/blog/${blog.slug}`,
+                lastModified: new Date(blog.updatedAt),
+                changeFrequency: 'monthly' as const,
+                priority: 0.7,
+            }))
+    } catch (e) {
+        console.error('Sitemap: failed to fetch blogs', e)
+    }
 
-    // Static pages with priorities
     const staticPages: MetadataRoute.Sitemap = [
         {
             url: baseUrl,
@@ -55,16 +69,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
             priority: 0.3,
         },
     ]
-
-    // Dynamic blog posts
-    const blogPages: MetadataRoute.Sitemap = blogsData.blogs
-        .filter(blog => blog.published)
-        .map(blog => ({
-            url: `${baseUrl}/blog/${blog.slug}`,
-            lastModified: new Date(blog.updatedAt),
-            changeFrequency: 'monthly' as const,
-            priority: 0.7,
-        }))
 
     return [...staticPages, ...blogPages]
 }

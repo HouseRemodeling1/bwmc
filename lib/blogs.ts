@@ -1,118 +1,66 @@
-import fs from "fs";
-import path from "path";
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
-
-const supabase = createClient(supabaseUrl, supabaseServiceRoleKey, {
-  auth: {
-    persistSession: false,
-  },
-});
-
-const blogsFilePath = path.join(process.cwd(), "public", "data", "blogs.json");
-
 export interface Blog {
-    id: string;
-    title: string;
-    excerpt: string;
-    content: string;
-    coverImage: string;
-    category: string;
-    author: string;
-    published: boolean;
-    slug: string;
-    createdAt: string;
-    updatedAt: string;
-    keywords?: string[];
-    relatedPosts?: string[];
-    relatedServices?: string[];
+  id: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  coverImage: string;
+  category: string;
+  author: string;
+  published: boolean;
+  slug: string;
+  authorId?: string;
+  keywords?: string[];
+  relatedPosts?: string[];
+  relatedServices?: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+function supabaseHeaders() {
+  return {
+    "Content-Type": "application/json",
+    "apikey": SUPABASE_KEY,
+    "Authorization": `Bearer ${SUPABASE_KEY}`,
+    "Prefer": "return=representation",
+  };
+}
+
+// GET all blogs
 export async function getBlogs(): Promise<Blog[]> {
-    try {
-        const { data, error } = await supabase
-            .from("blogs")
-            .select("*")
-            .order("createdAt", { ascending: false });
-
-        if (error) throw error;
-
-        if (!data || data.length === 0) {
-            // Only seed in development to avoid build hangs
-            if (process.env.NODE_ENV === 'development' && fs.existsSync(blogsFilePath)) {
-                try {
-                    const fileContents = fs.readFileSync(blogsFilePath, "utf8");
-                    const localData = JSON.parse(fileContents);
-                    const localBlogs = localData.blogs || [];
-                    
-                    if (localBlogs.length > 0) {
-                        console.info("Seeding Supabase with local blogs...");
-                        await saveBlogs(localBlogs);
-                        return localBlogs;
-                    }
-                } catch (seedError) {
-                    console.error("Seeding failed:", seedError);
-                }
-            }
-            return [];
-        }
-
-        return data as Blog[];
-    } catch (error: any) {
-        console.error("Error in getBlogs:", error);
-        
-        // Fallback to local data only in development
-        if (process.env.NODE_ENV === 'development' && fs.existsSync(blogsFilePath)) {
-            try {
-                const fileContents = fs.readFileSync(blogsFilePath, "utf8");
-                return JSON.parse(fileContents).blogs || [];
-            } catch (e) {
-                return [];
-            }
-        }
-        
-        // In production/build, return empty array to prevent build failure
-        return [];
-    }
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/blogs?order=createdAt.desc`, {
+      headers: supabaseHeaders(),
+      cache: "no-store",
+    });
+    if (!res.ok) throw new Error(`Failed to fetch blogs: ${await res.text()}`);
+    return res.json();
+  } catch (error) {
+    console.error("getBlogs error:", error);
+    return [];
+  }
 }
 
-export async function saveBlogs(blogs: Blog[]) {
-    try {
-        if (!supabaseUrl || !supabaseServiceRoleKey) return;
-
-        const { error } = await supabase
-            .from("blogs")
-            .upsert(blogs, { onConflict: 'id' });
-
-        if (error) throw error;
-    } catch (error: any) {
-        console.error("Failed to save to Supabase:", error);
-        throw new Error(`Persistence error: ${error.message || "Failed to save to Supabase"}. Please ensure you have run the SQL script in Supabase to create the 'blogs' table with camelCase columns.`);
-    }
-
-    if (process.env.NODE_ENV === 'development') {
-        try {
-            const dir = path.dirname(blogsFilePath);
-            if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-            fs.writeFileSync(blogsFilePath, JSON.stringify({ blogs }, null, 2));
-        } catch (error) {
-            console.error("Failed to sync to local file:", error);
-        }
-    }
+// UPSERT (insert or update) blogs
+export async function saveBlogs(blogs: Blog[]): Promise<void> {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/blogs`, {
+    method: "POST",
+    headers: {
+      ...supabaseHeaders(),
+      "Prefer": "resolution=merge-duplicates,return=minimal",
+    },
+    body: JSON.stringify(blogs),
+  });
+  if (!res.ok) throw new Error(`Failed to save blogs: ${await res.text()}`);
 }
 
-export async function deleteBlog(id: string) {
-    try {
-        const { error } = await supabase
-            .from("blogs")
-            .delete()
-            .eq("id", id);
-
-        if (error) throw error;
-    } catch (error: any) {
-        console.error("Failed to delete from Supabase:", error);
-        throw new Error(`Persistence error: ${error.message || "Failed to delete from Supabase"}`);
-    }
+// DELETE a blog by id
+export async function deleteBlog(id: string): Promise<void> {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/blogs?id=eq.${id}`, {
+    method: "DELETE",
+    headers: supabaseHeaders(),
+  });
+  if (!res.ok) throw new Error(`Failed to delete blog: ${await res.text()}`);
 }

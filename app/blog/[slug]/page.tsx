@@ -9,6 +9,8 @@ import { generateBlogMetadata, estimateReadingTime } from "@/lib/metadata";
 import { generateArticleSchema } from "@/lib/schema";
 
 import { getBlogs, Blog } from "@/lib/blogs";
+import AuthorCard from "@/components/AuthorCard";
+import { getAuthorById } from "@/lib/authors";
 
 async function getBlog(slug: string): Promise<Blog | undefined> {
     try {
@@ -60,6 +62,7 @@ export default async function BlogPost({
         notFound();
     }
 
+    const author = blog.authorId ? await getAuthorById(blog.authorId) : null;
     const allBlogs = await getAllBlogs();
     const readingTime = estimateReadingTime(blog.content);
 
@@ -237,6 +240,9 @@ export default async function BlogPost({
                             "
                             dangerouslySetInnerHTML={{ __html: blog.content }}
                         />
+
+                        {/* Author Card */}
+                        {author && <AuthorCard author={author} />}
 
                         {/* Keywords */}
                         {blog.keywords && blog.keywords.length > 0 && (
