@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Linkedin, Twitter, Instagram, Globe } from "lucide-react";
 
 interface Author {
@@ -12,11 +11,10 @@ export default function AuthorCard({ author }: { author: Author }) {
       <div className="flex flex-col sm:flex-row gap-6 items-start bg-gray-50 rounded-2xl p-6 transition-all hover:shadow-md">
         {author.avatar ? (
           <div className="relative w-20 h-20 flex-shrink-0">
-            <Image 
+            <img 
               src={author.avatar} 
               alt={author.name} 
-              fill
-              className="rounded-full object-cover border-4 border-white shadow-md" 
+              className="w-full h-full rounded-full object-cover border-4 border-white shadow-md" 
             />
           </div>
         ) : (
