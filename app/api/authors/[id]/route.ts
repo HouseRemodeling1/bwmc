@@ -8,6 +8,18 @@ function hashPassword(password: string): string {
   return createHash("sha256").update(password + salt).digest("hex");
 }
 
+export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+    const { getAuthorById } = await import("@/lib/authors");
+    const author = await getAuthorById(id);
+    if (!author) return NextResponse.json({ error: "Author not found" }, { status: 404 });
+    return NextResponse.json(author);
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to load author" }, { status: 500 });
+  }
+}
+
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;

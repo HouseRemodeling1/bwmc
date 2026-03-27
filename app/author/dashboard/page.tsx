@@ -75,11 +75,15 @@ export default function AuthorDashboard() {
           </div>
           <div className="flex items-center gap-3">
             <Link href="/author/blogs/new"
-              className="flex items-center gap-2 bg-gradient-to-r from-royal-blue to-sky-blue text-white font-semibold px-5 py-2 rounded-lg hover:shadow-lg transition-all">
+              className="flex items-center gap-2 bg-gradient-to-r from-royal-blue to-sky-blue text-white font-semibold px-5 py-2 rounded-lg hover:shadow-lg transition-all border border-transparent">
               <Plus className="w-4 h-4" /> New Post
             </Link>
+            <Link href="/author/profile" title="Edit Profile"
+              className="flex items-center gap-2 text-gray-500 hover:text-royal-blue transition-colors p-2 bg-gray-100 rounded-lg hover:bg-royal-blue/10 border border-gray-200">
+              <Edit2 className="w-5 h-5" />
+            </Link>
             <button onClick={handleLogout} title="Logout"
-              className="flex items-center gap-2 text-gray-500 hover:text-red-500 transition-colors p-2 bg-gray-100 rounded-lg hover:bg-red-50">
+              className="flex items-center gap-2 text-gray-500 hover:text-red-500 transition-colors p-2 bg-gray-100 rounded-lg hover:bg-red-50 border border-gray-200">
               <LogOut className="w-5 h-5" />
             </button>
           </div>
