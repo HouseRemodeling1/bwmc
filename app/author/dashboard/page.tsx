@@ -120,7 +120,7 @@ export default function AuthorDashboard() {
                     className="p-2 text-gray-400 hover:text-royal-blue rounded-lg hover:bg-royal-blue/10 transition-colors">
                     {blog.published ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
-                  <Link href={`/admin/blogs/${blog.id}/edit`} title="Edit Post"
+                  <Link href={`/author/blogs/${blog.id}/edit`} title="Edit Post"
                     className="p-2 text-gray-400 hover:text-royal-blue rounded-lg hover:bg-royal-blue/10 transition-colors">
                     <Edit2 className="w-4 h-4" />
                   </Link>
