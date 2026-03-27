@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Plus, FileText, LogOut } from "lucide-react";
+import { Plus, FileText, LogOut, Users } from "lucide-react";
 
 interface Blog {
     id: string;
@@ -69,17 +69,17 @@ export default function AdminDashboard() {
 
             {/* Main Content */}
             <main className="max-w-7xl mx-auto px-6 py-8">
-                <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
                     <div>
                         <h2 className="text-3xl font-bold text-navy mb-2">Your Blogs</h2>
                         <p className="text-gray-600">Manage and create blog posts</p>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex gap-3 flex-wrap">
                         <Link
                             href="/admin/authors"
-                            className="flex items-center gap-2 border border-royal-blue text-royal-blue font-semibold px-6 py-3 rounded-lg hover:bg-royal-blue hover:text-white transition-all"
+                            className="flex items-center gap-2 border border-royal-blue text-royal-blue font-semibold px-5 py-3 rounded-lg hover:bg-royal-blue hover:text-white transition-all"
                         >
-                            <Plus className="w-5 h-5" />
+                            <Users className="w-5 h-5" />
                             Manage Authors
                         </Link>
                         <Link

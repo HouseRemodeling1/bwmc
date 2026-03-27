@@ -24,7 +24,11 @@ begin
         create policy "Public can read authors" on authors for select using (true);
     end if;
     if not exists (select 1 from pg_policies where policyname = 'Service role full access on authors') then
-        create policy "Service role full access on authors" on authors for all using (true);
+        create policy "Service role full access on authors" on authors
+          as permissive for all
+          to service_role
+          using (true)
+          with check (true);
     end if;
 end $$;
 

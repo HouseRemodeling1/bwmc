@@ -30,6 +30,11 @@ export async function PUT(
     try {
         const { id } = await params;
         const body = await request.json();
+
+        // Normalize authorId: convert empty string or undefined to null
+        if (body.authorId === "" || body.authorId === undefined) {
+            body.authorId = null;
+        }
         
         // We still need current blog to know the old slug for revalidation
         const blogs = await getBlogs();

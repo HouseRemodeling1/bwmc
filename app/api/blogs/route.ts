@@ -18,6 +18,11 @@ export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
 
+        // Normalize authorId: convert empty string or undefined to null
+        if (body.authorId === "" || body.authorId === undefined) {
+            body.authorId = null;
+        }
+
         const newBlog: Blog = {
             id: Date.now().toString(),
             ...body,

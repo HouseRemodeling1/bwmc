@@ -78,7 +78,7 @@ export default function AuthorsPage() {
             <ArrowLeft className="w-5 h-5" /> Back to Dashboard
           </Link>
           <button
-            onClick={() => setEditing(empty())}
+            onClick={() => setEditing({ name: "", bio: "", avatar: "", role: "Writer", linkedin: "", twitter: "", instagram: "", website: "" })}
             className="flex items-center gap-2 bg-gradient-to-r from-royal-blue to-sky-blue text-white font-semibold px-5 py-2 rounded-lg hover:shadow-lg transition-all"
           >
             <Plus className="w-4 h-4" /> New Author
