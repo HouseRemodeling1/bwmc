@@ -76,6 +76,13 @@ export default function AdminDashboard() {
                     </div>
                     <div className="flex gap-3 flex-wrap">
                         <Link
+                            href="/admin/autopilot"
+                            className="flex items-center gap-2 bg-gradient-to-r from-navy to-royal-blue text-white font-semibold px-6 py-3 rounded-lg hover:shadow-lg transition-all"
+                        >
+                            <Zap className="w-5 h-5 text-sky-blue" />
+                            SEO Autopilot
+                        </Link>
+                        <Link
                             href="/admin/authors"
                             className="flex items-center gap-2 border border-royal-blue text-royal-blue font-semibold px-5 py-3 rounded-lg hover:bg-royal-blue hover:text-white transition-all"
                         >

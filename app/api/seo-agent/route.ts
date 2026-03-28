@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     .map(b => ({ title: b.title, slug: b.slug, category: b.category }))
     .slice(0, 20);
 
-  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
   const prompt = `
 You are an expert SEO specialist for BWMC, a UAE business consultancy based in Dubai.
