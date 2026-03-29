@@ -87,32 +87,32 @@ export default function AuthorProfilePage() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
               <input value={formData.name || ""} onChange={e => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none" required />
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy" required />
             </div>
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Role Display Title</label>
               <input value={formData.role || ""} onChange={e => setFormData({ ...formData, role: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none" />
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy" />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Login Username</label>
               <input value={formData.username || ""} onChange={e => setFormData({ ...formData, username: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none" />
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy" />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
               <input type="password" value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })}
                 placeholder="Leave blank to keep current password"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none" />
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy" />
             </div>
 
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">Avatar Image URL</label>
               <input type="url" value={formData.avatar || ""} onChange={e => setFormData({ ...formData, avatar: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none" />
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy" />
               {formData.avatar && (
                 <img src={formData.avatar} alt="Avatar UI preview" className="mt-3 w-16 h-16 rounded-full object-cover border" />
               )}
@@ -121,29 +121,29 @@ export default function AuthorProfilePage() {
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">Short Bio</label>
               <textarea value={formData.bio || ""} onChange={e => setFormData({ ...formData, bio: e.target.value })}
-                rows={3} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none" />
+                rows={3} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy" />
             </div>
 
             {/* Social Links */}
             <div>
                <label className="block text-sm font-medium text-gray-700 mb-1">LinkedIn URL</label>
                <input type="url" value={formData.linkedin || ""} onChange={e => setFormData({ ...formData, linkedin: e.target.value })}
-                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none" />
+                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy" />
             </div>
             <div>
                <label className="block text-sm font-medium text-gray-700 mb-1">Twitter / X URL</label>
                <input type="url" value={formData.twitter || ""} onChange={e => setFormData({ ...formData, twitter: e.target.value })}
-                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none" />
+                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy" />
             </div>
             <div>
                <label className="block text-sm font-medium text-gray-700 mb-1">Instagram URL</label>
                <input type="url" value={formData.instagram || ""} onChange={e => setFormData({ ...formData, instagram: e.target.value })}
-                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none" />
+                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy" />
             </div>
             <div>
                <label className="block text-sm font-medium text-gray-700 mb-1">Personal Website URL</label>
                <input type="url" value={formData.website || ""} onChange={e => setFormData({ ...formData, website: e.target.value })}
-                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none" />
+                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy" />
             </div>
 
             <div className="md:col-span-2 flex gap-4 pt-4 border-t border-gray-100 mt-2">

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Plus, FileText, LogOut, Users } from "lucide-react";
+import { Plus, FileText, LogOut, Users, Zap } from "lucide-react";
 
 interface Blog {
     id: string;

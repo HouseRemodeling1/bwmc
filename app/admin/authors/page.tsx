@@ -111,7 +111,7 @@ export default function AuthorsPage() {
                   <input
                     value={(editing as any)[field] || ""}
                     onChange={e => setEditing({ ...editing, [field]: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy"
                   />
                 </div>
               ))}
@@ -123,7 +123,7 @@ export default function AuthorsPage() {
                   type="password"
                   value={(editing as any)?.password || ""}
                   onChange={e => setEditing({ ...editing, password: e.target.value } as any)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy"
                   placeholder={editing?.id ? "Leave blank to keep current password" : "Set a password"}
                 />
               </div>
@@ -133,7 +133,7 @@ export default function AuthorsPage() {
                   value={editing.bio || ""}
                   onChange={e => setEditing({ ...editing, bio: e.target.value })}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy"
                 />
               </div>
             </div>

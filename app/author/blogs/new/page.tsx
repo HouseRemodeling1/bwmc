@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowLeft, Save } from "lucide-react";
 import SeoAgent from "@/components/SeoAgent";
+import FileUpload from "@/components/FileUpload";
 
 export default function AuthorNewBlog() {
     const router = useRouter();
@@ -94,7 +95,7 @@ export default function AuthorNewBlog() {
                             <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
                             <input type="text" value={formData.title}
                                 onChange={(e) => handleTitleChange(e.target.value)}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy"
                                 placeholder="Enter your post title" required />
                         </div>
 
@@ -106,7 +107,7 @@ export default function AuthorNewBlog() {
                                 <span className="text-gray-400 text-sm">bwmc.ae/blog/</span>
                                 <input type="text" value={formData.slug}
                                     onChange={(e) => set({ slug: e.target.value })}
-                                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-sm" />
+                                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-sm text-navy" />
                             </div>
                         </div>
 
@@ -114,7 +115,7 @@ export default function AuthorNewBlog() {
                             <label className="block text-sm font-medium text-gray-700 mb-2">Excerpt *</label>
                             <textarea value={formData.excerpt}
                                 onChange={(e) => set({ excerpt: e.target.value })}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy"
                                 placeholder="A short summary shown on the blog listing page" rows={2} required />
                         </div>
 
@@ -122,7 +123,7 @@ export default function AuthorNewBlog() {
                             <label className="block text-sm font-medium text-gray-700 mb-2">Content *</label>
                             <textarea value={formData.content}
                                 onChange={(e) => set({ content: e.target.value })}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none font-mono text-sm"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none font-mono text-sm text-navy"
                                 placeholder="Write your full article here... (supports HTML tags like <h2>, <p>, <strong>, <ul>)"
                                 rows={18} required />
                             <p className="text-xs text-gray-400 mt-1">
@@ -130,17 +131,10 @@ export default function AuthorNewBlog() {
                             </p>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Cover Image URL</label>
-                            <input type="url" value={formData.coverImage}
-                                onChange={(e) => set({ coverImage: e.target.value })}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none"
-                                placeholder="https://example.com/image.jpg" />
-                            {formData.coverImage && (
-                                <img src={formData.coverImage} alt="preview"
-                                    className="mt-2 h-32 w-full object-cover rounded-lg border border-gray-200" />
-                            )}
-                        </div>
+                        <FileUpload 
+                            defaultValue={formData.coverImage}
+                            onUpload={(url) => set({ coverImage: url })}
+                        />
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>

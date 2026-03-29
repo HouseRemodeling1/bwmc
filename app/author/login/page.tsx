@@ -57,7 +57,7 @@ export default function AuthorLogin() {
               type="text"
               value={form.username}
               onChange={e => setForm({ ...form, username: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-transparent outline-none"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-transparent outline-none text-navy"
               placeholder="your_username"
               required
             />
@@ -68,7 +68,7 @@ export default function AuthorLogin() {
               type="password"
               value={form.password}
               onChange={e => setForm({ ...form, password: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-transparent outline-none"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-transparent outline-none text-navy"
               placeholder="••••••••"
               required
             />

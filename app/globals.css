@@ -40,6 +40,18 @@ body {
   padding: 0;
 }
 
+input,
+textarea,
+select {
+  color: var(--navy); /* Default to BWMC Navy for readability */
+}
+
+/* Ensure placeholder visibility */
+input::placeholder,
+textarea::placeholder {
+  color: #94A3B8; /* text-slate-400 */
+}
+
 h1,
 h2,
 h3,

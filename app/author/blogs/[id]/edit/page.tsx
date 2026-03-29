@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowLeft, Save } from "lucide-react";
 import SeoAgent from "@/components/SeoAgent";
+import FileUpload from "@/components/FileUpload";
 
 export default function AuthorEditBlog({ params }: { params: Promise<{ id: string }> }) {
     const { id } = React.use(params);
@@ -88,7 +89,7 @@ export default function AuthorEditBlog({ params }: { params: Promise<{ id: strin
                             <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
                             <input type="text" value={formData.title}
                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy"
                                 required />
                         </div>
 
@@ -96,14 +97,14 @@ export default function AuthorEditBlog({ params }: { params: Promise<{ id: strin
                             <label className="block text-sm font-medium text-gray-700 mb-2">Slug</label>
                             <input type="text" value={formData.slug}
                                 onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none" />
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy" />
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Excerpt *</label>
                             <textarea value={formData.excerpt}
                                 onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy"
                                 rows={2} required />
                         </div>
 
@@ -111,27 +112,20 @@ export default function AuthorEditBlog({ params }: { params: Promise<{ id: strin
                             <label className="block text-sm font-medium text-gray-700 mb-2">Content *</label>
                             <textarea value={formData.content}
                                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none font-mono text-sm"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none font-mono text-sm text-navy"
                                 rows={18} required />
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Cover Image URL</label>
-                            <input type="url" value={formData.coverImage}
-                                onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none"
-                                placeholder="https://example.com/image.jpg" />
-                            {formData.coverImage && (
-                                <img src={formData.coverImage} alt="preview"
-                                    className="mt-2 h-32 w-full object-cover rounded-lg border border-gray-200" />
-                            )}
-                        </div>
+                        <FileUpload 
+                            defaultValue={formData.coverImage}
+                            onUpload={(url) => setFormData({ ...formData, coverImage: url })}
+                        />
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
                             <select value={formData.category}
                                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none">
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy">
                                 <option>Business</option>
                                 <option>Finance</option>
                                 <option>Tax</option>

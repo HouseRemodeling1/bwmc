@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowLeft, Save } from "lucide-react";
 import SeoAgent from "@/components/SeoAgent";
+import FileUpload from "@/components/FileUpload";
 
 export default function EditBlog({ params }: { params: Promise<{ id: string }> }) {
     const { id } = React.use(params);
@@ -125,7 +126,7 @@ export default function EditBlog({ params }: { params: Promise<{ id: string }> }
                                 type="text"
                                 value={formData.title}
                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-transparent outline-none"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-transparent outline-none text-navy"
                                 required
                             />
                         </div>
@@ -137,7 +138,7 @@ export default function EditBlog({ params }: { params: Promise<{ id: string }> }
                             <textarea
                                 value={formData.excerpt}
                                 onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-transparent outline-none"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-transparent outline-none text-navy"
                                 rows={2}
                                 required
                             />
@@ -150,7 +151,7 @@ export default function EditBlog({ params }: { params: Promise<{ id: string }> }
                             <textarea
                                 value={formData.content}
                                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-transparent outline-none font-mono text-sm"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-transparent outline-none font-mono text-sm text-navy"
                                 rows={15}
                                 required
                             />
@@ -164,23 +165,15 @@ export default function EditBlog({ params }: { params: Promise<{ id: string }> }
                                 type="text"
                                 value={formData.slug}
                                 onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-transparent outline-none"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-transparent outline-none text-navy"
                                 placeholder="e.g. my-blog-post"
                             />
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Cover Image URL
-                            </label>
-                            <input
-                                type="url"
-                                value={formData.coverImage}
-                                onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-transparent outline-none"
-                                placeholder="https://example.com/image.jpg"
-                            />
-                        </div>
+                        <FileUpload 
+                            defaultValue={formData.coverImage}
+                            onUpload={(url) => setFormData({ ...formData, coverImage: url })}
+                        />
 
                         <div className="grid grid-cols-2 gap-6">
                             <div>
