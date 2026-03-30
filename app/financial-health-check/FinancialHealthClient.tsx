@@ -1287,7 +1287,7 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
 
                                     {/* Profit Leakage Section */}
                                     <SectionCard title="Profit Leakage Analyzer" icon={TrendingDown}>
-                                        <ProfitLeakageReport report={report.profitLeakage} />
+                                        <ProfitLeakageReport leakage={report.profitLeakage} loading={false} error={null} />
                                     </SectionCard>
 
                                     {/* Risk Dashboard Section */}
