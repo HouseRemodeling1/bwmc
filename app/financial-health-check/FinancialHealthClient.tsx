@@ -24,7 +24,7 @@ import {
 interface ChatMessage { role: "user" | "ai"; text: string; }
 
 type PageState = "hero" | "upload" | "processing" | "report";
-type AnalysisMode = "ifrs" | "ratios" | "health" | null;
+type AnalysisMode = "ifrs" | "ratios" | "health" | "comprehensive" | null;
 
 const PROCESSING_STEPS = [
     "Reading your numbers...",
@@ -237,7 +237,12 @@ export default function FinancialHealthClient() {
         
         const mode = analysisMode || "health";
         
-        if (mode === "ifrs") {
+        if (mode === "comprehensive") {
+            setIfrsReport(SAMPLE_IFRS_REPORT);
+            setRatiosReport(SAMPLE_RATIOS_REPORT);
+            setReport(SAMPLE_REPORT);
+            setExtractedSummary("Comprehensive CFO Briefing: Nova Trading LLC");
+        } else if (mode === "ifrs") {
             setIfrsReport(SAMPLE_IFRS_REPORT);
             setExtractedSummary("Sample IFRS Report: Nova Trading LLC");
         } else if (mode === "ratios") {
@@ -269,7 +274,11 @@ export default function FinancialHealthClient() {
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error || "Analysis failed");
 
-                if (mode === "ifrs") {
+                if (mode === "comprehensive") {
+                    setIfrsReport(data.report.ifrs);
+                    setRatiosReport(data.report.ratios);
+                    setReport(data.report.standard);
+                } else if (mode === "ifrs") {
                     setIfrsReport(data.report);
                 } else if (mode === "ratios") {
                     setRatiosReport(data.report);
@@ -475,7 +484,7 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                     </div>
 
                     {!analysisMode ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
                             <motion.div 
                                 whileHover={{ y: -5 }}
                                 className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-royal-blue transition-all shadow-sm flex flex-col items-center text-center group"
@@ -506,40 +515,40 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                                 className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-royal-blue transition-all shadow-sm flex flex-col items-center text-center group"
                             >
                                 <div className="w-16 h-16 rounded-2xl bg-sky-blue/10 flex items-center justify-center mb-6 group-hover:bg-sky-blue transition-colors">
-                                    <BarChart2 className="w-8 h-8 text-sky-blue group-hover:text-white" />
+                                    <Calculator className="w-8 h-8 text-sky-blue group-hover:text-white" />
                                 </div>
-                                <h3 className="text-xl font-bold text-navy mb-2">Full Financial Analysis</h3>
+                                <h3 className="text-xl font-bold text-navy mb-2">Comprehensive CFO Analysis</h3>
                                 <p className="text-gray-500 text-sm mb-8 leading-relaxed">
-                                    Upload your financials. We calculate liquidity, profitability, leverage, working capital ratios and trend analysis.
+                                    The ultimate financial overhaul. Includes Health Check, IFRS Compliance, and Full Ratio analysis in one report.
                                 </p>
                                 <button 
-                                    onClick={() => setAnalysisMode("ratios")}
+                                    onClick={() => setAnalysisMode("comprehensive")}
                                     className="mt-auto w-full py-3 bg-navy text-white font-bold rounded-xl hover:bg-royal-blue transition-colors mb-2"
                                 >
                                     Select Mode
                                 </button>
                                 <button 
-                                    onClick={() => { setAnalysisMode("ratios"); setTimeout(handleViewSample, 0); }}
+                                    onClick={() => { setAnalysisMode("comprehensive"); setTimeout(handleViewSample, 0); }}
                                     className="text-[10px] font-black text-sky-blue uppercase tracking-widest hover:underline"
                                 >
-                                    View Sample Ratio Report
+                                    View Full Sample
                                 </button>
                             </motion.div>
 
                             <motion.div 
                                 whileHover={{ y: -5 }}
-                                className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-royal-blue transition-all shadow-sm flex flex-col items-center text-center group md:col-span-2"
+                                className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-royal-blue transition-all shadow-sm flex flex-col items-center text-center group"
                             >
                                 <div className="w-16 h-16 rounded-2xl bg-green-50 flex items-center justify-center mb-6 group-hover:bg-green-500 transition-colors">
                                     <Activity className="w-8 h-8 text-green-500 group-hover:text-white" />
                                 </div>
                                 <h3 className="text-xl font-bold text-navy mb-2">Standard Health Check</h3>
                                 <p className="text-gray-500 text-sm mb-8 leading-relaxed">
-                                    Our classic AI analysis for a general overview of your business health, profit leakage, and key performance metrics.
+                                    Quick overview of your profit leaks, growth trends, and immediate CFO recommendations for your business.
                                 </p>
                                 <button 
                                     onClick={() => setAnalysisMode("health")}
-                                    className="mt-auto px-12 py-3 bg-navy text-white font-bold rounded-xl hover:bg-royal-blue transition-colors mb-2"
+                                    className="mt-auto w-full py-3 bg-navy text-white font-bold rounded-xl hover:bg-royal-blue transition-colors mb-2"
                                 >
                                     Select Mode
                                 </button>
@@ -547,7 +556,7 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                                     onClick={() => { setAnalysisMode("health"); setTimeout(handleViewSample, 0); }}
                                     className="text-[10px] font-black text-green-600 uppercase tracking-widest hover:underline"
                                 >
-                                    View Sample Health Check
+                                    View Sample
                                 </button>
                             </motion.div>
                         </div>
@@ -1199,6 +1208,200 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                                     </div>
                                 );
                             })()}
+
+                            {ifrsReport && (
+                                <SectionCard title="Part 1: IFRS Compliance & Trial Balance" icon={ShieldCheck}>
+                                    <IFRSReportView report={ifrsReport} />
+                                </SectionCard>
+                            )}
+
+                            {ratiosReport && (
+                                <SectionCard title="Part 2: Advanced Financial Ratio Analysis" icon={Calculator}>
+                                    <RatiosReportView report={ratiosReport} />
+                                </SectionCard>
+                            )}
+
+                            {report && (
+                                <>
+                                    {analysisMode === "comprehensive" && (
+                                        <div className="mb-12 pt-8 border-t border-gray-100">
+                                            <h2 className="text-2xl font-black text-navy uppercase tracking-tighter mb-4">Part 3: Performance & Health Briefing</h2>
+                                        </div>
+                                    )}
+                                    <CFOReportCover meta={report.reportMeta} summary={report.executiveSummary} health={report.healthScore} />
+                                    
+                                    <div className="grid md:grid-cols-2 gap-8 mb-12">
+                                        <SectionCard title="CFO Analysis & Narrative" icon={FileText}>
+                                            <p className="text-sm leading-relaxed text-gray-600 font-medium">{report.financialPerformance.narrative}</p>
+                                        </SectionCard>
+                                        <SectionCard title="Efficiency Benchmarks" icon={Activity}>
+                                            <div className="space-y-4">
+                                                {report.financialPerformance.keyMetrics.map((m, i) => (
+                                                    <div key={i} className="flex justify-between items-center py-2 border-b border-gray-50 last:border-0">
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-xs font-bold text-navy">{m.metric}</span>
+                                                            <StatusBadge status={m.status} />
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="text-sm font-black text-navy">{m.value}</span>
+                                                                <span className={`text-[10px] font-bold ${m.gap.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}>{m.gap}</span>
+                                                            </div>
+                                                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">VS Sect. {m.benchmark}</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </SectionCard>
+                                    </div>
+
+                                    {/* Cost Intelligence Section */}
+                                    <SectionCard title="Cost Concentration & Intelligence" icon={TrendingUp}>
+                                        <div className="grid md:grid-cols-3 gap-6 mb-8">
+                                            {report.costIntelligence.costBreakdown.map((c, i) => (
+                                                <AdvancedInsightCard key={i} title={c.category} icon={Zap} value={`AED ${new Intl.NumberFormat().format(c.amount)}`} status={c.status}>
+                                                    {c.commentary}
+                                                </AdvancedInsightCard>
+                                            ))}
+                                        </div>
+                                        {report.costIntelligence.hiddenCosts.length > 0 && (
+                                            <div className="bg-amber-50 rounded-2xl p-6 border border-amber-100">
+                                                <div className="flex items-center gap-3 mb-4">
+                                                    <AlertTriangle className="w-5 h-5 text-amber-600" />
+                                                    <h4 className="font-bold text-amber-900 text-sm uppercase tracking-widest">Hidden Leaks Detected</h4>
+                                                </div>
+                                                <div className="space-y-3">
+                                                    {report.costIntelligence.hiddenCosts.map((h, i) => (
+                                                        <div key={i} className="flex justify-between items-start gap-4 pb-3 border-b border-amber-200/50 last:border-0 last:pb-0">
+                                                            <div>
+                                                                <p className="text-xs font-bold text-amber-950">{h.description}</p>
+                                                                <p className="text-[10px] text-amber-800 italic mt-0.5">{h.insight}</p>
+                                                            </div>
+                                                            <span className="text-sm font-black text-amber-900 shrink-0">AED {new Intl.NumberFormat().format(h.estimatedAnnualImpact)}/yr</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </SectionCard>
+
+                                    {/* Profit Leakage Section */}
+                                    <SectionCard title="Profit Leakage Analyzer" icon={TrendingDown}>
+                                        <ProfitLeakageReport report={report.profitLeakage} />
+                                    </SectionCard>
+
+                                    {/* Risk Dashboard Section */}
+                                    <SectionCard title="Risk & Mandatory Compliance" icon={Shield}>
+                                        <div className="grid md:grid-cols-2 gap-8 mb-10">
+                                            <div className="space-y-4">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <ShieldAlert className="w-4 h-4 text-red-500" />
+                                                    <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">CFO Red Flags</h4>
+                                                </div>
+                                                {report.riskAssessment.redFlags.map((flag, i) => (
+                                                    <div key={i} className="bg-red-50/50 rounded-xl p-4 border border-red-100">
+                                                        <div className="flex justify-between items-center mb-2">
+                                                            <h5 className="font-bold text-red-900 text-sm">{flag.title}</h5>
+                                                            <StatusBadge status={flag.severity} />
+                                                        </div>
+                                                        <p className="text-xs text-red-800 leading-relaxed mb-3">{flag.cfoObservation}</p>
+                                                        <div className="bg-white/50 rounded-lg p-2.5 border border-red-200">
+                                                            <p className="text-[10px] font-bold text-red-900 uppercase mb-1">CFO Immediate Action:</p>
+                                                            <p className="text-[10px] text-red-800 font-medium italic">"{flag.immediateAction}"</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <div className="space-y-6">
+                                                <div className="bg-white rounded-2xl border border-gray-100 p-6 flex items-start gap-4">
+                                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                                                        report.riskAssessment.vatExposure.status === 'exceeded' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'
+                                                    }`}>
+                                                        <ShieldCheck className="w-5 h-5" />
+                                                    </div>
+                                                    <div>
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <h4 className="text-xs font-bold text-navy uppercase tracking-widest">VAT Compliance</h4>
+                                                            <StatusBadge status={report.riskAssessment.vatExposure.status} />
+                                                        </div>
+                                                        <p className="text-[10px] font-medium text-gray-500 leading-relaxed italic">{report.riskAssessment.vatExposure.narrative}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="bg-white rounded-2xl border border-gray-100 p-6 flex items-start gap-4">
+                                                    <div className="w-10 h-10 rounded-xl bg-royal-blue/5 flex items-center justify-center shrink-0 text-royal-blue">
+                                                        <Activity className="w-5 h-5" />
+                                                    </div>
+                                                    <div>
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <h4 className="text-xs font-bold text-navy uppercase tracking-widest">Liquidity Buffer</h4>
+                                                            <span className="text-[9px] font-black bg-gray-100 text-gray-600 px-2 rounded-full">{report.riskAssessment.cashRunway.months} MONTHS</span>
+                                                        </div>
+                                                        <p className="text-[10px] font-medium text-gray-500 leading-relaxed italic">{report.riskAssessment.cashRunway.narrative}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </SectionCard>
+
+                                    {/* Recommendations Section */}
+                                    <SectionCard title="CEO Strategic Recovery Roadmap" icon={Zap}>
+                                        <div className="space-y-6">
+                                            {report.strategicRecommendations.map((rec, i) => (
+                                                <div key={i} className="flex gap-6 group">
+                                                    <div className="flex flex-col items-center shrink-0">
+                                                        <div className="w-8 h-8 rounded-full bg-navy text-white flex items-center justify-center text-xs font-black shadow-lg z-10">
+                                                            {rec.priority}
+                                                        </div>
+                                                        {i < report.strategicRecommendations.length - 1 && <div className="w-0.5 h-full bg-gray-100 group-hover:bg-royal-blue/20 transition-colors" />}
+                                                    </div>
+                                                    <div className="pb-8">
+                                                        <div className="flex items-center gap-3 mb-2">
+                                                            <h4 className="text-lg font-black text-navy">{rec.title}</h4>
+                                                            <div className="flex gap-2">
+                                                                <span className="text-[9px] font-black uppercase text-royal-blue bg-royal-blue/10 px-2 py-0.5 rounded-full">{rec.impact} Impact</span>
+                                                                <span className="text-[9px] font-black uppercase text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">{rec.timeframe}</span>
+                                                            </div>
+                                                        </div>
+                                                        <p className="text-sm text-gray-600 font-medium mb-3 leading-relaxed">{rec.cfoRationale}</p>
+                                                        <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                                                            <p className="text-[10px] font-black text-navy uppercase mb-1">Specific CFO Action:</p>
+                                                            <p className="text-[12px] font-bold text-royal-blue leading-tight italic">"{rec.specificAction}"</p>
+                                                            <div className="mt-3 pt-3 border-t border-gray-200/50 flex items-center gap-2">
+                                                                <TrendingUp className="w-3 h-3 text-green-500" />
+                                                                <p className="text-[10px] font-black text-green-600 uppercase">Impact: {rec.expectedImpact}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </SectionCard>
+
+                                    {/* Month 1-3 Action Plan Section */}
+                                    <SectionCard title="90-Day CFO Implementation Plan" icon={ArrowRight}>
+                                        <StrategicRoadmapTimeline plan={report.actionPlan} />
+                                    </SectionCard>
+
+                                    {/* Closing Statement Section */}
+                                    <div className="text-center py-12">
+                                        <div className="inline-block px-8 py-4 bg-gray-50 rounded-2xl border border-gray-100 max-w-2xl">
+                                            <p className="text-sm text-gray-600 font-medium leading-relaxed italic mb-4">"{report.closingStatement.narrative}"</p>
+                                            <div className="flex items-center justify-center gap-8">
+                                                <div className="text-left">
+                                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Signed</p>
+                                                    <p className="text-xl font-bold text-navy italic">Marcus Al-Rashidi</p>
+                                                    <p className="text-[9px] font-bold text-royal-blue uppercase">BWMC Senior Advisor</p>
+                                                </div>
+                                                <div className="h-12 w-px bg-gray-200" />
+                                                <div className="text-right">
+                                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Analysis Engine</p>
+                                                    <p className="text-xl font-black text-navy">FinSight AI v3.0</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
 
                             {/* Final Closing Statement & Signature */}
                             <div className="pt-20 pb-12 text-center space-y-6">

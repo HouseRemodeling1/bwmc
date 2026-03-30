@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { buildMainReportPrompt, getIFRSPrompt, getRatiosPrompt } from "@/lib/gemini-prompts";
+import { 
+    buildMainReportPrompt, buildLeakagePrompt, 
+    getIFRSPrompt, getRatiosPrompt, getComprehensivePrompt 
+} from "@/lib/gemini-prompts";
 import { extractJSON } from "@/lib/gemini-client";
 
 // Try models in order — fall back if one is unavailable
@@ -108,6 +111,8 @@ export async function POST(req: NextRequest) {
         finalPrompt = getRatiosPrompt(extractedText);
     } else if (mode === "health" && extractedText) {
         finalPrompt = buildMainReportPrompt(extractedText);
+    } else if (mode === "comprehensive" && extractedText) {
+        finalPrompt = getComprehensivePrompt(extractedText);
     }
 
     if (!finalPrompt || typeof finalPrompt !== "string") {
