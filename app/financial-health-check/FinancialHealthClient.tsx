@@ -1387,10 +1387,12 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                        </>
+                    ) : null}
+                </div>
+            </motion.div>
+        )}
+    </AnimatePresence>
 
             {/* Print styles */}
             <style>{`
