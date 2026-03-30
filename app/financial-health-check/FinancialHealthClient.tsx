@@ -5,22 +5,25 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
     Upload, FileText, Table, BarChart2, AlertTriangle, CheckCircle,
     ChevronRight, Download, Mail, RefreshCw, MessageCircle, Send,
-    TrendingUp, TrendingDown, Shield, ArrowRight, X, Activity, Zap
+    TrendingUp, TrendingDown, Shield, ArrowRight, X, Activity, Zap, ShieldCheck, Calculator
 } from "lucide-react";
 import WhatIfSimulator from "@/components/financial-health/WhatIfSimulator";
 import ProfitLeakageReport from "@/components/financial-health/ProfitLeakageReport";
+import IFRSReportView from "@/components/financial-health/IFRSReportView";
+import RatiosReportView from "@/components/financial-health/RatiosReportView";
 import { callGemini, callGeminiJSON, parseFileToText } from "@/lib/gemini-client";
 import { buildMainReportPrompt, buildLeakagePrompt, buildChatPrompt } from "@/lib/gemini-prompts";
 import LockForm from "@/components/financial-health/LockForm";
 
 import {
     FinancialReport, SubScoreDetail, SubScores, RedFlag, CostBreakdownItem,
-    WaterfallRow, LeakItem, StrategicRecommendation, ActionPlanItem
+    WaterfallRow, LeakItem, StrategicRecommendation, ActionPlanItem, IFRSReport, RatiosReport
 } from "./financial-types";
 
 interface ChatMessage { role: "user" | "ai"; text: string; }
 
 type PageState = "hero" | "upload" | "processing" | "report";
+type AnalysisMode = "ifrs" | "ratios" | "health" | null;
 
 const PROCESSING_STEPS = [
     "Reading your numbers...",
@@ -351,6 +354,8 @@ const SAMPLE_REPORT: FinancialReport = {
 export default function FinancialHealthClient() {
     const [pageState, setPageState] = useState<PageState>("hero");
     const [report, setReport] = useState<FinancialReport | null>(null);
+    const [ifrsReport, setIfrsReport] = useState<IFRSReport | null>(null);
+    const [ratiosReport, setRatiosReport] = useState<RatiosReport | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [extractedText, setExtractedText] = useState("");
@@ -364,6 +369,7 @@ export default function FinancialHealthClient() {
     const [isUnlocked, setIsUnlocked] = useState(false);
     const [isSkipped, setIsSkipped] = useState(false);
     const [isViewingSample, setIsViewingSample] = useState(false);
+    const [analysisMode, setAnalysisMode] = useState<AnalysisMode>(null);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
 
 
@@ -401,11 +407,27 @@ export default function FinancialHealthClient() {
     const runAnalysis = async (text: string) => {
         setIsViewingSample(false);
         setExtractedText(text);
+        const mode = analysisMode === "ifrs" ? "ifrs" : analysisMode === "ratios" ? "ratios" : "health";
+        
         runProcessingAnimation(async () => {
             try {
-                const reportResult = await callGeminiJSON<FinancialReport>(buildMainReportPrompt(text));
+                const res = await fetch("/api/gemini-proxy", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ extractedText: text, mode }),
+                });
+
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Analysis failed");
+
+                if (mode === "ifrs") {
+                    setIfrsReport(data.report);
+                } else if (mode === "ratios") {
+                    setRatiosReport(data.report);
+                } else {
+                    setReport(data.report);
+                }
                 
-                setReport(reportResult);
                 setPageState("report");
                 setTimeout(() => reportRef.current?.scrollIntoView({ behavior: "smooth" }), 200);
             } catch (err: unknown) {
@@ -505,6 +527,8 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
 
     const resetPage = () => {
         setReport(null);
+        setIfrsReport(null);
+        setRatiosReport(null);
         setError(null);
         setChatMessages([]);
         setManualForm({ revenue: "", expenses: "", assets: "", liabilities: "" });
@@ -516,14 +540,12 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
         setExtractedText("");
         setExtractedSummary("");
         setIsViewingSample(false);
+        setAnalysisMode(null);
         setPageState("upload");
         setTimeout(() => uploadRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
     };
 
     const handlePrint = () => window.print();
-
-    const scoreColor = (s: number) => s >= 71 ? "#22c55e" : s >= 41 ? "#f59e0b" : "#ef4444";
-    const subScoreColor = (s: number) => s >= 71 ? "#22c55e" : s >= 41 ? "#f59e0b" : "#ef4444";
 
     return (
         <main className="min-h-screen bg-white print:bg-white">
@@ -592,9 +614,89 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
             <section ref={uploadRef} className="py-20 px-6 lg:px-8 bg-gray-50">
                 <div className="max-w-3xl mx-auto">
                     <div className="text-center mb-10">
-                        <h2 className="text-3xl font-bold text-navy mb-3">Upload Your Financial Document</h2>
-                        <p className="text-gray-600">PDF, Excel (.xlsx) or CSV — any standard financial document works.</p>
+                        <h2 className="text-3xl font-bold text-navy mb-3">
+                            {analysisMode === "ifrs" ? "IFRS Review Setup" : 
+                             analysisMode === "ratios" ? "Ratio Analysis Setup" : 
+                             analysisMode === "health" ? "Health Check Setup" : 
+                             "Select Your Analysis Mode"}
+                        </h2>
+                        <p className="text-gray-600">
+                            {analysisMode ? "Upload your documents to begin the AI-powered analysis." : "Choose how you want our AI to analyze your business financials."}
+                        </p>
                     </div>
+
+                    {!analysisMode ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                            <motion.div 
+                                whileHover={{ y: -5 }}
+                                className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-royal-blue transition-all shadow-sm flex flex-col items-center text-center group"
+                            >
+                                <div className="w-16 h-16 rounded-2xl bg-royal-blue/10 flex items-center justify-center mb-6 group-hover:bg-royal-blue transition-colors">
+                                    <Table className="w-8 h-8 text-royal-blue group-hover:text-white" />
+                                </div>
+                                <h3 className="text-xl font-bold text-navy mb-2">Trial Balance & IFRS Review</h3>
+                                <p className="text-gray-500 text-sm mb-8 leading-relaxed">
+                                    Upload your trial balance. We classify every account to IFRS, generate your P&L and Balance Sheet, and flag compliance issues.
+                                </p>
+                                <button 
+                                    onClick={() => setAnalysisMode("ifrs")}
+                                    className="mt-auto w-full py-3 bg-navy text-white font-bold rounded-xl hover:bg-royal-blue transition-colors"
+                                >
+                                    Select Mode
+                                </button>
+                            </motion.div>
+
+                            <motion.div 
+                                whileHover={{ y: -5 }}
+                                className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-royal-blue transition-all shadow-sm flex flex-col items-center text-center group"
+                            >
+                                <div className="w-16 h-16 rounded-2xl bg-sky-blue/10 flex items-center justify-center mb-6 group-hover:bg-sky-blue transition-colors">
+                                    <BarChart2 className="w-8 h-8 text-sky-blue group-hover:text-white" />
+                                </div>
+                                <h3 className="text-xl font-bold text-navy mb-2">Full Financial Analysis</h3>
+                                <p className="text-gray-500 text-sm mb-8 leading-relaxed">
+                                    Upload your financials. We calculate liquidity, profitability, leverage, working capital ratios and trend analysis.
+                                </p>
+                                <button 
+                                    onClick={() => setAnalysisMode("ratios")}
+                                    className="mt-auto w-full py-3 bg-navy text-white font-bold rounded-xl hover:bg-royal-blue transition-colors"
+                                >
+                                    Select Mode
+                                </button>
+                            </motion.div>
+
+                            <motion.div 
+                                whileHover={{ y: -5 }}
+                                className="bg-white rounded-2xl p-8 border-2 border-gray-100 hover:border-royal-blue transition-all shadow-sm flex flex-col items-center text-center group md:col-span-2"
+                            >
+                                <div className="w-16 h-16 rounded-2xl bg-green-50 flex items-center justify-center mb-6 group-hover:bg-green-500 transition-colors">
+                                    <Activity className="w-8 h-8 text-green-500 group-hover:text-white" />
+                                </div>
+                                <h3 className="text-xl font-bold text-navy mb-2">Standard Health Check</h3>
+                                <p className="text-gray-500 text-sm mb-8 leading-relaxed">
+                                    Our classic AI analysis for a general overview of your business health, profit leakage, and key performance metrics.
+                                </p>
+                                <button 
+                                    onClick={() => setAnalysisMode("health")}
+                                    className="mt-auto px-12 py-3 bg-navy text-white font-bold rounded-xl hover:bg-royal-blue transition-colors"
+                                >
+                                    Select Mode
+                                </button>
+                            </motion.div>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="flex justify-between items-center mb-6">
+                                <button 
+                                    onClick={() => setAnalysisMode(null)}
+                                    className="text-sm font-bold text-royal-blue hover:text-navy flex items-center gap-1 transition-colors"
+                                >
+                                    ← Change Mode
+                                </button>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 bg-gray-100 px-3 py-1 rounded-full">
+                                    Mode: {analysisMode.toUpperCase()}
+                                </span>
+                            </div>
 
                     {error && (
                         <motion.div
@@ -750,7 +852,7 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
 
             {/* ── REPORT DASHBOARD ─────────────────────────────────────────── */}
             <AnimatePresence>
-                {pageState === "report" && report && (
+                {pageState === "report" && (report || ifrsReport || ratiosReport) && (
                     <motion.div
                         ref={reportRef}
                         initial={{ opacity: 0, y: 30 }}
@@ -780,145 +882,76 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                         )}
                         <div className="max-w-4xl mx-auto space-y-8">
 
-                            {/* CFO Cover Page & Executive Summary */}
-                            <CFOReportCover 
-                                meta={report.reportMeta} 
-                                summary={report.executiveSummary} 
-                                health={report.healthScore}
-                            />
-
-                            <div className="flex items-center justify-between flex-wrap gap-4 px-2">
-                                <div className="flex items-center gap-2">
-                                    <Shield className="w-3 h-3 text-royal-blue" />
-                                    <p className="text-[10px] text-gray-400 uppercase tracking-[0.2em]">BWMC FinSight AI • Reference #{Math.random().toString(36).substring(7).toUpperCase()}</p>
-                                </div>
-                                <button
-                                    onClick={resetPage}
-                                    className="flex items-center gap-2 text-xs text-royal-blue font-bold px-4 py-2 hover:bg-royal-blue/5 rounded-lg transition-colors print:hidden"
-                                >
-                                    <RefreshCw className="w-3 h-3" />
-                                    New Analysis
-                                </button>
-                            </div>
-
-                            {/* Analyst Note */}
-                            <div className="bg-amber-50 border-l-4 border-amber-400 p-6 rounded-r-2xl shadow-sm">
-                                <div className="flex items-center gap-2 mb-2 text-amber-800 uppercase tracking-widest text-[10px] font-black">
-                                    <MessageCircle className="w-4 h-4" />
-                                    Analyst Observation (Marcus Al-Rashidi)
-                                </div>
-                                <p className="text-amber-900 font-serif italic text-lg leading-relaxed">
-                                    "{report.reportMeta.analystNote}"
-                                </p>
-                            </div>
-
-                            {/* Financial Performance Section */}
-                            <SectionCard title="Performance Intelligence" icon={BarChart2}>
-                                <div className="space-y-8">
-                                    <div 
-                                        className="text-gray-700 leading-relaxed space-y-4"
-                                        dangerouslySetInnerHTML={{ 
-                                            __html: report.financialPerformance.narrative.replace(/\*\*(.*?)\*\*/g, '<strong class="text-navy font-bold">$1</strong>').replace(/\n/g, '<br/>') 
-                                        }}
+                            {analysisMode === "ifrs" && ifrsReport ? (
+                                <IFRSReportView report={ifrsReport} />
+                            ) : analysisMode === "ratios" && ratiosReport ? (
+                                <RatiosReportView report={ratiosReport} />
+                            ) : report ? (
+                                <>
+                                    {/* CFO Cover Page & Executive Summary */}
+                                    <CFOReportCover 
+                                        meta={report.reportMeta} 
+                                        summary={report.executiveSummary} 
+                                        health={report.healthScore}
                                     />
-                                    
-                                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                        {report.financialPerformance.keyMetrics?.map((m, idx) => (
-                                            <div key={idx} className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{m.metric}</p>
-                                                <p className="text-xl font-black text-navy mb-1">{m.value}</p>
-                                                <div className="flex justify-between items-center">
-                                                    <span className="text-[9px] text-gray-500 italic">Target: {m.benchmark}</span>
-                                                    <StatusBadge status={m.status} />
-                                                </div>
-                                            </div>
-                                        ))}
+
+                                    <div className="flex items-center justify-between flex-wrap gap-4 px-2">
+                                        <div className="flex items-center gap-2">
+                                            <Shield className="w-3 h-3 text-royal-blue" />
+                                            <p className="text-[10px] text-gray-400 uppercase tracking-[0.2em]">BWMC FinSight AI • Reference #{Math.random().toString(36).substring(7).toUpperCase()}</p>
+                                        </div>
+                                        <button
+                                            onClick={resetPage}
+                                            className="flex items-center gap-2 text-xs text-royal-blue font-bold px-4 py-2 hover:bg-royal-blue/5 rounded-lg transition-colors print:hidden"
+                                        >
+                                            <RefreshCw className="w-3 h-3" />
+                                            New Analysis
+                                        </button>
                                     </div>
 
-                                    <div className="p-4 bg-royal-blue/5 rounded-xl border border-royal-blue/10">
-                                        <h4 className="text-[10px] font-black text-royal-blue uppercase tracking-widest mb-2 flex items-center gap-2">
-                                            <Zap className="w-3 h-3" />
-                                            Margin Bridge Story
-                                        </h4>
-                                        <p className="text-sm italic text-navy leading-relaxed font-serif">"{report.financialPerformance.marginBridge.narrative}"</p>
-                                    </div>
-                                </div>
-                            </SectionCard>
-
-                            {/* Cost Intelligence Section */}
-                            <SectionCard title="Cost Structure Intelligence" icon={Activity}>
-                                <div className="space-y-6">
-                                    <p className="text-gray-600 text-sm leading-relaxed mb-6 italic">"{report.costIntelligence.narrative}"</p>
-                                    
-                                    <div className="overflow-x-auto">
-                                        <table className="w-full text-left">
-                                            <thead>
-                                                <tr className="border-b border-gray-100">
-                                                    <th className="py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Category</th>
-                                                    <th className="py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Amount</th>
-                                                    <th className="py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Revenue %</th>
-                                                    <th className="py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="divide-y divide-gray-50">
-                                                {(report.costIntelligence.costBreakdown || []).map((item, idx) => (
-                                                    <tr key={idx} className="group">
-                                                        <td className="py-4 font-bold text-navy text-sm">{item.category}</td>
-                                                        <td className="py-4 text-sm text-gray-600 font-mono">AED {item.amount.toLocaleString()}</td>
-                                                        <td className="py-4">
-                                                            <div className="flex items-center gap-2">
-                                                                <span className="text-sm font-black text-navy">{item.percentOfRevenue}%</span>
-                                                                <span className="text-[9px] text-gray-400 italic">(Benchmark: {item.benchmark}%)</span>
-                                                            </div>
-                                                        </td>
-                                                        <td className="py-4"><StatusBadge status={item.status} /></td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
+                                    {/* Analyst Note */}
+                                    <div className="bg-amber-50 border-l-4 border-amber-400 p-6 rounded-r-2xl shadow-sm">
+                                        <div className="flex items-center gap-2 mb-2 text-amber-800 uppercase tracking-widest text-[10px] font-black">
+                                            <MessageCircle className="w-4 h-4" />
+                                            Analyst Observation (Marcus Al-Rashidi)
+                                        </div>
+                                        <p className="text-amber-900 font-serif italic text-lg leading-relaxed">
+                                            "{report.reportMeta.analystNote}"
+                                        </p>
                                     </div>
 
-                                    {/* Expose Top 2 Red Flags Above the Blur Wall */}
-                                    {report.riskAssessment.redFlags && report.riskAssessment.redFlags.length > 0 && (
-                                        <div className="mt-12 mb-6">
-                                            <div className="flex items-center gap-3 mb-6">
-                                                <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
-                                                    <Shield className="w-5 h-5 text-red-600" />
-                                                </div>
-                                                <h3 className="font-bold text-navy text-base uppercase tracking-widest">Immediate Risks Identified</h3>
-                                            </div>
-                                            <div className="grid md:grid-cols-2 gap-6">
-                                                {report.riskAssessment.redFlags.slice(0, 2).map((flag, idx) => (
-                                                    <div key={idx} className="p-5 bg-red-50/50 rounded-2xl border border-red-100 shadow-sm relative overflow-hidden">
-                                                        <div className={`absolute left-0 top-0 bottom-0 w-1 ${flag.severity === 'critical' ? 'bg-red-500' : 'bg-amber-400'}`} />
-                                                        <div className="flex justify-between items-start mb-3">
-                                                            <span className="font-bold text-navy text-sm">{flag.title}</span>
-                                                            <StatusBadge status={flag.severity} />
+                                    {/* Financial Performance Section */}
+                                    <SectionCard title="Performance Intelligence" icon={BarChart2}>
+                                        <div className="space-y-8">
+                                            <div 
+                                                className="text-gray-700 leading-relaxed space-y-4"
+                                                dangerouslySetInnerHTML={{ 
+                                                    __html: report.financialPerformance.narrative.replace(/\*\*(.*?)\*\*/g, '<strong class="text-navy font-bold">$1</strong>').replace(/\n/g, '<br/>') 
+                                                }}
+                                            />
+                                            
+                                            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                                {report.financialPerformance.keyMetrics?.map((m, idx) => (
+                                                    <div key={idx} className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{m.metric}</p>
+                                                        <p className="text-xl font-black text-navy mb-1">{m.value}</p>
+                                                        <div className="flex justify-between items-center">
+                                                            <span className="text-[9px] text-gray-500 italic">Target: {m.benchmark}</span>
+                                                            <StatusBadge status={m.status} />
                                                         </div>
-                                                        <p className="text-xs text-gray-700 leading-relaxed italic mb-4">"{flag.cfoObservation}"</p>
                                                     </div>
                                                 ))}
                                             </div>
-                                        </div>
-                                    )}
 
-                                    {/* Profit Leakage Teaser */}
-                                    <div className="mt-8">
-                                        <div className="flex items-center gap-3 mb-4">
-                                            <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
-                                                <AlertTriangle className="w-5 h-5 text-amber-600" />
+                                            <div className="p-4 bg-royal-blue/5 rounded-xl border border-royal-blue/10">
+                                                <h4 className="text-[10px] font-black text-royal-blue uppercase tracking-widest mb-2 flex items-center gap-2">
+                                                    <Zap className="w-3 h-3" />
+                                                    Margin Bridge Story
+                                                </h4>
+                                                <p className="text-sm italic text-navy leading-relaxed font-serif">"{report.financialPerformance.marginBridge.narrative}"</p>
                                             </div>
-                                            <h3 className="font-bold text-navy text-base uppercase tracking-widest">Profit Leakage Warning</h3>
                                         </div>
-                                        <p className="text-gray-600 font-medium leading-relaxed italic">
-                                            {report.profitLeakage.narrative.split('.')[0]}.
-                                        </p>
-                                        <p className="text-navy font-black mt-3">
-                                            Your top 3 profit leaks are costing you AED {report.profitLeakage.recoveryOpportunity.monthlyAED.toLocaleString()} every month...
-                                        </p>
-                                    </div>
-                                </div>
-                            </SectionCard>
+                                    </SectionCard>
 
                             {/* ── CONSTANT: Determine if this is a sample based on the company name ── */}
                             {(() => {
@@ -958,6 +991,81 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                                         )}
 
                                         <div className={contentClass}>
+                                            {/* Cost Intelligence Section */}
+                                            <SectionCard title="Cost Structure Intelligence" icon={Activity}>
+                                                <div className="space-y-6">
+                                                    <p className="text-gray-600 text-sm leading-relaxed mb-6 italic">"{report.costIntelligence.narrative}"</p>
+                                                    
+                                                    <div className="overflow-x-auto">
+                                                        <table className="w-full text-left">
+                                                            <thead>
+                                                                <tr className="border-b border-gray-100">
+                                                                    <th className="py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Category</th>
+                                                                    <th className="py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Amount</th>
+                                                                    <th className="py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Revenue %</th>
+                                                                    <th className="py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody className="divide-y divide-gray-50">
+                                                                {(report.costIntelligence.costBreakdown || []).map((item, idx) => (
+                                                                    <tr key={idx} className="group">
+                                                                        <td className="py-4 font-bold text-navy text-sm">{item.category}</td>
+                                                                        <td className="py-4 text-sm text-gray-600 font-mono">AED {item.amount.toLocaleString()}</td>
+                                                                        <td className="py-4">
+                                                                            <div className="flex items-center gap-2">
+                                                                                <span className="text-sm font-black text-navy">{item.percentOfRevenue}%</span>
+                                                                                <span className="text-[9px] text-gray-400 italic">(Benchmark: {item.benchmark}%)</span>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td className="py-4"><StatusBadge status={item.status} /></td>
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+
+                                                    {/* Expose Top 2 Red Flags Above the Blur Wall */}
+                                                    {report.riskAssessment.redFlags && report.riskAssessment.redFlags.length > 0 && (
+                                                        <div className="mt-12 mb-6">
+                                                            <div className="flex items-center gap-3 mb-6">
+                                                                <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
+                                                                    <Shield className="w-5 h-5 text-red-600" />
+                                                                </div>
+                                                                <h3 className="font-bold text-navy text-base uppercase tracking-widest">Immediate Risks Identified</h3>
+                                                            </div>
+                                                            <div className="grid md:grid-cols-2 gap-6">
+                                                                {report.riskAssessment.redFlags.slice(0, 2).map((flag, idx) => (
+                                                                    <div key={idx} className="p-5 bg-red-50/50 rounded-2xl border border-red-100 shadow-sm relative overflow-hidden">
+                                                                        <div className={`absolute left-0 top-0 bottom-0 w-1 ${flag.severity === 'critical' ? 'bg-red-500' : 'bg-amber-400'}`} />
+                                                                        <div className="flex justify-between items-start mb-3">
+                                                                            <span className="font-bold text-navy text-sm">{flag.title}</span>
+                                                                            <StatusBadge status={flag.severity} />
+                                                                        </div>
+                                                                        <p className="text-xs text-gray-700 leading-relaxed italic mb-4">"{flag.cfoObservation}"</p>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Profit Leakage Teaser */}
+                                                    <div className="mt-8">
+                                                        <div className="flex items-center gap-3 mb-4">
+                                                            <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                                                                <AlertTriangle className="w-5 h-5 text-amber-600" />
+                                                            </div>
+                                                            <h3 className="font-bold text-navy text-base uppercase tracking-widest">Profit Leakage Warning</h3>
+                                                        </div>
+                                                        <p className="text-gray-600 font-medium leading-relaxed italic">
+                                                            {report.profitLeakage.narrative.split('.')[0]}.
+                                                        </p>
+                                                        <p className="text-navy font-black mt-3">
+                                                            Your top 3 profit leaks are costing you AED {report.profitLeakage.recoveryOpportunity.monthlyAED.toLocaleString()} every month...
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </SectionCard>
+
                                             {/* Cost Intelligence Section - Hidden Costs (Moved here) */}
                                             {report.costIntelligence.hiddenCosts.length > 0 && (
                                                 <div className="bg-red-50 p-5 rounded-2xl border border-red-100 mb-8 shadow-sm">

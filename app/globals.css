@@ -25,12 +25,7 @@
   --animate-bounce-slow: bounce 3s infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0F172A;
-    --foreground: #EFF6FF;
-  }
-}
+/* Removed prefers-color-scheme: dark to ensure black text as requested by user */
 
 body {
   background: var(--background);

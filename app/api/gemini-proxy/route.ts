@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { buildMainReportPrompt, getIFRSPrompt, getRatiosPrompt } from "@/lib/gemini-prompts";
+import { extractJSON } from "@/lib/gemini-client";
+
 // Try models in order — fall back if one is unavailable
 const MODELS = [
     "gemini-2.0-flash",
-    "gemini-2.5-pro",
+    "gemini-1.5-pro",
     "gemini-flash-latest",
     "gemini-pro-latest",
 ];
@@ -16,10 +19,20 @@ const GEN_CONFIG = {
 };
 
 export async function POST(req: NextRequest) {
-    const { prompt } = await req.json();
+    const { prompt: oldPrompt, extractedText, mode } = await req.json();
 
-    if (!prompt || typeof prompt !== "string") {
-        return NextResponse.json({ error: "Missing prompt" }, { status: 400 });
+    let finalPrompt = oldPrompt;
+
+    if (mode === "ifrs" && extractedText) {
+        finalPrompt = getIFRSPrompt(extractedText);
+    } else if (mode === "ratios" && extractedText) {
+        finalPrompt = getRatiosPrompt(extractedText);
+    } else if (mode === "health" && extractedText) {
+        finalPrompt = buildMainReportPrompt(extractedText);
+    }
+
+    if (!finalPrompt || typeof finalPrompt !== "string") {
+        return NextResponse.json({ error: "Missing prompt or extractedText/mode" }, { status: 400 });
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
@@ -28,10 +41,10 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Gemini API key not configured on server." }, { status: 500 });
     }
 
-    console.log(`[gemini-proxy] Key prefix: ${apiKey.slice(0, 8)}... Prompt chars: ${prompt.length}`);
+    console.log(`[gemini-proxy] Key prefix: ${apiKey.slice(0, 8)}... Prompt chars: ${finalPrompt.length}`);
 
     const body = {
-        contents: [{ parts: [{ text: prompt }] }],
+        contents: [{ parts: [{ text: finalPrompt }] }],
         generationConfig: GEN_CONFIG,
     };
 
@@ -95,6 +108,19 @@ export async function POST(req: NextRequest) {
             }
 
             console.log(`[gemini-proxy] ${model} succeeded. Response chars: ${text.length}`);
+
+            // NEW: Parse JSON if in mode
+            if (mode) {
+                try {
+                    const jsonStr = extractJSON(text);
+                    const report = JSON.parse(jsonStr);
+                    return NextResponse.json({ mode, report });
+                } catch (parseErr) {
+                    console.error("[gemini-proxy] JSON Parse Error:", parseErr);
+                    return NextResponse.json({ error: "Failed to parse AI response as JSON. Please try again." }, { status: 500 });
+                }
+            }
+
             return NextResponse.json({ text });
 
         } catch (err) {

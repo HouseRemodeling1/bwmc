@@ -28,7 +28,7 @@ export async function callGemini(prompt: string): Promise<string> {
  * Handles cases where Gemini adds preamble text, trailing commentary,
  * imperfect markdown fences, or wraps JSON in explanation.
  */
-function extractJSON(raw: string): string {
+export function extractJSON(raw: string): string {
     if (!raw || !raw.trim()) throw new Error("Empty response from AI");
 
     // 1. Strip markdown fences and conversational noise more aggressively

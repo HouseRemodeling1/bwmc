@@ -175,3 +175,109 @@ export interface FinancialReport {
         signOff: string;
     };
 }
+
+export interface AccountLine {
+    accountName: string;
+    amount: number;
+    ifrsCategory: string;
+    ifrsStandard: string;
+    notes: string;
+}
+
+export interface IFRSReport {
+    balanceCheck: {
+        totalDebits: number;
+        totalCredits: number;
+        isBalanced: boolean;
+        discrepancy: number;
+    };
+    classification: {
+        assets: AccountLine[];
+        liabilities: AccountLine[];
+        equity: AccountLine[];
+        revenue: AccountLine[];
+        expenses: AccountLine[];
+    };
+    generatedPL: {
+        revenue: number;
+        costOfSales: number;
+        grossProfit: number;
+        operatingExpenses: number;
+        ebit: number;
+        netProfit: number;
+    };
+    generatedBalanceSheet: {
+        totalAssets: number;
+        totalLiabilities: number;
+        totalEquity: number;
+        isBalanced: boolean;
+    };
+    complianceFlags: {
+        severity: "critical" | "warning" | "info";
+        standard: string;
+        issue: string;
+        affectedAccounts: string[];
+        recommendation: string;
+    }[];
+    summary: {
+        overallComplianceScore: number;
+        criticalIssues: number;
+        warnings: number;
+        keyFindings: string[];
+    };
+}
+
+export interface RatiosReport {
+    liquidity: {
+        currentRatio: number;
+        quickRatio: number;
+        cashRatio: number;
+        analysis: string;
+    };
+    profitability: {
+        grossMargin: number;
+        netMargin: number;
+        ebitdaMargin: number;
+        roa: number;
+        roe: number;
+        analysis: string;
+    };
+    leverage: {
+        debtToEquity: number;
+        debtToAssets: number;
+        interestCoverageRatio: number;
+        analysis: string;
+    };
+    workingCapital: {
+        workingCapital: number;
+        workingCapitalRatio: number;
+        daysReceivable: number;
+        daysPayable: number;
+        cashConversionCycle: number;
+        analysis: string;
+    };
+    roi: {
+        returnOnInvestment: number;
+        returnOnCapitalEmployed: number;
+        analysis: string;
+    };
+    trends: {
+        period: string;
+        metric: string;
+        value: number;
+        change: number;
+        direction: "up" | "down" | "flat";
+    }[];
+    benchmarks: {
+        metric: string;
+        userValue: number;
+        uaeAverage: number;
+        rating: "strong" | "average" | "weak";
+    }[];
+    executiveSummary: {
+        overallRating: "excellent" | "good" | "fair" | "poor";
+        topStrengths: string[];
+        topRisks: string[];
+        priorityActions: string[];
+    };
+}

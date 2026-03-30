@@ -128,6 +128,17 @@ export default function LockForm({ reportData, onUnlock, onSkip }: LockFormProps
                     />
                     {errors.company && <p className="text-red-500 text-xs mt-1 px-1">{errors.company}</p>}
                 </div>
+
+                <div className="relative group">
+                    <label className="flex items-center gap-3 w-full border border-dashed border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-400 cursor-pointer hover:bg-gray-50 transition-all">
+                        <svg className="w-5 h-5 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <span>Upload Business Cover Photo (Optional)</span>
+                        <input type="file" className="hidden" accept="image/*" />
+                    </label>
+                </div>
             </div>
 
             <button

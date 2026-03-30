@@ -395,5 +395,86 @@ ${JSON.stringify(reportJSON).slice(0, 2000)}
 Their question:
 ${question}
 
-Reply conversationally as if talking to a non-accountant. If you reference numbers, always use AED format.`;
+    Reply conversationally as if talking to a non-accountant. If you reference numbers, always use AED format.`;
+}
+
+export function getIFRSPrompt(extractedText: string): string {
+    return `You are a Senior IFRS-qualified Accountant and Auditor with 20 years of experience in UAE financial compliance.
+
+Your task is to perform a detailed IFRS Review of the following Trial Balance data:
+${extractedText.slice(0, 15000)}
+
+---
+
+INSTRUCTIONS:
+1. Parse every line in the trial balance.
+2. Classify each account into precisely one of these categories: assets, liabilities, equity, revenue, or expenses.
+3. For EVERY account, cite the relevant IFRS/IAS standard (e.g., IAS 16, IFRS 16, IAS 2, etc.) in the 'ifrsStandard' field.
+4. Calculate total debits and total credits. Flag if they do not match (isBalanced: false) and calculate the discrepancy.
+5. Generate a high-level P&L and Balance Sheet based on your classifications.
+6. Identify compliance flags (critical issues, warnings, or info) related to UAE regulations or IFRS standards.
+7. Summary: Provide an overall compliance score and key findings.
+
+---
+
+RETURN ONLY A PURE AND CLEAN VALID JSON OBJECT matching the IFRSReport interface.
+- NO markdown backticks.
+- NO conversational text.
+- NO preamble.
+- Ensure the JSON is perfectly valid.
+
+JSON Structure:
+{
+  "balanceCheck": { "totalDebits": 0, "totalCredits": 0, "isBalanced": true, "discrepancy": 0 },
+  "classification": {
+    "assets": [{ "accountName": "string", "amount": 0, "ifrsCategory": "string", "ifrsStandard": "string", "notes": "string" }],
+    "liabilities": [],
+    "equity": [],
+    "revenue": [],
+    "expenses": []
+  },
+  "generatedPL": { "revenue": 0, "costOfSales": 0, "grossProfit": 0, "operatingExpenses": 0, "ebit": 0, "netProfit": 0 },
+  "generatedBalanceSheet": { "totalAssets": 0, "totalLiabilities": 0, "totalEquity": 0, "isBalanced": true },
+  "complianceFlags": [{ "severity": "critical|warning|info", "standard": "string", "issue": "string", "affectedAccounts": [], "recommendation": "string" }],
+  "summary": { "overallComplianceScore": 0, "criticalIssues": 0, "warnings": 0, "keyFindings": [] }
+  };
+}
+
+export function getRatiosPrompt(extractedText: string): string {
+    return `You are a CFO-level Financial Analyst specializing in UAE markets.
+
+Your task is to calculate a complete suite of financial ratios from the following data:
+${extractedText.slice(0, 15000)}
+
+---
+
+INSTRUCTIONS:
+1. Calculate every ratio mentioned in the JSON structure below.
+2. Provide a plain-English analysis paragraph for each category (liquidity, profitability, leverage, working capital, roi).
+3. If multiple months or years are present, identify trends in the 'trends' array.
+4. Benchmark your results against these UAE SME Industry Averages:
+   - Current Ratio: 1.5
+   - Quick Ratio: 1.0
+   - Gross Margin: Sector dependent (explain if sector unclear)
+   - ROE: 12%
+   - Debt-to-Equity: 0.8
+
+---
+
+RETURN ONLY A PURE AND CLEAN VALID JSON OBJECT matching the RatiosReport interface.
+- NO markdown backticks.
+- NO conversational text.
+- NO preamble.
+
+JSON Structure:
+{
+  "liquidity": { "currentRatio": 0, "quickRatio": 0, "cashRatio": 0, "analysis": "string" },
+  "profitability": { "grossMargin": 0, "netMargin": 0, "ebitdaMargin": 0, "roa": 0, "roe": 0, "analysis": "string" },
+  "leverage": { "debtToEquity": 0, "debtToAssets": 0, "interestCoverageRatio": 0, "analysis": "string" },
+  "workingCapital": { "workingCapital": 0, "workingCapitalRatio": 0, "daysReceivable": 0, "daysPayable": 0, "cashConversionCycle": 0, "analysis": "string" },
+  "roi": { "returnOnInvestment": 0, "returnOnCapitalEmployed": 0, "analysis": "string" },
+  "trends": [{ "period": "string", "metric": "string", "value": 0, "change": 0, "direction": "up|down|flat" }],
+  "benchmarks": [{ "metric": "string", "userValue": 0, "uaeAverage": 0, "rating": "strong|average|weak" }],
+  "executiveSummary": { "overallRating": "excellent|good|fair|poor", "topStrengths": [], "topRisks": [], "priorityActions": [] }
+}`;
 }
