@@ -5,7 +5,6 @@ import {
     ArrowUpRight, ArrowDownRight, Minus, BarChart3, PieChart, Activity
 } from "lucide-react";
 import { RatiosReport } from "@/app/financial-health-check/financial-types";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from "recharts";
 
 interface Props {
     report: RatiosReport;
