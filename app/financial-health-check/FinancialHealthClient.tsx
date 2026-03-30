@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
     Upload, FileText, Table, BarChart2, AlertTriangle, CheckCircle,
     ChevronRight, Download, Mail, RefreshCw, MessageCircle, Send,
-    TrendingUp, TrendingDown, Shield, ArrowRight, X, Activity, Zap, ShieldCheck, Calculator
+    TrendingUp, TrendingDown, Shield, ArrowRight, X, Activity, Zap, ShieldCheck, Calculator, ShieldAlert
 } from "lucide-react";
 import WhatIfSimulator from "@/components/financial-health/WhatIfSimulator";
 import ProfitLeakageReport from "@/components/financial-health/ProfitLeakageReport";
