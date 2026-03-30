@@ -4,19 +4,52 @@ import { buildMainReportPrompt, getIFRSPrompt, getRatiosPrompt } from "@/lib/gem
 import { extractJSON } from "@/lib/gemini-client";
 
 // Try models in order — fall back if one is unavailable
-const MODELS = [
+// Try models in order — fall back if one is unavailable or rate-limited
+const GEMINI_MODELS = [
     "gemini-2.0-flash",
+    "gemini-1.5-flash-002",
+    "gemini-1.5-flash",
+    "gemini-2.0-flash-exp",
+    "gemini-1.5-pro-002",
     "gemini-1.5-pro",
-    "gemini-flash-latest",
     "gemini-pro-latest",
 ];
 
 const GEN_CONFIG = {
-    temperature: 0.2,
+    temperature: 0.1, // Lower temperature for more stable financial data
     topK: 32,
     topP: 1,
     maxOutputTokens: 8192,
 };
+
+async function tryMoonshot(prompt: string, apiKey: string) {
+    const endpoint = "https://api.moonshot.cn/v1/chat/completions";
+    console.log("[gemini-proxy] Trying Moonshot AI (Kimi) fallback...");
+    
+    const res = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+            model: "moonshot-v1-32k",
+            messages: [
+                { role: "system", content: "You are a professional financial analyst. Return raw JSON ONLY." },
+                { role: "user", content: prompt }
+            ],
+            temperature: 0.2
+        }),
+    });
+
+    if (!res.ok) {
+        const error = await res.json();
+        throw new Error(`Moonshot failed: ${JSON.stringify(error)}`);
+    }
+
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content || "";
+}
 
 export async function POST(req: NextRequest) {
     const { prompt: oldPrompt, extractedText, mode } = await req.json();
@@ -35,103 +68,90 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Missing prompt or extractedText/mode" }, { status: 400 });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-        console.error("[gemini-proxy] GEMINI_API_KEY env var is not set!");
-        return NextResponse.json({ error: "Gemini API key not configured on server." }, { status: 500 });
-    }
-
-    console.log(`[gemini-proxy] Key prefix: ${apiKey.slice(0, 8)}... Prompt chars: ${finalPrompt.length}`);
-
-    const body = {
-        contents: [{ parts: [{ text: finalPrompt }] }],
-        generationConfig: GEN_CONFIG,
-    };
+    const geminiKey = process.env.GEMINI_API_KEY;
+    const kimiKey = process.env.KIMI_API_KEY; // Optional backup
 
     let lastError = "";
 
-    for (const model of MODELS) {
-        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-        console.log(`[gemini-proxy] Trying model: ${model}`);
+    // ── STEP 1: TRY GEMINI FALLBACK CHAIN ───────────────────────────────
+    if (geminiKey) {
+        for (const model of GEMINI_MODELS) {
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiKey}`;
+            console.log(`[gemini-proxy] Trying Gemini: ${model}`);
 
-        try {
-            const res = await fetch(endpoint, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(body),
-            });
+            try {
+                const res = await fetch(endpoint, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: finalPrompt }] }],
+                        generationConfig: GEN_CONFIG,
+                    }),
+                });
 
-            // Always read the body so we can log it
-            const data = await res.json();
+                const data = await res.json();
 
-            if (!res.ok) {
-                // Extract the real error message from Gemini's response
-                const geminiMsg = data?.error?.message || data?.error?.status || JSON.stringify(data).slice(0, 200);
-                console.error(`[gemini-proxy] ${model} returned HTTP ${res.status}: ${geminiMsg}`);
-
-                if (res.status === 403) {
-                    return NextResponse.json({ error: `API key rejected (403): ${geminiMsg}` }, { status: 403 });
-                }
-                if (res.status === 429) {
-                    // Don't die on 429, try next model!
-                    lastError = "Too many requests. Please wait 30 seconds and try again.";
+                if (!res.ok) {
+                    const msg = data?.error?.message || data?.error?.status || `HTTP ${res.status}`;
+                    console.error(`[gemini-proxy] ${model} failed (${res.status}): ${msg}`);
+                    lastError = `Gemini ${model}: ${msg}`;
+                    
+                    // Don't retry on fatal input errors (400)
+                    if (res.status === 400) break;
                     continue;
                 }
-                if (res.status === 400) {
-                    return NextResponse.json({ error: `Bad request (400): ${geminiMsg}` }, { status: 400 });
+
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+                if (!text) {
+                    lastError = `${model} returned empty response`;
+                    continue;
                 }
 
-                // For 404 (model not found) or 500, try next model
-                lastError = `${model} failed: HTTP ${res.status} — ${geminiMsg}`;
+                return processAIResponse(text, mode);
+
+            } catch (err) {
+                lastError = err instanceof Error ? err.message : String(err);
+                console.error(`[gemini-proxy] ${model} network error: ${lastError}`);
                 continue;
             }
-
-            // Safety block
-            if (!data?.candidates || data.candidates.length === 0) {
-                const blockReason = data?.promptFeedback?.blockReason;
-                console.warn(`[gemini-proxy] ${model} blocked. Reason: ${blockReason}`);
-                return NextResponse.json({
-                    error: blockReason
-                        ? `Request blocked by safety filters (${blockReason}).`
-                        : "Gemini returned an empty response. Please try again.",
-                }, { status: 422 });
-            }
-
-            const candidate = data.candidates[0];
-            if (candidate?.finishReason === "SAFETY") {
-                return NextResponse.json({ error: "Response blocked by safety filters. Please try a different document." }, { status: 422 });
-            }
-
-            const text = candidate?.content?.parts?.[0]?.text ?? "";
-            if (!text) {
-                return NextResponse.json({ error: "Gemini returned an empty response. Please try again." }, { status: 422 });
-            }
-
-            console.log(`[gemini-proxy] ${model} succeeded. Response chars: ${text.length}`);
-
-            // NEW: Parse JSON if in mode
-            if (mode) {
-                try {
-                    const jsonStr = extractJSON(text);
-                    const report = JSON.parse(jsonStr);
-                    return NextResponse.json({ mode, report });
-                } catch (parseErr) {
-                    console.error("[gemini-proxy] JSON Parse Error:", parseErr);
-                    return NextResponse.json({ error: "Failed to parse AI response as JSON. Please try again." }, { status: 500 });
-                }
-            }
-
-            return NextResponse.json({ text });
-
-        } catch (err) {
-            const msg = err instanceof Error ? err.message : String(err);
-            console.error(`[gemini-proxy] ${model} network error: ${msg}`);
-            lastError = `${model} network error: ${msg}`;
-            continue;
         }
     }
 
-    // All models failed
-    console.error(`[gemini-proxy] All models failed. Last error: ${lastError}`);
-    return NextResponse.json({ error: `All Gemini models failed. Last error: ${lastError}` }, { status: 500 });
+    // ── STEP 2: TRY KIMI (MOONSHOT) FALLBACK ────────────────────────────
+    if (kimiKey) {
+        try {
+            const text = await tryMoonshot(finalPrompt, kimiKey);
+            console.log("[gemini-proxy] Moonshot AI succeeded.");
+            return processAIResponse(text, mode);
+        } catch (err) {
+            console.error("[gemini-proxy] Moonshot failed:", err);
+            lastError += ` | Moonshot: ${err instanceof Error ? err.message : String(err)}`;
+        }
+    }
+
+    // ── STEP 3: ALL HAVE FAILED ─────────────────────────────────────────
+    console.error(`[gemini-proxy] Critical failure: ${lastError}`);
+    return NextResponse.json({ 
+        error: "Financial analysis engine is currently over capacity. Please try again in 1-2 minutes.",
+        details: lastError 
+    }, { status: 503 });
+}
+
+/** Centralized AI response processor to handle JSON extraction and formatting */
+function processAIResponse(text: string, mode?: string) {
+    if (!mode) {
+        return NextResponse.json({ text });
+    }
+
+    try {
+        const jsonStr = extractJSON(text);
+        const report = JSON.parse(jsonStr);
+        return NextResponse.json({ mode: mode as any, report });
+    } catch (parseErr) {
+        console.error("[gemini-proxy] JSON Parse Error:", parseErr, "Raw text:", text.slice(0, 200));
+        return NextResponse.json({ 
+            error: "We had trouble reading the AI response. Please try again.",
+            raw: text.slice(0, 100)
+        }, { status: 500 });
+    }
 }
