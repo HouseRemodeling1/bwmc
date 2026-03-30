@@ -437,7 +437,7 @@ JSON Structure:
   "generatedBalanceSheet": { "totalAssets": 0, "totalLiabilities": 0, "totalEquity": 0, "isBalanced": true },
   "complianceFlags": [{ "severity": "critical|warning|info", "standard": "string", "issue": "string", "affectedAccounts": [], "recommendation": "string" }],
   "summary": { "overallComplianceScore": 0, "criticalIssues": 0, "warnings": 0, "keyFindings": [] }
-  };
+  }`;
 }
 
 export function getRatiosPrompt(extractedText: string): string {

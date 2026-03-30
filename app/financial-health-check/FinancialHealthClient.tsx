@@ -806,8 +806,10 @@ Annualized Revenue: AED ${manualForm.revenue ? (parseFloat(manualForm.revenue) *
                             </motion.div>
                         )}
                     </AnimatePresence>
-                </div>
-            </section>
+                </>
+            )}
+        </div>
+    </section>
 
             {/* ── PROCESSING ───────────────────────────────────────────────── */}
             <AnimatePresence>
