@@ -3,7 +3,6 @@ import { Montserrat, Inter, Merriweather } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import ChatBot from "@/components/ChatBot";
 import { generateOrganizationSchema, generateWebSiteSchema } from "@/lib/schema";
 
 const montserrat = Montserrat({
@@ -178,7 +177,6 @@ export default function RootLayout({
 
         <Header />
         {children}
-        <ChatBot />
         <Footer />
         <Script id="zoho-salesiq-init" strategy="afterInteractive">
           {`
