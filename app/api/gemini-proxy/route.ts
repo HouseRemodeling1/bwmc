@@ -6,12 +6,11 @@ import { extractJSON } from "@/lib/gemini-client";
 // Try models in order — fall back if one is unavailable
 // Try models in order — fall back if one is unavailable or rate-limited
 const GEMINI_MODELS = [
+    "gemini-3.1-pro-preview",
+    "gemini-3-flash-preview",
+    "gemini-2.5-pro",
+    "gemini-2.5-flash",
     "gemini-2.0-flash",
-    "gemini-1.5-flash-002",
-    "gemini-1.5-flash",
-    "gemini-2.0-flash-exp",
-    "gemini-1.5-pro-002",
-    "gemini-1.5-pro",
     "gemini-pro-latest",
 ];
 
@@ -22,33 +21,80 @@ const GEN_CONFIG = {
     maxOutputTokens: 8192,
 };
 
-async function tryMoonshot(prompt: string, apiKey: string) {
-    const endpoint = "https://api.moonshot.cn/v1/chat/completions";
-    console.log("[gemini-proxy] Trying Moonshot AI (Kimi) fallback...");
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function tryAnthropic(prompt: string, apiKey: string) {
+    const endpoint = "https://api.anthropic.com/v1/messages";
+    console.log("[gemini-proxy] Trying Anthropic (Claude 4.6) fallback...");
     
     const res = await fetch(endpoint, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${apiKey}`
+            "x-api-key": apiKey,
+            "anthropic-version": "2023-06-01"
         },
         body: JSON.stringify({
-            model: "moonshot-v1-32k",
+            model: "claude-sonnet-4.6",
+            max_tokens: 4096,
             messages: [
-                { role: "system", content: "You are a professional financial analyst. Return raw JSON ONLY." },
                 { role: "user", content: prompt }
             ],
-            temperature: 0.2
+            system: "You are a professional financial analyst. Return raw JSON ONLY. Do not include markdown fences in the output.",
+            temperature: 0.1
         }),
     });
 
     if (!res.ok) {
         const error = await res.json();
-        throw new Error(`Moonshot failed: ${JSON.stringify(error)}`);
+        throw new Error(`Anthropic failed: ${JSON.stringify(error)}`);
     }
 
     const data = await res.json();
-    return data.choices?.[0]?.message?.content || "";
+    return data.content?.[0]?.text || "";
+}
+
+async function tryMoonshot(prompt: string, apiKey: string) {
+    // Try both international and China endpoints
+    const endpoints = [
+        "https://api.moonshot.ai/v1/chat/completions",
+        "https://api.moonshot.cn/v1/chat/completions"
+    ];
+
+    let lastError = "";
+    for (const endpoint of endpoints) {
+        try {
+            console.log(`[gemini-proxy] Trying Moonshot at ${endpoint}...`);
+            const res = await fetch(endpoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: "moonshot-v1-32k",
+                    messages: [
+                        { role: "system", content: "You are a professional financial analyst. Return raw JSON ONLY." },
+                        { role: "user", content: prompt }
+                    ],
+                    temperature: 0.2
+                }),
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                return data.choices?.[0]?.message?.content || "";
+            }
+
+            const error = await res.json();
+            lastError = JSON.stringify(error);
+            console.warn(`[gemini-proxy] Moonshot at ${endpoint} failed: ${lastError}`);
+        } catch (err) {
+            lastError = err instanceof Error ? err.message : String(err);
+            console.error(`[gemini-proxy] Moonshot at ${endpoint} network error: ${lastError}`);
+        }
+    }
+    throw new Error(`All Moonshot endpoints failed: ${lastError}`);
 }
 
 export async function POST(req: NextRequest) {
@@ -69,7 +115,8 @@ export async function POST(req: NextRequest) {
     }
 
     const geminiKey = process.env.GEMINI_API_KEY;
-    const kimiKey = process.env.KIMI_API_KEY; // Optional backup
+    const kimiKey = process.env.KIMI_API_KEY; 
+    const anthropicKey = process.env.ANTHROPIC_API_KEY;
 
     let lastError = "";
 
@@ -96,6 +143,9 @@ export async function POST(req: NextRequest) {
                     console.error(`[gemini-proxy] ${model} failed (${res.status}): ${msg}`);
                     lastError = `Gemini ${model}: ${msg}`;
                     
+                    // Add cool-off delay after rate limits
+                    if (res.status === 429) await delay(1000);
+                    
                     // Don't retry on fatal input errors (400)
                     if (res.status === 400) break;
                     continue;
@@ -117,7 +167,19 @@ export async function POST(req: NextRequest) {
         }
     }
 
-    // ── STEP 2: TRY KIMI (MOONSHOT) FALLBACK ────────────────────────────
+    // ── STEP 2: TRY ANTHROPIC FALLBACK ──────────────────────────────────
+    if (anthropicKey) {
+        try {
+            const text = await tryAnthropic(finalPrompt, anthropicKey);
+            console.log("[gemini-proxy] Anthropic (Claude) succeeded.");
+            return processAIResponse(text, mode);
+        } catch (err) {
+            console.error("[gemini-proxy] Anthropic failed:", err);
+            lastError += ` | Anthropic: ${err instanceof Error ? err.message : String(err)}`;
+        }
+    }
+
+    // ── STEP 3: TRY KIMI (MOONSHOT) FALLBACK ────────────────────────────
     if (kimiKey) {
         try {
             const text = await tryMoonshot(finalPrompt, kimiKey);
@@ -129,10 +191,10 @@ export async function POST(req: NextRequest) {
         }
     }
 
-    // ── STEP 3: ALL HAVE FAILED ─────────────────────────────────────────
+    // ── STEP 4: ALL HAVE FAILED ─────────────────────────────────────────
     console.error(`[gemini-proxy] Critical failure: ${lastError}`);
     return NextResponse.json({ 
-        error: "Financial analysis engine is currently over capacity. Please try again in 1-2 minutes.",
+        error: "Financial analysis engine is currently over capacity. Please try again soon.",
         details: lastError 
     }, { status: 503 });
 }
