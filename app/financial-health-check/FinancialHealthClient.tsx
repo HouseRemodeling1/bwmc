@@ -261,7 +261,7 @@ export default function FinancialHealthClient() {
     const runAnalysis = async (text: string) => {
         setIsViewingSample(false);
         setExtractedText(text);
-        const mode = analysisMode === "ifrs" ? "ifrs" : analysisMode === "ratios" ? "ratios" : "health";
+        const mode = analysisMode || "health";
         
         runProcessingAnimation(async () => {
             try {
