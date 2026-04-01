@@ -92,13 +92,35 @@ SEO scoring rules:
 
   try {
     const result = await model.generateContent(prompt);
-    const text = result.response.text().trim();
-    const cleaned = text.replace(/^```json?\s*/i, "").replace(/\s*```\s*$/, "").trim();
-    const seoData = JSON.parse(cleaned);
+    const response = await result.response;
+    const text = response.text().trim();
+    
+    // Improved JSON extraction to handle cases where AI adds extra text or markdown
+    let cleaned = text;
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      cleaned = jsonMatch[0];
+    } else {
+      cleaned = text.replace(/^```json?\s*/i, "").replace(/\s*```\s*$/, "").trim();
+    }
 
-    return NextResponse.json({ seoData });
-  } catch (err) {
-    console.error("SEO Agent error:", err);
-    return NextResponse.json({ error: "SEO analysis failed" }, { status: 500 });
+    try {
+      const seoData = JSON.parse(cleaned);
+      return NextResponse.json({ seoData });
+    } catch (parseErr) {
+      console.error("SEO JSON Parse error:", parseErr);
+      console.error("Raw response text:", text);
+      return NextResponse.json({ 
+        error: "Failed to parse SEO data", 
+        details: parseErr instanceof Error ? parseErr.message : String(parseErr),
+        rawResponse: text.substring(0, 500) // Include snippet for debugging
+      }, { status: 500 });
+    }
+  } catch (err: any) {
+    console.error("SEO Agent API error:", err);
+    return NextResponse.json({ 
+      error: "SEO analysis failed", 
+      details: err.message || String(err) 
+    }, { status: 500 });
   }
 }

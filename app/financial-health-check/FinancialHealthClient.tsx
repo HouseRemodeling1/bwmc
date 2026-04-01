@@ -27,9 +27,9 @@ type PageState = "hero" | "upload" | "processing" | "report";
 type AnalysisMode = "ifrs" | "ratios" | "health" | "comprehensive" | null;
 
 const PROCESSING_STEPS = [
-    "Reading your numbers...",
-    "Spotting patterns...",
-    "Building your report...",
+    "Orchestrating AI Experts...",
+    "Analyzing IFRS & Ratios...",
+    "Finalizing Health Briefing...",
 ];
 
 // ─── Helper Components ─────────────────────────────────────────────────────────
@@ -265,30 +265,66 @@ export default function FinancialHealthClient() {
         
         runProcessingAnimation(async () => {
             try {
-                const res = await fetch("/api/gemini-proxy", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ extractedText: text, mode }),
-                });
-
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || "Analysis failed");
-
                 if (mode === "comprehensive") {
-                    setIfrsReport(data.report.ifrs);
-                    setRatiosReport(data.report.ratios);
-                    setReport(data.report.standard);
-                } else if (mode === "ifrs") {
-                    setIfrsReport(data.report);
-                } else if (mode === "ratios") {
-                    setRatiosReport(data.report);
+                    // Parallelize the 3-part comprehensive analysis
+                    console.log("[runAnalysis] Triggering triple-parallel AI pass...");
+                    const [ifrsRes, ratiosRes, healthRes] = await Promise.all([
+                        fetch("/api/gemini-proxy", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ extractedText: text, mode: "ifrs" }),
+                        }),
+                        fetch("/api/gemini-proxy", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ extractedText: text, mode: "ratios" }),
+                        }),
+                        fetch("/api/gemini-proxy", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ extractedText: text, mode: "health" }),
+                        })
+                    ]);
+
+                    const [ifrsData, ratiosData, healthData] = await Promise.all([
+                        ifrsRes.json(),
+                        ratiosRes.json(),
+                        healthRes.json()
+                    ]);
+
+                    // Check for errors in any of the calls
+                    if (!ifrsRes.ok) throw new Error(ifrsData.error || "IFRS analysis failed");
+                    if (!ratiosRes.ok) throw new Error(ratiosData.error || "Ratios analysis failed");
+                    if (!healthRes.ok) throw new Error(healthData.error || "Health analysis failed");
+
+                    setIfrsReport(ifrsData.report);
+                    setRatiosReport(ratiosData.report);
+                    setReport(healthData.report);
+
                 } else {
-                    setReport(data.report);
+                    // Standard standalone analysis
+                    const res = await fetch("/api/gemini-proxy", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ extractedText: text, mode }),
+                    });
+
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error || "Analysis failed");
+
+                    if (mode === "ifrs") {
+                        setIfrsReport(data.report);
+                    } else if (mode === "ratios") {
+                        setRatiosReport(data.report);
+                    } else {
+                        setReport(data.report);
+                    }
                 }
                 
                 setPageState("report");
                 setTimeout(() => reportRef.current?.scrollIntoView({ behavior: "smooth" }), 200);
             } catch (err: unknown) {
+                console.error("[runAnalysis] Error during analysis:", err);
                 setError(err instanceof Error ? err.message : "Analysis failed. Please try again.");
                 setPageState("upload");
             }

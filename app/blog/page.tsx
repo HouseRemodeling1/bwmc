@@ -37,6 +37,15 @@ export default async function BlogPage() {
                     <p className="text-xl text-white/90 max-w-2xl mx-auto">
                         Stay informed with expert insights on business, finance, tax, and audit
                     </p>
+                    <div className="mt-8 flex justify-center">
+                        <Link 
+                            href="/author" 
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-navy font-bold rounded-lg hover:bg-royal-blue hover:text-white transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                        >
+                            <User className="w-5 h-5" />
+                            View All Authors
+                        </Link>
+                    </div>
                 </div>
             </section>
 
