@@ -46,7 +46,9 @@ export default function Hero() {
             className="pt-8 flex flex-col sm:flex-row items-center justify-center gap-4"
           >
             <Link
-              href="/contact"
+              href="https://calendar.zoho.com/eventreqForm/zz080112303cb9dcc2384c6fa97dd188a0774202f3cc5182980964ff045e31964b51a850c56e281f045fcbc10dab89ff4f7daa7aa0?theme=0&l=en&tz=Asia%2FDubai"
+              target="_blank"
+              rel="noopener noreferrer"
               className="group bg-royal-blue hover:bg-sky-blue text-white px-8 py-4 rounded-[4px] text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-2xl inline-flex items-center gap-2 min-w-[200px] justify-center"
             >
               Get In Touch
