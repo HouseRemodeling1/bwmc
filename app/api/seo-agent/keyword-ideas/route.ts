@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     const existingBlogs = await getBlogs();
     const existingTitles = existingBlogs.map(b => b.title).join("\n");
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `
 You are an SEO expert specializing in UAE business content for BWMC (Bridge Water Management Consultancies) in Dubai.

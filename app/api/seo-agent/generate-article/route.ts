@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       .map(b => ({ title: b.title, slug: b.slug }))
       .slice(0, 15);
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const systemPrompt = stylePrompt || 
       "Write in a professional, authoritative tone as a senior BWMC consultant in Dubai. Use data and UAE statistics. Sound like a senior BWMC consultant speaking to a CEO. No fluff, only value.";
