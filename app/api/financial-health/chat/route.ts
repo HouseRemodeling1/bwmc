@@ -16,7 +16,7 @@ export async function POST(req: Request) {
 
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({
-            model: "gemini-1.5-flash",
+            model: "gemini-2.5-flash",
             systemInstruction: `You are a friendly senior financial advisor analyzing a UAE SME's finances. 
 You have already generated a financial health report for this business. 
 Answer the user's question in plain English — no jargon, no bullet points unless absolutely needed.
