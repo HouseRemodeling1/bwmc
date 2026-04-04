@@ -1,14 +1,11 @@
-"use client";
-
-import { use, useEffect, useState } from "react";
+import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { Calendar, User, ArrowLeft, Clock, Share2, Bookmark, CheckCircle, Activity } from "lucide-react";
+import { Calendar, User, ArrowLeft, Clock, Share2, Bookmark, CheckCircle } from "lucide-react";
 import { notFound } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import RelatedContent from "@/components/RelatedContent";
-import { estimateReadingTime } from "@/lib/metadata";
+import { generateBlogMetadata, estimateReadingTime } from "@/lib/metadata";
 import { generateArticleSchema } from "@/lib/schema";
 import { getBlogs, Blog } from "@/lib/blogs";
 import AuthorCard from "@/components/AuthorCard";
@@ -35,98 +32,91 @@ async function getAllBlogs(): Promise<Blog[]> {
     }
 }
 
-export default function BlogPost({
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+    const { slug } = await params;
+    const blog = await getBlog(slug);
+    if (!blog) return { title: "Blog Not Found | BWMC" };
+    return generateBlogMetadata(blog);
+}
+
+export default async function BlogPost({
     params,
 }: {
     params: Promise<{ slug: string }>;
 }) {
-    const { slug } = use(params);
-    const [blog, setBlog] = useState<Blog | null>(null);
-    const [author, setAuthor] = useState<any>(null);
-    const [allRelatedContent, setAllRelatedContent] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        async function loadData() {
-            const b = await getBlog(slug);
-            if (!b) {
-                setLoading(false);
-                return;
-            }
-            setBlog(b);
-
-            if (b.authorId) {
-                const a = await getAuthorById(b.authorId);
-                setAuthor(a);
-            }
-
-            const allBlogs = await getAllBlogs();
-            const relatedPosts = b.relatedPosts
-                ? allBlogs
-                    .filter((rp) => b.relatedPosts?.includes(rp.slug))
-                    .slice(0, 3)
-                : allBlogs
-                    .filter((rp) => rp.category === b.category && rp.slug !== b.slug)
-                    .slice(0, 3);
-
-            const posts = relatedPosts.map((rp) => ({
-                title: rp.title,
-                href: `/blog/${rp.slug}`,
-                description: rp.excerpt,
-                category: rp.category,
-            }));
-
-            const serviceMap: { [key: string]: { title: string; description: string } } = {
-                "business-setup": { title: "Business Setup", description: "Expert company formation in UAE" },
-                accounting: { title: "Accounting Services", description: "Professional bookkeeping & audits" },
-                taxation: { title: "Tax Compliance", description: "VAT & Corporate Tax advisory" },
-            };
-
-            const services = (b.relatedServices || []).map(s => ({
-                title: serviceMap[s]?.title || s,
-                href: `/services/${s}`,
-                description: serviceMap[s]?.description || "Expert business advice",
-                category: "Service",
-            }));
-
-            setAllRelatedContent([...services, ...posts]);
-            setLoading(false);
-        }
-        loadData();
-    }, [slug]);
-
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-navy flex items-center justify-center">
-                <div className="text-center">
-                    <Activity className="w-12 h-12 text-sky-blue animate-spin mx-auto mb-4" />
-                    <p className="text-white font-medium">Preparing your insight...</p>
-                </div>
-            </div>
-        );
-    }
+    const { slug } = await params;
+    const blog = await getBlog(slug);
 
     if (!blog) {
         notFound();
     }
 
+    const author = blog.authorId ? await getAuthorById(blog.authorId) : null;
+    const allBlogs = await getAllBlogs();
+    
+    // Logic for related content
+    const relatedPosts = blog.relatedPosts
+        ? allBlogs
+            .filter((rp) => blog.relatedPosts?.includes(rp.slug))
+            .slice(0, 3)
+        : allBlogs
+            .filter((rp) => rp.category === blog.category && rp.slug !== blog.slug)
+            .slice(0, 3);
+
+    const posts = relatedPosts.map((rp) => ({
+        title: rp.title,
+        href: `/blog/${rp.slug}`,
+        description: rp.excerpt,
+        category: rp.category,
+    }));
+
+    const serviceMap: { [key: string]: { title: string; description: string } } = {
+        "business-setup": { title: "Business Setup", description: "Expert company formation in UAE" },
+        accounting: { title: "Accounting Services", description: "Professional bookkeeping & audits" },
+        taxation: { title: "Tax Compliance", description: "VAT & Corporate Tax advisory" },
+    };
+
+    const services = (blog.relatedServices || []).map(s => ({
+        title: serviceMap[s]?.title || s,
+        href: `/services/${s}`,
+        description: serviceMap[s]?.description || "Expert business advice",
+        category: "Service",
+    }));
+
+    const allRelatedContent = [...services, ...posts];
     const readingTime = blog.readingTime ? `${blog.readingTime} min read` : estimateReadingTime(blog.content);
     const formattedContent = formatBlogContent(blog.content);
 
+    // Article Schema
+    const articleSchema = generateArticleSchema({
+        headline: blog.title,
+        description: blog.excerpt,
+        image: blog.coverImage.startsWith("http") ? blog.coverImage : `https://bwmc.ae${blog.coverImage}`,
+        datePublished: blog.createdAt,
+        dateModified: blog.updatedAt,
+        authorName: blog.author,
+        url: `https://bwmc.ae/blog/${blog.slug}`,
+        keywords: blog.keywords,
+        articleSection: blog.category,
+    });
+
     return (
-        <main className="min-h-screen bg-white">
-            {/* Redesigned Premium Hero Section */}
-            <section className="relative pt-32 pb-48 px-6 lg:px-8 bg-[#0B1221] overflow-hidden">
-                {/* Dynamic Background Elements */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,#1E40AF_0%,transparent_40%),radial-gradient(circle_at_70%_80%,#0369A1_0%,transparent_50%)] opacity-30" />
-                <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 pointer-events-none" />
-                
-                <div className="max-w-4xl mx-auto relative z-10 text-center md:text-left">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                    >
+        <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+            />
+            <main className="min-h-screen bg-white">
+                {/* Premium Hero Section */}
+                <section className="relative pt-32 pb-48 px-6 lg:px-8 bg-[#0B1221] overflow-hidden">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,#1E40AF_0%,transparent_40%),radial-gradient(circle_at_70%_80%,#0369A1_0%,transparent_50%)] opacity-30" />
+                    <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 pointer-events-none" />
+                    
+                    <div className="max-w-4xl mx-auto relative z-10 text-center md:text-left">
                         <Breadcrumbs
                             items={[
                                 { label: "Blog", href: "/blog" },
@@ -152,8 +142,7 @@ export default function BlogPost({
                             {blog.title}
                         </h1>
 
-                        {/* Glassmorphic Metadata Card */}
-                        <div className="inline-flex flex-wrap items-center gap-y-4 gap-x-8 p-6 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl">
+                        <div className="inline-flex flex-wrap items-center gap-y-4 gap-x-8 p-6 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl text-left">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-royal-blue flex items-center justify-center text-white font-bold text-lg">
                                     {blog.author[0]}
@@ -182,131 +171,119 @@ export default function BlogPost({
                                 </span>
                             </div>
                         </div>
-                    </motion.div>
-                </div>
-            </section>
+                    </div>
+                </section>
 
-            {/* Overlapping Cover Image */}
-            <div className="relative max-w-6xl mx-auto -mt-32 px-6 lg:px-8 mb-20">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                    className="aspect-video relative rounded-3xl overflow-hidden shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] bg-navy border-4 border-white/10 group"
-                >
-                    <Image
-                        src={blog.coverImage || "https://images.unsplash.com/photo-1454165833767-0270393b8000"}
-                        alt={blog.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-1000"
-                        priority
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <div className="absolute bottom-10 left-10 hidden md:block">
-                        <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20">
-                            <CheckCircle className="w-4 h-4 text-green-400" />
-                            <span className="text-white font-medium text-sm italic">Verified by BWMC Compliance</span>
+                {/* Overlapping Cover Image */}
+                <div className="relative max-w-6xl mx-auto -mt-32 px-6 lg:px-8 mb-20">
+                    <div className="aspect-video relative rounded-3xl overflow-hidden shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] bg-navy border-4 border-white/10 group">
+                        <Image
+                            src={blog.coverImage || "https://images.unsplash.com/photo-1454165833767-0270393b8000"}
+                            alt={blog.title}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-1000"
+                            priority
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                        <div className="absolute bottom-10 left-10 hidden md:block">
+                            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20">
+                                <CheckCircle className="w-4 h-4 text-green-400" />
+                                <span className="text-white font-medium text-sm italic">Verified by BWMC Compliance</span>
+                            </div>
                         </div>
                     </div>
-                </motion.div>
-            </div>
+                </div>
 
-            {/* Content Section */}
-            <section className="pb-24 px-6 lg:px-8">
-                <div className="max-w-4xl mx-auto grid lg:grid-cols-[1fr_280px] gap-16">
-                    {/* Main Body */}
-                    <article>
-                        {/* Excerpt/Lead */}
-                        <p className="text-lg md:text-2xl font-medium text-navy/70 leading-relaxed mb-12 italic border-l-4 border-sky-blue pl-6 bg-sky-blue/5 py-4 rounded-r-xl">
-                            {blog.excerpt}
-                        </p>
+                {/* Content Section */}
+                <section className="pb-24 px-6 lg:px-8">
+                    <div className="max-w-4xl mx-auto grid lg:grid-cols-[1fr_280px] gap-16">
+                        <article>
+                            <p className="text-lg md:text-2xl font-medium text-navy/70 leading-relaxed mb-12 italic border-l-4 border-sky-blue pl-6 bg-sky-blue/5 py-4 rounded-r-xl">
+                                {blog.excerpt}
+                            </p>
 
-                        <div 
-                            className="prose prose-lg prose-slate max-w-none 
-                            prose-headings:text-navy prose-headings:font-black
-                            prose-p:leading-relaxed prose-p:text-gray-700
-                            prose-strong:text-navy prose-strong:font-bold
-                            prose-a:text-royal-blue prose-a:no-underline hover:prose-a:underline
-                            prose-ul:text-gray-600 prose-ul:my-6
-                            prose-li:my-2
-                            prose-img:rounded-3xl prose-img:shadow-2xl prose-img:my-12"
-                            dangerouslySetInnerHTML={{ __html: formattedContent }}
-                        />
+                            <div 
+                                className="prose prose-lg prose-slate max-w-none 
+                                prose-headings:text-navy prose-headings:font-black
+                                prose-p:leading-relaxed prose-p:text-gray-700
+                                prose-strong:text-navy prose-strong:font-bold
+                                prose-a:text-royal-blue prose-a:no-underline hover:prose-a:underline
+                                prose-ul:text-gray-600 prose-ul:my-6
+                                prose-li:my-2
+                                prose-img:rounded-3xl prose-img:shadow-2xl prose-img:my-12"
+                                dangerouslySetInnerHTML={{ __html: formattedContent }}
+                            />
 
-                        {/* Author Footer */}
-                        {author && (
-                            <div className="mt-20">
-                                <h3 className="text-sm font-black text-navy/30 uppercase tracking-[0.2em] mb-8 border-b border-gray-100 pb-4">Written By</h3>
-                                <AuthorCard author={author} />
-                            </div>
-                        )}
+                            {author && (
+                                <div className="mt-20">
+                                    <h3 className="text-sm font-black text-navy/30 uppercase tracking-[0.2em] mb-8 border-b border-gray-100 pb-4">Written By</h3>
+                                    <AuthorCard author={author} />
+                                </div>
+                            )}
 
-                        {/* Topics */}
-                        {blog.keywords && blog.keywords.length > 0 && (
-                            <div className="mt-16 bg-gray-50 p-8 rounded-3xl border border-gray-100">
-                                <h3 className="text-sm font-black text-navy/40 uppercase tracking-widest mb-4">Topics Covered</h3>
-                                <div className="flex flex-wrap gap-2">
-                                    {blog.keywords.map((k, i) => (
-                                        <span key={i} className="px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-100 transition-colors">
-                                            #{k}
-                                        </span>
-                                    ))}
+                            {blog.keywords && blog.keywords.length > 0 && (
+                                <div className="mt-16 bg-gray-50 p-8 rounded-3xl border border-gray-100">
+                                    <h3 className="text-sm font-black text-navy/40 uppercase tracking-widest mb-4">Topics Covered</h3>
+                                    <div className="flex flex-wrap gap-2">
+                                        {blog.keywords.map((k, i) => (
+                                            <span key={i} className="px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-100 transition-colors">
+                                                #{k}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </article>
+
+                        <aside className="hidden lg:block sticky top-32 h-fit">
+                            <div className="bg-[#f8fafc] border border-gray-200 rounded-3xl p-8">
+                                <h3 className="text-navy font-black uppercase text-xs tracking-widest mb-6">Article Actions</h3>
+                                <div className="space-y-4">
+                                    <button className="w-full flex items-center justify-between p-4 bg-white border border-gray-200 rounded-2xl hover:border-royal-blue group transition-all font-bold text-sm text-gray-700">
+                                        Save for later
+                                        <Bookmark className="w-4 h-4 text-gray-400 group-hover:text-royal-blue" />
+                                    </button>
+                                    <button className="w-full flex items-center justify-between p-4 bg-white border border-gray-200 rounded-2xl hover:border-royal-blue group transition-all font-bold text-sm text-gray-700">
+                                        Share Insight
+                                        <Share2 className="w-4 h-4 text-gray-400 group-hover:text-royal-blue" />
+                                    </button>
+                                </div>
+
+                                <div className="mt-12 bg-navy rounded-2xl p-6 text-white text-center">
+                                    <p className="text-sky-blue text-[10px] font-black uppercase tracking-[0.2em] mb-2">Need advice?</p>
+                                    <p className="text-sm font-bold mb-4">Schedule a call with our consultants</p>
+                                    <Link 
+                                        href="/contact"
+                                        className="block w-full py-2 bg-white text-navy font-bold text-xs rounded-xl hover:bg-sky-blue transition-colors"
+                                    >
+                                        Book Now
+                                    </Link>
                                 </div>
                             </div>
-                        )}
-                    </article>
-
-                    {/* Sidebar */}
-                    <aside className="hidden lg:block sticky top-32 h-fit">
-                        <div className="bg-[#f8fafc] border border-gray-200 rounded-3xl p-8 sticky top-32">
-                            <h3 className="text-navy font-black uppercase text-xs tracking-widest mb-6">Article Actions</h3>
-                            <div className="space-y-4">
-                                <button className="w-full flex items-center justify-between p-4 bg-white border border-gray-200 rounded-2xl hover:border-royal-blue group transition-all">
-                                    <span className="text-sm font-bold text-gray-700 group-hover:text-royal-blue">Save for later</span>
-                                    <Bookmark className="w-4 h-4 text-gray-400 group-hover:text-royal-blue" />
-                                </button>
-                                <button className="w-full flex items-center justify-between p-4 bg-white border border-gray-200 rounded-2xl hover:border-royal-blue group transition-all">
-                                    <span className="text-sm font-bold text-gray-700 group-hover:text-royal-blue">Share Insight</span>
-                                    <Share2 className="w-4 h-4 text-gray-400 group-hover:text-royal-blue" />
-                                </button>
-                            </div>
-
-                            <div className="mt-12 bg-navy rounded-2xl p-6 text-white text-center">
-                                <p className="text-sky-blue text-[10px] font-black uppercase tracking-[0.2em] mb-2">Need advice?</p>
-                                <p className="text-sm font-bold mb-4">Schedule a call with our consultants</p>
-                                <Link 
-                                    href="/contact"
-                                    className="block w-full py-2 bg-white text-navy font-bold text-xs rounded-xl hover:bg-sky-blue transition-colors"
-                                >
-                                    Book Now
-                                </Link>
-                            </div>
-                        </div>
-                    </aside>
-                </div>
-            </section>
-
-            {/* Related Content */}
-            {allRelatedContent.length > 0 && (
-                <RelatedContent
-                    title="Further Reading"
-                    items={allRelatedContent}
-                    className="bg-[#f8fafc] border-t border-gray-200"
-                />
-            )}
-
-            {/* CTA */}
-            <section className="bg-navy py-24 px-6 lg:px-8 text-center relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-96 h-96 bg-royal-blue/20 blur-[120px] rounded-full pointer-events-none" />
-                <div className="max-w-4xl mx-auto relative z-10">
-                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Expertise When You Need It.</h2>
-                    <p className="text-xl text-white/70 mb-10">BWMC partners with businesses to bridge the gap between financial compliance and strategic growth.</p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link href="/contact" className="px-10 py-5 bg-sky-blue hover:bg-royal-blue text-white font-black rounded-2xl transition-all shadow-2xl">Start a Consultation</Link>
-                        <Link href="/services" className="px-10 py-5 bg-white/10 hover:bg-white/20 text-white font-black rounded-2xl border border-white/20 transition-all">Browse Services</Link>
+                        </aside>
                     </div>
-                </div>
-            </section>
-        </main>
+                </section>
+
+                {allRelatedContent.length > 0 && (
+                    <RelatedContent
+                        title="Further Reading"
+                        items={allRelatedContent}
+                        className="bg-[#f8fafc] border-t border-gray-200"
+                    />
+                )}
+
+                <section className="bg-navy py-24 px-6 lg:px-8 text-center relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-royal-blue/20 blur-[120px] rounded-full pointer-events-none" />
+                    <div className="max-w-4xl mx-auto relative z-10">
+                        <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Expertise When You Need It.</h2>
+                        <p className="text-xl text-white/70 mb-10">BWMC partners with businesses to bridge the gap between financial compliance and strategic growth.</p>
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                            <Link href="/contact" className="px-10 py-5 bg-sky-blue hover:bg-royal-blue text-white font-black rounded-2xl transition-all shadow-2xl">Start a Consultation</Link>
+                            <Link href="/services" className="px-10 py-5 bg-white/10 hover:bg-white/20 text-white font-black rounded-2xl border border-white/20 transition-all">Browse Services</Link>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </>
     );
 }
