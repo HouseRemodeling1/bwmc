@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { Calendar, User, ArrowLeft, Clock, Share2, Bookmark, CheckCircle } from "lucide-react";
+import { Calendar, ArrowLeft, Clock, CheckCircle } from "lucide-react";
 import { notFound } from "next/navigation";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import RelatedContent from "@/components/RelatedContent";
@@ -11,6 +11,7 @@ import { getBlogs, Blog } from "@/lib/blogs";
 import AuthorCard from "@/components/AuthorCard";
 import { getAuthorById } from "@/lib/authors";
 import { formatBlogContent } from "@/lib/content-formatter";
+import ShareButtons from "@/components/blog/ShareButtons";
 
 async function getBlog(slug: string): Promise<Blog | undefined> {
     try {
@@ -239,17 +240,8 @@ export default async function BlogPost({
 
                         <aside className="hidden lg:block sticky top-32 h-fit">
                             <div className="bg-[#f8fafc] border border-gray-200 rounded-3xl p-8">
-                                <h3 className="text-navy font-black uppercase text-xs tracking-widest mb-6">Article Actions</h3>
-                                <div className="space-y-4">
-                                    <button className="w-full flex items-center justify-between p-4 bg-white border border-gray-200 rounded-2xl hover:border-royal-blue group transition-all font-bold text-sm text-gray-700">
-                                        Save for later
-                                        <Bookmark className="w-4 h-4 text-gray-400 group-hover:text-royal-blue" />
-                                    </button>
-                                    <button className="w-full flex items-center justify-between p-4 bg-white border border-gray-200 rounded-2xl hover:border-royal-blue group transition-all font-bold text-sm text-gray-700">
-                                        Share Insight
-                                        <Share2 className="w-4 h-4 text-gray-400 group-hover:text-royal-blue" />
-                                    </button>
-                                </div>
+                                <h3 className="text-navy font-black uppercase text-xs tracking-widest mb-6">Share This</h3>
+                                <ShareButtons title={blog.title} />
 
                                 <div className="mt-12 bg-navy rounded-2xl p-6 text-white text-center">
                                     <p className="text-sky-blue text-[10px] font-black uppercase tracking-[0.2em] mb-2">Need advice?</p>
