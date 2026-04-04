@@ -102,6 +102,8 @@ export default async function BlogPost({
         url: `https://bwmc.ae/blog/${blog.slug}`,
         keywords: blog.keywords,
         articleSection: blog.category,
+        publisherName: "BWMC",
+        publisherLogo: "https://bwmc.ae/logo.png",
     });
 
     return (
