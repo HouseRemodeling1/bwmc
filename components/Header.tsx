@@ -30,6 +30,11 @@ export default function Header() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+    // Close mobile menu whenever route changes
+    useEffect(() => {
+        setMobileMenuOpen(false);
+    }, [pathname]);
+
     return (
         <header
             className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${isDarkHeader ? "bg-[#1A2B4C]/95 backdrop-blur-md shadow-sm py-3" : "bg-transparent py-5"
