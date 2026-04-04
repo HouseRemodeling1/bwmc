@@ -177,7 +177,7 @@ export default async function BlogPost({
                 </section>
 
                 {/* Overlapping Cover Image */}
-                <div className="relative max-w-6xl mx-auto -mt-32 px-6 lg:px-8 mb-20">
+                <div className="relative max-w-4xl mx-auto -mt-32 px-6 lg:px-8 mb-20">
                     <div className="aspect-video relative rounded-3xl overflow-hidden shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] bg-navy border-4 border-white/10 group">
                         <Image
                             src={blog.coverImage || "https://images.unsplash.com/photo-1454165833767-0270393b8000"}
@@ -198,7 +198,7 @@ export default async function BlogPost({
 
                 {/* Content Section */}
                 <section className="pb-24 px-6 lg:px-8">
-                    <div className="max-w-4xl mx-auto grid lg:grid-cols-[1fr_280px] gap-16">
+                    <div className="max-w-3xl mx-auto grid lg:grid-cols-[1fr_220px] gap-12">
                         <article>
                             <p className="text-lg md:text-2xl font-medium text-navy/70 leading-relaxed mb-12 italic border-l-4 border-sky-blue pl-6 bg-sky-blue/5 py-4 rounded-r-xl">
                                 {blog.excerpt}
