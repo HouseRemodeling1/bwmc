@@ -38,10 +38,11 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
 
     const shareLinkedIn = () => {
         const encodedUrl = encodeURIComponent(getUrl());
+        const encodedTitle = encodeURIComponent(title);
         window.open(
-            `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+            `https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}`,
             "_blank",
-            "noopener,noreferrer"
+            "noopener,noreferrer,width=600,height=600"
         );
     };
 
