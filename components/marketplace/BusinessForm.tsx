@@ -18,13 +18,13 @@ const businessSchema = z.object({
   business_name: z.string().min(3, "Business name must be at least 3 characters"),
   industry: z.string().min(1, "Please select an industry"),
   location: z.string().min(1, "Please select a location"),
-  asking_price: z.preprocess((val) => (val === "" ? undefined : val), z.coerce.number().min(1, "Price is required")),
-  annual_revenue: z.preprocess((val) => (val === "" ? undefined : val), z.coerce.number().optional()),
-  annual_profit: z.preprocess((val) => (val === "" ? undefined : val), z.coerce.number().optional()),
+  asking_price: z.string().min(1, "Price is required"),
+  annual_revenue: z.string().optional(),
+  annual_profit: z.string().optional(),
   description: z.string().min(50, "Please provide at least 50 characters of description"),
   reason_for_sale: z.string().optional(),
-  employees_count: z.preprocess((val) => (val === "" ? undefined : val), z.coerce.number().optional()),
-  established_year: z.preprocess((val) => (val === "" ? undefined : val), z.coerce.number().optional()),
+  employees_count: z.string().optional(),
+  established_year: z.string().optional(),
   images: z.array(z.string()).default([]),
 })
 
@@ -61,7 +61,14 @@ export function BusinessForm() {
       const res = await fetch("/api/businesses", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify({
+          ...values,
+          asking_price: Number(values.asking_price),
+          annual_revenue: values.annual_revenue ? Number(values.annual_revenue) : undefined,
+          annual_profit: values.annual_profit ? Number(values.annual_profit) : undefined,
+          employees_count: values.employees_count ? Number(values.employees_count) : undefined,
+          established_year: values.established_year ? Number(values.established_year) : undefined,
+        }),
       })
       
       if (!res.ok) throw new Error("Failed to create listing")

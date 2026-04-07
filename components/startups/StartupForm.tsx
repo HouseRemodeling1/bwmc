@@ -23,8 +23,8 @@ const startupSchema = z.object({
   pitch_summary: z.string().min(50, "At least 50 characters required"),
   problem_statement: z.string().min(50, "At least 50 characters required"),
   solution: z.string().min(50, "At least 50 characters required"),
-  funding_ask: z.preprocess((val) => (val === "" ? undefined : val), z.coerce.number().min(1, "Funding ask is required")),
-  equity_offered: z.preprocess((val) => (val === "" ? undefined : val), z.coerce.number().optional()),
+  funding_ask: z.string().min(1, "Funding ask is required"),
+  equity_offered: z.string().optional(),
   logo_url: z.string().optional(),
 })
 
@@ -67,6 +67,8 @@ export function StartupForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...values,
+          funding_ask: Number(values.funding_ask),
+          equity_offered: values.equity_offered ? Number(values.equity_offered) : undefined,
           founders,
         }),
       })
