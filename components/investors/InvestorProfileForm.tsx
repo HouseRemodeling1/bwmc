@@ -41,24 +41,33 @@ export function InvestorProfileForm() {
   const onSubmit = async (values: InvestorFormValues) => {
     setLoading(true)
     try {
+      const cleanNum = (val?: string) => {
+        if (!val) return undefined;
+        const cleaned = val.replace(/[^0-9.]/g, '');
+        return cleaned ? Number(cleaned) : undefined;
+      }
+
       const res = await fetch("/api/investors", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...values,
-          ticket_size_min: values.ticket_size_min ? Number(values.ticket_size_min) : undefined,
-          ticket_size_max: values.ticket_size_max ? Number(values.ticket_size_max) : undefined,
+          ticket_size_min: cleanNum(values.ticket_size_min),
+          ticket_size_max: cleanNum(values.ticket_size_max),
           focus_industries: ["Technology"], // Default for now
           preferred_stages: ["seed"], // Default for now
         }),
       })
       
-      if (!res.ok) throw new Error("Failed to create profile")
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `Server returned ${res.status}`);
+      }
       
       router.push("/investors/dashboard?onboarding=success")
-    } catch (error) {
+    } catch (error: any) {
       console.error(error)
-      alert("Error saving profile.")
+      alert(error.message || "Error saving profile.")
     } finally {
       setLoading(false)
     }

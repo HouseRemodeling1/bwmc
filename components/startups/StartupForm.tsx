@@ -62,24 +62,33 @@ export function StartupForm() {
   const onSubmit = async (values: StartupFormValues) => {
     setLoading(true)
     try {
+      const cleanNum = (val?: string) => {
+        if (!val) return undefined;
+        const cleaned = val.replace(/[^0-9.]/g, '');
+        return cleaned ? Number(cleaned) : undefined;
+      }
+
       const res = await fetch("/api/startups", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...values,
-          funding_ask: Number(values.funding_ask),
-          equity_offered: values.equity_offered ? Number(values.equity_offered) : undefined,
+          funding_ask: cleanNum(values.funding_ask),
+          equity_offered: cleanNum(values.equity_offered),
           founders,
         }),
       })
       
-      if (!res.ok) throw new Error("Failed to create profile")
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `Server returned ${res.status}`);
+      }
       
       const data = await res.json()
       router.push(`/startups/${data.slug}?success=true`)
-    } catch (error) {
+    } catch (error: any) {
       console.error(error)
-      alert("Something went wrong.")
+      alert(error.message || "Something went wrong.")
     } finally {
       setLoading(false)
     }

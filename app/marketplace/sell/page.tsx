@@ -1,9 +1,14 @@
-// app/marketplace/sell/page.tsx
-import { BusinessForm } from "@/components/marketplace/BusinessForm"
-import { Badge } from "@/components/ui/badge"
-import { ShieldCheck, Zap, Globe } from "lucide-react"
+import { createClient } from "@/lib/supabase/server"
+import { redirect } from "next/navigation"
 
-export default function SellBusinessPage() {
+export default async function SellBusinessPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    redirect("/api/auth/signin") // Or your login page
+  }
+
   return (
     <div className="min-h-screen bg-slate-50/50 pb-20">
       {/* Header Section */}

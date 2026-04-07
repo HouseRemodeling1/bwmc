@@ -58,26 +58,36 @@ export function BusinessForm() {
   const onSubmit = async (values: BusinessFormValues) => {
     setLoading(true)
     try {
+      // Helper to sanitize numeric strings (remove commas, spaces, etc.)
+      const cleanNum = (val?: string) => {
+        if (!val) return undefined;
+        const cleaned = val.replace(/[^0-9.]/g, '');
+        return cleaned ? Number(cleaned) : undefined;
+      }
+
       const res = await fetch("/api/businesses", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...values,
-          asking_price: Number(values.asking_price),
-          annual_revenue: values.annual_revenue ? Number(values.annual_revenue) : undefined,
-          annual_profit: values.annual_profit ? Number(values.annual_profit) : undefined,
-          employees_count: values.employees_count ? Number(values.employees_count) : undefined,
-          established_year: values.established_year ? Number(values.established_year) : undefined,
+          asking_price: cleanNum(values.asking_price),
+          annual_revenue: cleanNum(values.annual_revenue),
+          annual_profit: cleanNum(values.annual_profit),
+          employees_count: cleanNum(values.employees_count),
+          established_year: cleanNum(values.established_year),
         }),
       })
       
-      if (!res.ok) throw new Error("Failed to create listing")
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `Server returned ${res.status}`);
+      }
       
       const data = await res.json()
       router.push(`/marketplace/${data.slug}?success=true`)
-    } catch (error) {
+    } catch (error: any) {
       console.error(error)
-      alert("Something went wrong. Please try again.")
+      alert(error.message || "Something went wrong. Please try again.")
     } finally {
       setLoading(false)
     }
