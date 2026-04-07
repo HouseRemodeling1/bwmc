@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Montserrat, Inter, Merriweather } from "next/font/google";
+import { Montserrat, Inter, Merriweather, Geist } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -99,6 +99,10 @@ export const metadata: Metadata = {
 };
 
 import Script from "next/script";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+
 
 export default function RootLayout({
   children,
@@ -137,7 +141,7 @@ export default function RootLayout({
   const websiteSchema = generateWebSiteSchema(SITE_URL);
 
   return (
-    <html lang="en">
+    <html lang="en" className={cn("font-sans", geist.variable)}>
       <head>
         {/* Organization Schema */}
         <script
