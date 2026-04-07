@@ -25,7 +25,7 @@ const businessSchema = z.object({
   reason_for_sale: z.string().optional(),
   employees_count: z.string().optional(),
   established_year: z.string().optional(),
-  images: z.array(z.string()).default([]),
+  images: z.array(z.string()),
 })
 
 type BusinessFormValues = z.infer<typeof businessSchema>
