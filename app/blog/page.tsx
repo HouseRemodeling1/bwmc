@@ -6,6 +6,7 @@ import BlogGrid from "@/components/blog/BlogGrid";
 import { blogMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = blogMetadata;
+export const dynamic = "force-dynamic";
 
 async function getPublishedBlogs() {
     try {
