@@ -1,5 +1,8 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
+import { StartupForm } from "@/components/startups/StartupForm"
+import { Badge } from "@/components/ui/badge"
+import { ShieldCheck, Rocket, Landmark } from "lucide-react"
 
 export default async function ListYourStartupPage() {
   const supabase = await createClient()

@@ -1,5 +1,8 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
+import { BusinessForm } from "@/components/marketplace/BusinessForm"
+import { Badge } from "@/components/ui/badge"
+import { ShieldCheck, Zap, Globe } from "lucide-react"
 
 export default async function SellBusinessPage() {
   const supabase = await createClient()
