@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   const maxPrice = searchParams.get('maxPrice')
   const location = searchParams.get('location')
   
-  const supabase = createClient()
+  const supabase = await createClient()
   
   let query = supabase
     .from('businesses_for_sale')
@@ -32,7 +32,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   
   if (!user) {

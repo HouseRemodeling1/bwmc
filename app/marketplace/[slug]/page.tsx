@@ -24,7 +24,7 @@ import Link from 'next/link'
 import { Business } from '@/types/business'
 
 export default async function BusinessDetailPage({ params }: { params: { slug: string } }) {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data: business, error } = await supabase
     .from('businesses_for_sale')

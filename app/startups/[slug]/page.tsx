@@ -26,7 +26,7 @@ import Link from 'next/link'
 import { Startup } from '@/types/startup'
 
 export default async function StartupDetailPage({ params }: { params: { slug: string } }) {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data: startup, error } = await supabase
     .from('startups')
