@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { MapPin, TrendingUp, Users, CheckCircle } from 'lucide-react'
+import { PricingBadge } from './PricingBadge'
 import { Business } from '@/types/business'
 
 interface BusinessCardProps {
@@ -31,11 +32,7 @@ export function BusinessCard({ business }: BusinessCardProps) {
             className="object-cover"
           />
           <div className="absolute top-2 right-2 flex flex-col gap-2">
-            {business.listing_type !== 'free' && (
-              <Badge className="bg-primary/90 backdrop-blur-md border-none text-white font-medium uppercase text-[10px] tracking-wider">
-                {business.listing_type}
-              </Badge>
-            )}
+            <PricingBadge type={business.listing_type} />
           </div>
           {business.verified && (
             <Badge variant="secondary" className="absolute top-2 left-2 bg-green-500/90 backdrop-blur-md border-none text-white flex gap-1 items-center">

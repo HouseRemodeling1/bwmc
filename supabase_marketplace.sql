@@ -74,7 +74,7 @@ CREATE INDEX IF NOT EXISTS idx_businesses_status ON businesses_for_sale(status);
 CREATE INDEX IF NOT EXISTS idx_businesses_industry ON businesses_for_sale(industry);
 CREATE INDEX IF NOT EXISTS idx_businesses_location ON businesses_for_sale(location);
 CREATE INDEX IF NOT EXISTS idx_businesses_price ON businesses_for_sale(asking_price);
-CREATE INDEX IF NOT EXISTS idx_businesses_featured ON businesses_for_sale(featured_until) WHERE featured_until > NOW();
+CREATE INDEX IF NOT EXISTS idx_businesses_featured ON businesses_for_sale(featured_until);
 
 -- =====================================================
 -- STARTUP-INVESTOR PLATFORM TABLES
