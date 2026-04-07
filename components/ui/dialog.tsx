@@ -59,7 +59,7 @@ const DialogHeader = ({
       "flex flex-col space-y-1.5 text-center sm:text-left",
       className
     )}
-    ...props
+    {...props}
   />
 )
 DialogHeader.displayName = "DialogHeader"
@@ -73,7 +73,7 @@ const DialogFooter = ({
       "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
       className
     )}
-    ...props
+    {...props}
   />
 )
 DialogFooter.displayName = "DialogFooter"
@@ -88,7 +88,7 @@ const DialogTitle = React.forwardRef<
       "text-lg font-semibold leading-none tracking-tight",
       className
     )}
-    ...props
+    {...props}
   />
 ))
 DialogTitle.displayName = DialogPrimitive.Title.displayName
@@ -100,7 +100,7 @@ const DialogDescription = React.forwardRef<
   <DialogPrimitive.Description
     ref={ref}
     className={cn("text-sm text-slate-500", className)}
-    ...props
+    {...props}
   />
 ))
 DialogDescription.displayName = DialogPrimitive.Description.displayName

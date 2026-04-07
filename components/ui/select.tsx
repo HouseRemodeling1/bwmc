@@ -63,7 +63,6 @@ const SelectContent = React.forwardRef<
       </SelectPrimitive.ScrollDownButton>
     </SelectPrimitive.Content>
   </SelectPrimitive.Portal>
- consort
 ))
 SelectContent.displayName = SelectPrimitive.Content.displayName
 
