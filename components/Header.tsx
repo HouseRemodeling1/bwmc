@@ -128,16 +128,21 @@ export default function Header() {
                             </a>
                         </>
                     ) : (
-                        <Link
-                            href="/calculator"
-                            className={`flex items-center gap-2 px-6 py-3 rounded-[4px] text-base font-semibold transition-all ${isDarkHeader
-                                ? "bg-white text-navy hover:bg-gold hover:text-navy"
-                                : "bg-white text-navy hover:bg-neutral"
-                                }`}
-                        >
-                            <span>Cost Calculator</span>
-                            <Calculator className="w-5 h-5" />
-                        </Link>
+                        <div className="flex items-center gap-4">
+                            <Link href="/login" className={`text-sm font-bold transition-all ${isDarkHeader ? "text-white/80 hover:text-white" : "text-white/90 hover:text-white"}`}>
+                                Sign In
+                            </Link>
+                            <Link
+                                href="/calculator"
+                                className={`flex items-center gap-2 px-6 py-3 rounded-[4px] text-base font-semibold transition-all ${isDarkHeader
+                                    ? "bg-white text-navy hover:bg-gold hover:text-navy"
+                                    : "bg-white text-navy hover:bg-neutral"
+                                    }`}
+                            >
+                                <span>Cost Calculator</span>
+                                <Calculator className="w-5 h-5" />
+                            </Link>
+                        </div>
                     )}
                 </div>
 

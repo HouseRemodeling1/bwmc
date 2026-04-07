@@ -9,7 +9,7 @@ export default async function ListYourStartupPage() {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect("/api/auth/signin")
+    redirect("/login?next=/startups/list-your-startup")
   }
 
   return (

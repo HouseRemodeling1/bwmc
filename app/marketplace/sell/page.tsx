@@ -9,7 +9,7 @@ export default async function SellBusinessPage() {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect("/api/auth/signin") // Or your login page
+    redirect("/login?next=/marketplace/sell")
   }
 
   return (

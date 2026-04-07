@@ -25,7 +25,7 @@ export default async function InvestorDashboard() {
   const { data: { user } } = await supabase.auth.getUser()
   
   if (!user) {
-    redirect('/api/auth/signin')
+    redirect('/login?next=/investors/dashboard')
   }
 
   // Fetch investor profile
