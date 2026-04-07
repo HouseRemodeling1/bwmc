@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
 import { INDUSTRIES, UAE_LOCATIONS, STARTUP_STAGES } from "@/lib/constants"
-import { ArrowRight, ArrowLeft, CheckCircle2, Loader2, Plus, X } from "lucide-react"
+import { ArrowRight, ArrowLeft, CheckCircle2, Loader2, Plus, X, Rocket, ShieldCheck } from "lucide-react"
 import FileUpload from "@/components/FileUpload"
 import { useRouter } from "next/navigation"
 
