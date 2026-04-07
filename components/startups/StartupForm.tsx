@@ -23,8 +23,8 @@ const startupSchema = z.object({
   pitch_summary: z.string().min(50, "At least 50 characters required"),
   problem_statement: z.string().min(50, "At least 50 characters required"),
   solution: z.string().min(50, "At least 50 characters required"),
-  funding_ask: z.coerce.number().min(1, "Funding ask is required"),
-  equity_offered: z.coerce.number().optional(),
+  funding_ask: z.preprocess((val) => (val === "" ? undefined : val), z.coerce.number().min(1, "Funding ask is required")),
+  equity_offered: z.preprocess((val) => (val === "" ? undefined : val), z.coerce.number().optional()),
   logo_url: z.string().optional(),
 })
 

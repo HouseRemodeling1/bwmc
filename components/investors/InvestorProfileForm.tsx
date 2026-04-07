@@ -21,8 +21,8 @@ const investorSchema = z.object({
   linkedin_url: z.string().url("Valid LinkedIn URL required").optional().or(z.literal("")),
   website_url: z.string().url("Valid Website URL required").optional().or(z.literal("")),
   location: z.string().min(1, "Select location"),
-  ticket_size_min: z.coerce.number().optional(),
-  ticket_size_max: z.coerce.number().optional(),
+  ticket_size_min: z.preprocess((val) => (val === "" ? undefined : val), z.coerce.number().optional()),
+  ticket_size_max: z.preprocess((val) => (val === "" ? undefined : val), z.coerce.number().optional()),
 })
 
 type InvestorFormValues = z.infer<typeof investorSchema>

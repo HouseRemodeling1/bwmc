@@ -18,13 +18,13 @@ const businessSchema = z.object({
   business_name: z.string().min(3, "Business name must be at least 3 characters"),
   industry: z.string().min(1, "Please select an industry"),
   location: z.string().min(1, "Please select a location"),
-  asking_price: z.coerce.number().min(1, "Price is required"),
-  annual_revenue: z.coerce.number().optional(),
-  annual_profit: z.coerce.number().optional(),
+  asking_price: z.preprocess((val) => (val === "" ? undefined : val), z.coerce.number().min(1, "Price is required")),
+  annual_revenue: z.preprocess((val) => (val === "" ? undefined : val), z.coerce.number().optional()),
+  annual_profit: z.preprocess((val) => (val === "" ? undefined : val), z.coerce.number().optional()),
   description: z.string().min(50, "Please provide at least 50 characters of description"),
   reason_for_sale: z.string().optional(),
-  employees_count: z.coerce.number().optional(),
-  established_year: z.coerce.number().optional(),
+  employees_count: z.preprocess((val) => (val === "" ? undefined : val), z.coerce.number().optional()),
+  established_year: z.preprocess((val) => (val === "" ? undefined : val), z.coerce.number().optional()),
   images: z.array(z.string()).default([]),
 })
 
