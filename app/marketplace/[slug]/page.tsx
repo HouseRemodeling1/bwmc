@@ -24,13 +24,14 @@ import {
 import Link from 'next/link'
 import { Business } from '@/types/business'
 
-export default async function BusinessDetailPage({ params }: { params: { slug: string } }) {
+export default async function BusinessDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
   const supabase = await createClient()
   
   const { data: business, error } = await supabase
     .from('businesses_for_sale')
     .select('*')
-    .eq('slug', params.slug)
+    .eq('slug', slug)
     .single()
   
   if (error || !business) {

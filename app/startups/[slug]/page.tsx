@@ -25,13 +25,14 @@ import {
 import Link from 'next/link'
 import { Startup } from '@/types/startup'
 
-export default async function StartupDetailPage({ params }: { params: { slug: string } }) {
+export default async function StartupDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
   const supabase = await createClient()
   
   const { data: startup, error } = await supabase
     .from('startups')
     .select('*')
-    .eq('slug', params.slug)
+    .eq('slug', slug)
     .single()
   
   if (error || !startup) {

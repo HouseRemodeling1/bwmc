@@ -19,7 +19,12 @@ BEGIN
         RAISE EXCEPTION 'No users found in auth.users table. Please sign up on the website first.';
     END IF;
 
-    -- 2. Add Demo Business Listing (Marketplace)
+    -- 2. Cleanup existing demo data to prevent duplicate key errors
+    DELETE FROM businesses_for_sale WHERE slug = 'evergreen-coffee-house-chain';
+    DELETE FROM startups WHERE slug = 'finflow-ai';
+    DELETE FROM investors WHERE investor_name = 'Global Horizon Ventures';
+
+    -- 3. Add Demo Business Listing (Marketplace)
     INSERT INTO businesses_for_sale (
         user_id,
         business_name,
@@ -37,6 +42,7 @@ BEGIN
         listing_type,
         status,
         verified,
+        images,
         slug
     ) VALUES (
         target_user_id,
