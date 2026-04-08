@@ -1,6 +1,7 @@
 // app/marketplace/[slug]/page.tsx
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
+export const dynamic = 'force-dynamic'
 import Image from 'next/image'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
