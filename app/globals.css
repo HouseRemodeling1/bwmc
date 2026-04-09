@@ -94,6 +94,15 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Portfolio Refined Tokens */
+  --color-portfolio-bg: #0a0e27;
+  --color-portfolio-card: #141b3a;
+  --color-portfolio-border: #1e2749;
+  --color-portfolio-accent: #22d3ee;
+  --color-portfolio-text-primary: #ffffff;
+  --color-portfolio-text-secondary: #94a3b8;
+  --color-portfolio-text-muted: #64748b;
 }
 
 /* Removed prefers-color-scheme: dark to ensure black text as requested by user */

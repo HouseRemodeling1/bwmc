@@ -15,27 +15,29 @@ export default function ProjectGrid() {
     : projects.filter(p => p.category === filter);
 
   return (
-    <section id="projects-grid" className="py-24 bg-slate-950">
+    <section id="projects-grid" className="py-24 bg-portfolio-bg">
       <div className="container mx-auto px-6">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-8">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8 text-center md:text-left">
           <div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
-              Our <span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-blue to-cyan-400">Portfolio</span>
+            <h2 className="text-4xl md:text-6xl font-black mb-4 text-portfolio-text-primary tracking-tight">
+              Our <span className="text-portfolio-accent">Portfolio</span>
             </h2>
-            <p className="text-slate-400 max-w-xl">
-              Showcasing excellence in digital transformation and web engineering across diverse industries.
+            <p className="text-portfolio-text-secondary max-w-xl text-lg font-medium">
+              A showcase of our high-performance digital projects and engineering excellence.
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          {/* Filter Pills */}
+          <div className="flex flex-wrap justify-center md:justify-end gap-3">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setFilter(cat)}
-                className={`px-6 py-2 rounded-full text-xs font-bold transition-all capitalize tracking-widest ${
+                className={`px-6 py-2 rounded-full text-xs font-bold transition-all capitalize tracking-widest border ${
                   filter === cat 
-                    ? 'bg-sky-blue text-white shadow-lg shadow-sky-blue/20' 
-                    : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-slate-200 border border-white/10'
+                    ? 'bg-portfolio-accent text-portfolio-bg border-portfolio-accent shadow-lg shadow-portfolio-accent/20' 
+                    : 'bg-transparent text-portfolio-text-primary border-portfolio-border hover:border-portfolio-accent/50'
                 }`}
               >
                 {cat}
@@ -44,9 +46,10 @@ export default function ProjectGrid() {
           </div>
         </div>
 
+        {/* Masonry Layout */}
         <motion.div 
           layout
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-[240px] gap-6"
         >
           <AnimatePresence mode='popLayout'>
             {filteredProjects.map((project, index) => (

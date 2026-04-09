@@ -2,78 +2,69 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowRight, ExternalLink } from 'lucide-react';
 import { Project } from '@/lib/data/projects';
 import { cn } from '@/lib/utils';
 
-export default function ProjectCard({ project, index }: { project: Project; index: number }) {
-  // Determine card size for bento variety
-  const isLarge = index % 7 === 0;
-  const isWide = index % 7 === 3;
-  const isTall = index % 7 === 5;
+interface ProjectCardProps {
+  project: Project;
+  index: number;
+}
 
+const sizeClasses = {
+  small: 'col-span-1 row-span-1',
+  medium: 'col-span-1 row-span-2',
+  large: 'col-span-1 md:col-span-2 row-span-2',
+  wide: 'col-span-1 md:col-span-2 row-span-1',
+};
+
+export default function ProjectCard({ project, index }: ProjectCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ delay: index * 0.1 }}
+      transition={{ delay: index * 0.05 }}
+      whileHover={{ y: -8 }}
       className={cn(
-        "group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-lg transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:shadow-2xl hover:shadow-sky-blue/10",
-        isLarge && "md:col-span-2 md:row-span-2",
-        isWide && "md:col-span-2",
-        isTall && "md:row-span-2"
+        "group relative overflow-hidden rounded-2xl border border-portfolio-border bg-portfolio-card p-6 flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:shadow-portfolio-accent/10",
+        sizeClasses[project.size] || 'col-span-1 row-span-1'
       )}
     >
-      <Link href={`/projects/${project.id}`} className="block h-full">
-        <div className="relative w-full h-full min-h-[300px] flex flex-col justify-end p-6">
-          {/* Background Placeholder */}
-          <div className="absolute inset-0 bg-slate-900 -z-10 overflow-hidden">
-             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-             <div className="flex items-center justify-center h-full text-white/5 font-black text-6xl select-none group-hover:scale-110 transition-transform duration-700">
-                {project.title.charAt(0)}
-             </div>
+      <Link href={`/projects/${project.id}`} className="flex flex-col h-full">
+        <div className="space-y-4">
+          {/* Tech Stack Pills */}
+          <div className="flex flex-wrap gap-2">
+            {project.tech.map((t) => (
+              <span 
+                key={t} 
+                className="text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md border border-portfolio-accent/50 text-portfolio-accent"
+              >
+                {t}
+              </span>
+            ))}
           </div>
-
-          <div className="relative z-10">
-            <div className="flex flex-wrap gap-2 mb-3">
-              {project.tech.slice(0, 3).map((t) => (
-                <span key={t} className="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded bg-sky-blue/10 text-sky-blue border border-sky-blue/20">
-                  {t}
-                </span>
-              ))}
-            </div>
-            
-            <h3 className="text-xl font-bold text-white group-hover:text-sky-blue transition-colors mb-2">
+          
+          <div className="space-y-2">
+            <h3 className="text-xl md:text-2xl font-bold text-portfolio-text-primary group-hover:text-portfolio-accent transition-colors">
               {project.title}
             </h3>
-            <p className="text-sm text-slate-400 line-clamp-2 mb-4 group-hover:text-slate-300 transition-colors">
+            <p className="text-sm md:text-base text-portfolio-text-secondary line-clamp-3 leading-relaxed">
               {project.description}
             </p>
+          </div>
+        </div>
 
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-500 font-bold uppercase tracking-widest">
-                {project.client}
-              </span>
-              <div className="p-2 rounded-full bg-white/5 group-hover:bg-sky-blue group-hover:text-white transition-all">
-                <ArrowRight size={18} />
-              </div>
-            </div>
+        <div className="mt-8 pt-4 border-t border-portfolio-border/50 flex items-center justify-between">
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-portfolio-text-muted">
+            {project.client}
+          </span>
+          <div className="w-8 h-8 rounded-full bg-portfolio-bg border border-portfolio-border flex items-center justify-center text-portfolio-accent group-hover:bg-portfolio-accent group-hover:text-portfolio-bg transition-all">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
           </div>
         </div>
       </Link>
-      
-      {project.url && (
-        <a 
-          href={project.url} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="absolute top-4 right-4 p-2 rounded-full bg-slate-950/50 backdrop-blur-md text-white/50 hover:text-sky-blue opacity-0 group-hover:opacity-100 transition-all z-20"
-          title="View Live Site"
-        >
-          <ExternalLink size={16} />
-        </a>
-      )}
     </motion.div>
   );
 }
