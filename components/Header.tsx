@@ -262,11 +262,11 @@ export default function Header() {
                             {/* Bottom CTA */}
                             <div className="px-4 pb-8 pt-4 border-t border-white/10 space-y-3">
                                 <Link
-                                    href="/marketplace/my-listings"
+                                    href="/marketplace"
                                     className="flex items-center justify-center gap-2.5 w-full py-3.5 bg-white/10 hover:bg-white/15 text-white font-semibold text-[15px] rounded-xl transition-all border border-white/10"
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
-                                    My Listings
+                                    Marketplace
                                 </Link>
                                 <Link
                                     href="/calculator"
