@@ -11,29 +11,17 @@ import { menuItems, mainNav } from "@/lib/menuData";
 
 export default function Header() {
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
-    const pathname = usePathname();
-
-    // Pages that have a dark hero section and need a transparent/white-text header initially
-    const isTransparentPage = pathname === "/" || pathname.startsWith("/services/") || pathname === "/vat-guide";
-    const isGlobalSetup = pathname === "/global-setup" || pathname === "/uae-setup" || pathname === "/ecommerce-license";
-
-    // Use dark header style if scrolled OR if we are on a page without a dark hero
-    const isDarkHeader = scrolled || !isTransparentPage || isGlobalSetup;
-
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 20);
-        };
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+    const [mobileExpandedItem, setMobileExpandedItem] = useState<string | null>(null);
 
     // Close mobile menu whenever route changes
     useEffect(() => {
         setMobileMenuOpen(false);
+        setMobileExpandedItem(null);
     }, [pathname]);
+
+    const toggleMobileExpanded = (name: string) => {
+        setMobileExpandedItem(mobileExpandedItem === name ? null : name);
+    };
 
     return (
         <header
@@ -66,15 +54,23 @@ export default function Header() {
                                 onMouseEnter={() => setHoveredItem(item.name)}
                                 onMouseLeave={() => setHoveredItem(null)}
                             >
-                                <div
-                                    className={`flex items-center gap-1 text-base font-medium cursor-pointer py-2 transition-colors ${isDarkHeader ? "text-white hover:text-gold" : "text-white/90 hover:text-white"
-                                        }`}
-                                >
-                                    <Link href={item.href}>{item.name}</Link>
-                                    {item.hasDropdown && (
+                                {item.hasDropdown ? (
+                                    <div
+                                        className={`flex items-center gap-1 text-base font-medium cursor-pointer py-2 transition-colors ${isDarkHeader ? "text-white hover:text-gold" : "text-white/90 hover:text-white"
+                                            }`}
+                                    >
+                                        <span>{item.name}</span>
                                         <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
-                                    )}
-                                </div>
+                                    </div>
+                                ) : (
+                                    <Link
+                                        href={item.href}
+                                        className={`block text-base font-medium py-2 transition-colors ${isDarkHeader ? "text-white hover:text-gold" : "text-white/90 hover:text-white"
+                                            }`}
+                                    >
+                                        {item.name}
+                                    </Link>
+                                )}
 
                                 {/* Dropdown Content */}
                                 <AnimatePresence>
@@ -111,7 +107,7 @@ export default function Header() {
                     {isGlobalSetup ? (
                         <>
                             <a
-                                href="https://wa.me/971543097850" // Updated number
+                                href="https://wa.me/971543097850"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="flex items-center gap-2 px-5 py-2.5 rounded-[4px] text-sm font-semibold bg-[#25D366] text-white hover:bg-[#128C7E] transition-all"
@@ -120,7 +116,7 @@ export default function Header() {
                                 <span>WhatsApp</span>
                             </a>
                             <a
-                                href="tel:+971543097850" // Updated number
+                                href="tel:+971543097850"
                                 className="flex items-center gap-2 px-5 py-2.5 rounded-[4px] text-sm font-semibold bg-white text-navy hover:bg-neutral transition-all"
                             >
                                 <Phone className="w-4 h-4" />
@@ -170,33 +166,67 @@ export default function Header() {
                         transition={{ type: "spring", damping: 25, stiffness: 200 }}
                         className="fixed inset-0 bg-white z-40 lg:hidden overflow-y-auto"
                     >
-                        <div className="pt-24 px-6 pb-12 space-y-8">
-                            {menuItems.map((category) => (
-                                <div key={category.title}>
-                                    <h3 className="text-lg font-bold text-navy mb-4 flex items-center gap-2">
-                                        <category.icon className="w-5 h-5 text-royal-blue" />
-                                        {category.title}
-                                    </h3>
-                                    <ul className="space-y-3 pl-7 border-l-2 border-neutral">
-                                        {category.items.map((item) => (
-                                            <li key={item.slug}>
-                                                <Link
-                                                    href={`/services/${item.slug}`}
-                                                    className="block text-navy/70 text-sm py-1"
-                                                    onClick={() => setMobileMenuOpen(false)}
-                                                >
-                                                    {item.name}
-                                                </Link>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            ))}
+                        <div className="pt-24 px-6 pb-12 space-y-4">
+                            {mainNav.map((item) => {
+                                const isExpanded = mobileExpandedItem === item.name;
+                                const dropdownData = item.hasDropdown ? menuItems.find(m => m.title === item.name) : null;
 
-                            <div className="pt-6 border-t border-neutral">
+                                return (
+                                    <div key={item.name} className="border-b border-neutral/50 pb-2">
+                                        {item.hasDropdown ? (
+                                            <button
+                                                onClick={() => toggleMobileExpanded(item.name)}
+                                                className="w-full flex items-center justify-between text-lg font-bold text-navy py-2"
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    {dropdownData?.icon && <dropdownData.icon className="w-5 h-5 text-royal-blue" />}
+                                                    {item.name}
+                                                </div>
+                                                <ChevronDown className={`w-5 h-5 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+                                            </button>
+                                        ) : (
+                                            <Link
+                                                href={item.href}
+                                                className="block text-lg font-bold text-navy py-2"
+                                                onClick={() => setMobileMenuOpen(false)}
+                                            >
+                                                {item.name}
+                                            </Link>
+                                        )}
+
+                                        {/* Mobile Dropdown Items */}
+                                        <AnimatePresence>
+                                            {item.hasDropdown && isExpanded && (
+                                                <motion.ul
+                                                    initial={{ height: 0, opacity: 0 }}
+                                                    animate={{ height: "auto", opacity: 1 }}
+                                                    exit={{ height: 0, opacity: 0 }}
+                                                    className="overflow-hidden bg-neutral/30 rounded-lg"
+                                                >
+                                                    <div className="py-2 px-4 space-y-2">
+                                                        {dropdownData?.items.map((subItem) => (
+                                                            <li key={subItem.slug}>
+                                                                <Link
+                                                                    href={`/services/${subItem.slug}`}
+                                                                    className="block text-navy/70 text-sm py-2 hover:text-royal-blue"
+                                                                    onClick={() => setMobileMenuOpen(false)}
+                                                                >
+                                                                    {subItem.name}
+                                                                </Link>
+                                                            </li>
+                                                        ))}
+                                                    </div>
+                                                </motion.ul>
+                                            )}
+                                        </AnimatePresence>
+                                    </div>
+                                );
+                            })}
+
+                            <div className="pt-6">
                                 <Link
                                     href="/calculator"
-                                    className="w-full flex items-center justify-center gap-2 bg-royal-blue text-white py-3 rounded-[4px] font-semibold"
+                                    className="w-full flex items-center justify-center gap-2 bg-royal-blue text-white py-4 rounded-[4px] font-bold text-lg"
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
                                     <Calculator className="w-5 h-5" />
