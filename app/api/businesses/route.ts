@@ -53,7 +53,8 @@ export async function POST(request: Request) {
       ...body,
       user_id: user.id,
       slug,
-      status: 'pending', // Admin approval required
+      status: 'active', // Go live immediately
+      visibility: 'public',
     })
     .select()
     .single()
