@@ -218,7 +218,7 @@ export default async function BusinessDetailPage({ params }: { params: Promise<{
               <p className="text-slate-400 text-sm mb-6 leading-relaxed">
                 Connect with professional business brokers at BWMC to help you with DD and valuation.
               </p>
-              <Button variant="outline" className="w-full border-slate-700 text-white hover:bg-slate-800 rounded-xl h-12 font-bold">
+              <Button variant="outline" className="w-full border-slate-600 text-white hover:bg-slate-700 hover:text-white bg-slate-800 rounded-xl h-12 font-bold">
                 Talk to an Expert
               </Button>
             </div>
