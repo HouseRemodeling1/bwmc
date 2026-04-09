@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { INDUSTRIES, UAE_LOCATIONS } from "@/lib/constants"
 import { Business } from "@/types/business"
-import { Search, Filter, SlidersHorizontal, Plus } from "lucide-react"
+import { createClient } from "@/lib/supabase/client"
+import { Search, Filter, SlidersHorizontal, Plus, LayoutDashboard } from "lucide-react"
 import Link from "next/link"
 
 export default function MarketplacePage() {
@@ -17,10 +18,19 @@ export default function MarketplacePage() {
   const [search, setSearch] = useState("")
   const [selectedIndustry, setSelectedIndustry] = useState("All")
   const [selectedLocation, setSelectedLocation] = useState("All")
+  const [user, setUser] = useState<any>(null)
+
+  const supabase = createClient()
 
   useEffect(() => {
     fetchBusinesses()
+    checkUser()
   }, [])
+
+  const checkUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    setUser(user)
+  }
 
   const fetchBusinesses = async () => {
     setLoading(true)
@@ -57,6 +67,13 @@ export default function MarketplacePage() {
             The UAE's most trusted marketplace for business acquisition. Connect with verified sellers across all industries.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
+            {user && (
+              <Link href="/marketplace/my-listings">
+                <Button size="lg" variant="outline" className="border-slate-700 text-white hover:bg-slate-800 px-8 h-12 rounded-full font-bold">
+                  <LayoutDashboard className="mr-2 h-5 w-5" /> My Listings
+                </Button>
+              </Link>
+            )}
             <Link href="/marketplace/sell">
               <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-8 h-12 rounded-full font-bold shadow-lg shadow-primary/20">
                 <Plus className="mr-2 h-5 w-5" /> Sell Your Business
