@@ -23,20 +23,22 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { Business } from '@/types/business'
+import { OwnerControls } from '@/components/marketplace/OwnerControls'
 
 export default async function BusinessDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const supabase = await createClient()
-  
-  const { data: business, error } = await supabase
-    .from('businesses_for_sale')
-    .select('*')
-    .eq('slug', slug)
-    .single()
+
+  const [{ data: business, error }, { data: { user } }] = await Promise.all([
+    supabase.from('businesses_for_sale').select('*').eq('slug', slug).single(),
+    supabase.auth.getUser(),
+  ])
   
   if (error || !business) {
     notFound()
   }
+
+  const isOwner = user?.id === business.user_id
 
   const formatCurrency = (amount?: number) => {
     if (amount === undefined || amount === null) return 'N/A'
@@ -70,6 +72,8 @@ export default async function BusinessDetailPage({ params }: { params: Promise<{
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Owner Controls — only visible to listing owner */}
+            {isOwner && <OwnerControls businessId={business.id} slug={business.slug} />}
             {/* Gallery Placeholder */}
             <div className="relative h-[400px] rounded-3xl overflow-hidden shadow-2xl bg-slate-200">
               <Image 
