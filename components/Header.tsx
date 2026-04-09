@@ -74,8 +74,8 @@ export default function Header() {
                                             <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
                                         </div>
                                     ) : (
-                                        <Link href={item.href} className={`block text-base font-medium py-2 transition-colors ${isDarkHeader ? "text-white hover:text-yellow-400" : "text-white/90 hover:text-white"}`}>
-                                            {item.name}
+                                        <Link href="/marketplace" className={`text-sm font-bold transition-all ${isDarkHeader ? "text-white/80 hover:text-white" : "text-white/90 hover:text-white"}`}>
+                                            Marketplace
                                         </Link>
                                     )}
 
@@ -119,7 +119,7 @@ export default function Header() {
                             </>
                         ) : (
                             <div className="flex items-center gap-4">
-                                <Link href="/login" className="text-sm font-bold text-white/80 hover:text-white transition-all">Sign In</Link>
+                                <Link href="/marketplace" className="text-sm font-bold text-white/80 hover:text-white transition-all">Marketplace</Link>
                                 <Link href="/calculator" className="flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-bold bg-white text-[#1A2B4C] hover:bg-yellow-400 transition-all">
                                     <Calculator className="w-4 h-4" /><span>Cost Calculator</span>
                                 </Link>
