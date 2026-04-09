@@ -11,7 +11,25 @@ import { menuItems, mainNav } from "@/lib/menuData";
 
 export default function Header() {
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [mobileExpandedItem, setMobileExpandedItem] = useState<string | null>(null);
+    const [scrolled, setScrolled] = useState(false);
+    const pathname = usePathname();
+
+    // Pages that have a dark hero section and need a transparent/white-text header initially
+    const isTransparentPage = pathname === "/" || pathname.startsWith("/services/") || pathname === "/vat-guide";
+    const isGlobalSetup = pathname === "/global-setup" || pathname === "/uae-setup" || pathname === "/ecommerce-license";
+
+    // Use dark header style if scrolled OR if we are on a page without a dark hero
+    const isDarkHeader = scrolled || !isTransparentPage || isGlobalSetup;
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 20);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
 
     // Close mobile menu whenever route changes
     useEffect(() => {
