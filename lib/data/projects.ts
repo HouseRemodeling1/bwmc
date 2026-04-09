@@ -21,7 +21,7 @@ export const projects: Project[] = [
     description: 'A premium WordPress theme development for a leading MEP Engineering firm in Muscat, featuring dynamic galleries and multi-language support.',
     tech: ['WordPress', 'PHP', 'Swiper.js'],
     url: 'https://desertgp.com',
-    images: ['/projects/desert-1.jpg'],
+    images: ['https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&q=80&w=1200'], // Thematic high-res engineering
     features: ['Custom WP Theme', 'Language Switcher', 'Project Gallery', 'MEP Service Modules'],
     category: 'wordpress',
     size: 'large'
@@ -33,7 +33,7 @@ export const projects: Project[] = [
     description: 'Personal portfolio for a design professional, focusing on minimalism and high-end typography.',
     tech: ['Next.js', 'Framer Motion', 'Tailwind CSS'],
     url: 'https://ayishamuneer.com',
-    images: ['/projects/ayisha-1.jpg'],
+    images: ['https://www.ayishamuneer.com/assets/pic1.webp'],
     features: ['Minimalist Design', 'Smooth Transitions', 'Project Case Studies'],
     category: 'landing',
     size: 'small'
@@ -45,10 +45,10 @@ export const projects: Project[] = [
     description: 'B2B supply platform for hospitality industry with advanced product filtering.',
     tech: ['Next.js', 'TypeScript', 'Tailwind CSS'],
     url: 'https://stepvisionhotelsupplies.com',
-    images: ['/projects/stepvision-1.jpg'],
+    images: ['https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=1200'], // Thematic Hotel
     features: ['Product Catalog', 'B2B Pricing', 'Order Management'],
     category: 'saas',
-    size: 'small'
+    size: 'medium'
   },
   {
     id: 'nuniversal-yoga',
@@ -57,19 +57,19 @@ export const projects: Project[] = [
     description: 'Holistic yoga and wellness platform featuring custom booking systems and session galleries.',
     tech: ['WordPress', 'Custom Themes', 'Booking API'],
     url: 'https://nuniversalyoga.ae',
-    images: ['/projects/yoga-1.jpg'],
+    images: ['https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=1200'], // Thematic Yoga
     features: ['Session Booking', 'Trainer Profiles', 'Wellness Blog'],
     category: 'wordpress',
     size: 'wide'
   },
   {
     id: 'payyoli-mixture',
-    title: 'Payroll Mixture',
+    title: 'Payyoli Mixture',
     client: 'Payyoli Foods',
     description: 'E-commerce platform for authentic traditional snacks with high-performance cart functionality.',
     tech: ['Next.js', 'Shopify Headless', 'Tailwind CSS'],
     url: 'https://www.payyolimixture.co.in/',
-    images: ['/projects/payyoli-1.jpg'],
+    images: ['https://www.payyolimixture.co.in/wp-content/uploads/2025/01/mixture.webp'],
     features: ['E-commerce', 'Payment Gateway', 'Order Tracking'],
     category: 'saas',
     size: 'small'
@@ -81,10 +81,10 @@ export const projects: Project[] = [
     description: 'Modern marketplace for lifestyle and decor products with a sleek, minimalist UI.',
     tech: ['WordPress', 'WooCommerce', 'Elementor Custom'],
     url: 'https://www.aurorasouq.com/',
-    images: ['/projects/aurora-1.jpg'],
+    images: ['https://aurorasouq.com/wp-content/uploads/2023/06/1.webp'],
     features: ['WooCommerce', 'Product Search', 'Flash Sales'],
     category: 'wordpress',
-    size: 'small'
+    size: 'medium'
   },
   {
     id: 'alrizq',
@@ -93,7 +93,7 @@ export const projects: Project[] = [
     description: 'Corporate portal for trade management and company services across the GCC.',
     tech: ['WordPress', 'Divi Custom', 'PHP'],
     url: 'https://www.alrizq.sa/',
-    images: ['/projects/alrizq-1.jpg'],
+    images: ['https://www.alrizq.sa/wp-content/uploads/2025/12/frozen-Salment-filled-Norway.jpg'],
     features: ['Corporate Portfolio', 'GCC Regions', 'Service Modules'],
     category: 'wordpress',
     size: 'small'
@@ -105,10 +105,10 @@ export const projects: Project[] = [
     description: 'Creative agency portfolio showcasing design and digital marketing Excellence.',
     tech: ['Next.js', 'GSAP', 'Framer Motion'],
     url: 'https://pixelandpepper.com/',
-    images: ['/projects/pixel-1.jpg'],
+    images: ['https://pixelandpepper.com/wp-content/uploads/2025/05/portfolio.png'],
     features: ['Creative UI', 'Lottie Animations', 'Contact Flow'],
     category: 'react',
-    size: 'small'
+    size: 'large'
   },
   {
     id: 'learnix',
@@ -116,8 +116,8 @@ export const projects: Project[] = [
     client: 'Learnix Group',
     description: 'Educational platform for tutoring and online courses with interactive student modules.',
     tech: ['React', 'Firebase', 'Tailwind'],
-    url: 'https://learnixeducation.com/',
-    images: ['/projects/learnix-1.jpg'],
+    url: 'https://learnixonline.com/',
+    images: ['https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1200'], // Thematic Education
     features: ['Course Explorer', 'Student Portal', 'Live Classes'],
     category: 'saas',
     size: 'small'
@@ -129,9 +129,10 @@ export const projects: Project[] = [
     description: 'Healthcare portal for dental services with appointment booking and patient resources.',
     tech: ['WordPress', 'Medical SEO', 'Forms'],
     url: 'https://jaypeedent.com/',
-    images: ['/projects/jaypee-1.jpg'],
+    images: ['https://jaypeedent.com/wp-content/uploads/2022/01/Rainbow-Latest-Elastics-Bubblegum-Flavour-Pink-Color-7.webp'],
     features: ['Appointment Form', 'Service Grid', 'Patient Reviews'],
     category: 'landing',
     size: 'wide'
   }
 ];
+
