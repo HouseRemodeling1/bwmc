@@ -62,9 +62,6 @@ export default function MarketplacePage() {
                 <Plus className="mr-2 h-5 w-5" /> Sell Your Business
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="border-slate-700 text-white hover:bg-slate-800 px-8 h-12 rounded-full font-bold">
-              View Analytics
-            </Button>
           </div>
         </div>
       </div>
