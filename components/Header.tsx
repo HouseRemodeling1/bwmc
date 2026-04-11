@@ -119,6 +119,7 @@ export default function Header() {
                             </>
                         ) : (
                             <div className="flex items-center gap-4">
+                                <Link href="/marketplace" className="text-sm font-bold text-white/80 hover:text-white transition-all">Marketplace</Link>
                                 <Link href="/calculator" className="flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-bold bg-white text-[#1A2B4C] hover:bg-yellow-400 transition-all">
                                     <Calculator className="w-4 h-4" /><span>Cost Calculator</span>
                                 </Link>
@@ -260,7 +261,13 @@ export default function Header() {
 
                             {/* Bottom CTA */}
                             <div className="px-4 pb-8 pt-4 border-t border-white/10 space-y-3">
-
+                                <Link
+                                    href="/marketplace"
+                                    className="flex items-center justify-center gap-2.5 w-full py-3.5 bg-white/10 hover:bg-white/15 text-white font-semibold text-[15px] rounded-xl transition-all border border-white/10"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    Marketplace
+                                </Link>
                                 <Link
                                     href="/calculator"
                                     className="flex items-center justify-center gap-2.5 w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-[15px] rounded-xl transition-all shadow-lg shadow-blue-900/40"
