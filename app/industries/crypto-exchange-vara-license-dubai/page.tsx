@@ -164,7 +164,7 @@ export default function VaraLandingPage() {
             </div>
             <div className="relative">
               <div className="absolute -inset-4 bg-sky-blue/10 rounded-3xl blur-2xl -z-10" />
-              <img src="/assets/dubai-crypto-market.webp" alt="Dubai skyline representing the Virtual Asset ecosystem" className="w-full rounded-[40px] shadow-2xl border-8 border-white" />
+              <img src="/images/industries/vara/crypto-market.png" alt="Futuristic Dubai skyline with digital blockchain holographic overlays" className="w-full rounded-[40px] shadow-2xl border-8 border-white" />
             </div>
           </div>
         </section>
@@ -387,7 +387,7 @@ export default function VaraLandingPage() {
         <section className="mb-32">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
             <div className="order-2 lg:order-1">
-              <img src="/assets/vara-consulting-dubai.webp" alt="Consultants reviewing VARA compliance rulebook" className="w-full rounded-[40px] shadow-2xl" />
+              <img src="/images/industries/vara/compliance-consulting.png" alt="BWMC consultants in a modern Dubai office reviewing VARA compliance on a digital screen" className="w-full rounded-[40px] shadow-2xl" />
             </div>
             <div className="order-1 lg:order-2">
               <h2 className="text-3xl md:text-5xl font-black text-navy mb-8 leading-tight">
