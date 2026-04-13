@@ -2,6 +2,7 @@ import React from 'react';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Check, Wallet, ArrowRight, TrendingUp, ShieldCheck, Globe, Zap } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: "VARA Crypto License Dubai | Virtual Asset Exchange Setup | BWMC",
@@ -101,27 +102,35 @@ export default function VaraLandingPage() {
               <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
             </Link>
             <div className="flex items-center gap-4 text-sm font-bold text-slate-400">
-              <span className="flex items-center gap-2">✓ 90 Day Timeline</span>
-              <span className="flex items-center gap-2">✓ VARA Approved Auditor Network</span>
+              <span className="flex items-center gap-2"><Check className="w-4 h-4 text-sky-blue" /> 90 Day Timeline</span>
+              <span className="flex items-center gap-2"><Check className="w-4 h-4 text-sky-blue" /> VARA Approved Auditor Network</span>
             </div>
           </div>
           
           <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
             {/* Trust Badges - Placeholders */}
             <div className="flex flex-col items-center">
-              <div className="w-16 h-16 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center mb-2">V</div>
+              <div className="w-16 h-16 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center mb-2">
+                <ShieldCheck className="w-8 h-8 text-royal-blue" />
+              </div>
               <p className="text-[10px] uppercase tracking-widest font-bold">VARA Licensed</p>
             </div>
             <div className="flex flex-col items-center">
-              <div className="w-16 h-16 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center mb-2">A</div>
+              <div className="w-16 h-16 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center mb-2">
+                <Check className="w-8 h-8 text-royal-blue" />
+              </div>
               <p className="text-[10px] uppercase tracking-widest font-bold">AML Compliant</p>
             </div>
             <div className="flex flex-col items-center">
-              <div className="w-16 h-16 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center mb-2">B</div>
+              <div className="w-16 h-16 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center mb-2">
+                <Globe className="w-8 h-8 text-royal-blue" />
+              </div>
               <p className="text-[10px] uppercase tracking-widest font-bold">Bank Approved</p>
             </div>
             <div className="flex flex-col items-center">
-              <div className="w-16 h-16 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center mb-2">ISO</div>
+              <div className="w-16 h-16 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center mb-2">
+                <Zap className="w-8 h-8 text-royal-blue" />
+              </div>
               <p className="text-[10px] uppercase tracking-widest font-bold">Security Certified</p>
             </div>
           </div>
@@ -316,7 +325,9 @@ export default function VaraLandingPage() {
         <section className="mb-32">
           <div className="bg-slate-900 rounded-[50px] p-10 md:p-16 text-white backdrop-blur-xl">
             <h2 className="text-3xl md:text-5xl font-black mb-12 flex items-center gap-4">
-              <span className="w-12 h-12 bg-royal-blue rounded-2xl flex items-center justify-center text-2xl">💰</span>
+              <div className="w-12 h-12 bg-royal-blue rounded-2xl flex items-center justify-center">
+                <Wallet className="w-6 h-6 text-white" />
+              </div>
               Investment & Financial Projections
             </h2>
             <p className="text-slate-400 text-lg mb-12 max-w-2xl">
@@ -406,7 +417,9 @@ export default function VaraLandingPage() {
                   "Legacy exchange migration services for firms moving from offshore jurisdictions."
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm group hover:border-royal-blue/30 transition-all">
-                    <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 flex-shrink-0 group-hover:bg-royal-blue group-hover:text-white transition-all">✓</div>
+                    <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 flex-shrink-0 group-hover:bg-royal-blue group-hover:text-white transition-all">
+                      <Check className="w-4 h-4" />
+                    </div>
                     <p className="text-sm font-bold text-navy">{item}</p>
                   </div>
                 ))}
@@ -477,9 +490,9 @@ export default function VaraLandingPage() {
                  Book Your VARA Consultation Now
                </Link>
                
-               <div className="mt-12 text-sm font-bold text-white/60">
-                 <p className="mb-2">✓ No obligation feasibility review</p>
-                 <p>✓ Complete NDAs signed before data disclosure</p>
+               <div className="mt-12 text-sm font-bold text-white/60 space-y-2">
+                 <p className="flex items-center gap-2"><Check className="w-4 h-4" /> No obligation feasibility review</p>
+                 <p className="flex items-center gap-2"><Check className="w-4 h-4" /> Complete NDAs signed before data disclosure</p>
                </div>
             </div>
           </div>
