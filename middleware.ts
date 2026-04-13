@@ -6,6 +6,14 @@ export async function middleware(request: NextRequest) {
     // 1. Log or Handle Supabase Session Refresh (important for RLS)
     const supabaseResponse = await updateSession(request);
 
+    // 1.5 Handle Supabase Auth Errors from URL
+    const error = request.nextUrl.searchParams.get('error');
+    if (error && request.nextUrl.pathname === '/') {
+        const loginUrl = new URL('/login', request.url);
+        loginUrl.search = request.nextUrl.search;
+        return NextResponse.redirect(loginUrl);
+    }
+
     // 2. Handle Admin-specific security (custom password session)
     const adminSession = request.cookies.get("admin-session");
 

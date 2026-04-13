@@ -25,6 +25,17 @@ function LoginForm() {
   const supabase = createClient()
   
   const next = searchParams.get("next") || "/"
+  const urlError = searchParams.get("error")
+  const urlErrorDescription = searchParams.get("error_description")
+
+  // Sync URL errors to state
+  useState(() => {
+    if (urlErrorDescription) {
+      setError(urlErrorDescription)
+    } else if (urlError) {
+      setError(urlError === "access_denied" ? "Access denied. The link may have expired or already been used." : urlError)
+    }
+  })
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -92,8 +103,17 @@ function LoginForm() {
         </div>
 
         {error && (
-          <div className="p-4 bg-red-50 text-red-600 rounded-2xl text-xs font-bold border border-red-100 animate-in fade-in slide-in-from-top-1">
-            {error}
+          <div className="p-4 bg-red-50 text-red-600 rounded-2xl text-xs font-bold border border-red-100 animate-in fade-in slide-in-from-top-1 flex flex-col gap-2">
+            <p>{error}</p>
+            {error.includes("expired") && (
+              <button 
+                type="button"
+                onClick={() => setIsSignUp(true)}
+                className="text-primary underline hover:text-primary/80 text-left"
+              >
+                Try signing up again to get a new link
+              </button>
+            )}
           </div>
         )}
 
