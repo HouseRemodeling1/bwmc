@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { User, ChevronRight } from "lucide-react";
 import { getBlogs, Blog } from "@/lib/blogs";
-import BlogGrid from "@/components/blog/BlogGrid";
+import BlogListingContainer from "@/components/blog/BlogListingContainer";
 import { blogMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = blogMetadata;
@@ -58,23 +58,8 @@ export default async function BlogPage() {
                 </div>
             </section>
 
-            {/* Featured Section / Filters (Optional Placeholder) */}
-            <nav className="bg-gray-50 border-b border-gray-100 py-6 px-6 lg:px-8">
-                <div className="max-w-7xl mx-auto flex items-center gap-8 overflow-x-auto no-scrollbar">
-                    {["All Articles", "Taxation", "Accounting", "Success Stories", "Business Setup"].map((cat, i) => (
-                        <button key={cat} className={`text-sm font-bold uppercase tracking-widest whitespace-nowrap ${i === 0 ? "text-royal-blue border-b-2 border-royal-blue pb-1" : "text-gray-400 hover:text-navy transition-colors"}`}>
-                            {cat}
-                        </button>
-                    ))}
-                </div>
-            </nav>
-
-            {/* Blog Grid */}
-            <section className="py-24 px-6 lg:px-8">
-                <div className="max-w-7xl mx-auto">
-                    <BlogGrid blogs={blogs} />
-                </div>
-            </section>
+            {/* Dynamic Blog Listing with Filtering */}
+            <BlogListingContainer initialBlogs={blogs} />
         </main>
     );
 }

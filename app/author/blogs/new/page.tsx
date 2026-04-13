@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Save } from "lucide-react";
 import SeoAgent from "@/components/SeoAgent";
 import FileUpload from "@/components/FileUpload";
+import { BLOG_CATEGORIES } from "@/lib/constants";
 
 export default function AuthorNewBlog() {
     const router = useRouter();
@@ -17,7 +18,7 @@ export default function AuthorNewBlog() {
         excerpt: "",
         content: "",
         coverImage: "",
-        category: "Business",
+        category: BLOG_CATEGORIES[0] as string,
         published: false,
         slug: "",
         metaTitle: "",
@@ -140,8 +141,9 @@ export default function AuthorNewBlog() {
                             <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
                             <select value={formData.category} onChange={(e) => set({ category: e.target.value })}
                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none">
-                                <option>Business</option><option>Finance</option>
-                                <option>Tax</option><option>Audit</option><option>Technology</option>
+                                {BLOG_CATEGORIES.map(cat => (
+                                    <option key={cat} value={cat}>{cat}</option>
+                                ))}
                             </select>
                         </div>
 

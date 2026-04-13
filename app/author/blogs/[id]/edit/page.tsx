@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Save } from "lucide-react";
 import SeoAgent from "@/components/SeoAgent";
 import FileUpload from "@/components/FileUpload";
+import { BLOG_CATEGORIES } from "@/lib/constants";
 
 export default function AuthorEditBlog({ params }: { params: Promise<{ id: string }> }) {
     const { id } = React.use(params);
@@ -126,11 +127,9 @@ export default function AuthorEditBlog({ params }: { params: Promise<{ id: strin
                             <select value={formData.category}
                                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy">
-                                <option>Business</option>
-                                <option>Finance</option>
-                                <option>Tax</option>
-                                <option>Audit</option>
-                                <option>Technology</option>
+                                {BLOG_CATEGORIES.map(cat => (
+                                    <option key={cat} value={cat}>{cat}</option>
+                                ))}
                             </select>
                         </div>
 

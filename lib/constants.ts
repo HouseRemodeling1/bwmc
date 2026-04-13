@@ -66,6 +66,7 @@ export const BUSINESS_TYPES = [
   'Partnership',
 ] as const;
 
+
 export const ASSET_TYPES = [
   'Inventory',
   'Equipment',
@@ -76,3 +77,11 @@ export const ASSET_TYPES = [
   'Vehicles',
   'Other',
 ] as const;
+
+export const BLOG_CATEGORIES = [
+  "Taxation",
+  "Accounting",
+  "Success Stories",
+  "Business Setup",
+] as const;
+
