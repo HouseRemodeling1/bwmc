@@ -1,7 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Check, ShieldScale, FileText, Clock, AlertTriangle, Building2, Zap, ArrowRight, Wallet, PieChart } from 'lucide-react';
+import { Check, ShieldCheck, FileText, Clock, AlertTriangle, Building2, Zap, ArrowRight, Wallet, PieChart } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: "UAE Regulatory Approvals for Specialized Businesses | BWMC",
@@ -82,7 +82,7 @@ export default function RegulatoryApprovalsGuide() {
         <div className="absolute inset-0 bg-gradient-to-tr from-royal-blue/20 to-transparent" />
         <div className="max-w-5xl mx-auto relative z-10">
           <div className="inline-flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-5 py-2 mb-8 animate-fade-in">
-            <ShieldScale className="w-4 h-4 text-sky-blue" />
+            <ShieldCheck className="w-4 h-4 text-sky-blue" />
             <span className="text-[10px] font-black uppercase tracking-widest text-sky-blue">Advanced Regulatory Engineering</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-black mb-8 leading-[1.1] tracking-tight">
@@ -100,7 +100,7 @@ export default function RegulatoryApprovalsGuide() {
           <div className="mt-16 border-t border-white/10 pt-10 grid grid-cols-2 md:grid-cols-3 gap-8 text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">
              <div className="flex items-center gap-3"><Clock className="w-5 h-5" /> 2,200 Words Deep-Dive</div>
              <div className="flex items-center gap-3"><Building2 className="w-5 h-5" /> Multi-Agency Coverage</div>
-             <div className="flex items-center gap-3"><ShieldScale className="w-5 h-5" /> 2026 Compliance Standard</div>
+             <div className="flex items-center gap-3"><ShieldCheck className="w-5 h-5" /> 2026 Compliance Standard</div>
           </div>
         </div>
       </header>
