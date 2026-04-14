@@ -54,6 +54,15 @@ export const menuItems = [
             { name: "Trademark Registration", slug: "trademark-registration" },
             { name: "Digital Growth Performance", slug: "digital-growth" },
         ]
+    },
+    {
+        title: "Knowledge Base",
+        subtitle: "Expert Insights",
+        icon: FileText,
+        items: [
+            { name: "VAT Guide", slug: "/vat-guide" },
+            { name: "Insights & Blog", slug: "/blog" },
+        ]
     }
 ];
 
@@ -62,7 +71,6 @@ export const mainNav = [
     { name: "Taxation", href: "#", hasDropdown: true },
     { name: "Business Setup", href: "#", hasDropdown: true },
     { name: "Other Services", href: "#", hasDropdown: true },
-    { name: "Knowledge Base", href: "/vat-guide", hasDropdown: false },
-    { name: "Blog", href: "/blog", hasDropdown: false },
+    { name: "Knowledge Base", href: "#", hasDropdown: true },
     { name: "Contact Us", href: "/contact", hasDropdown: false },
 ];
