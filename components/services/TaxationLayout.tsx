@@ -37,7 +37,7 @@ export default function TaxationLayout({ content, slug }: LayoutProps) {
                                 { label: "Services", href: "/services" },
                                 { label: content.title, href: `/services/${slug}` }
                             ]}
-                            className="text-white/60"
+                            variant="light"
                         />
                     </div>
                     <span className="uppercase tracking-widest text-sm text-sky-blue mb-4 block font-semibold">Tax & Compliance Services</span>

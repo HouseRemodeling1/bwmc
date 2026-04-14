@@ -39,18 +39,34 @@ export default function OtherLayout({ content, slug }: LayoutProps) {
                                 { label: "Services", href: "/services" },
                                 { label: content.title, href: `/services/${slug}` }
                             ]}
-                            className="text-white/60"
+                            variant="light"
                         />
                     </div>
-                    <span className="bg-white/10 text-white px-4 py-1.5 rounded-full text-sm font-medium mb-6 inline-block backdrop-blur-sm border border-white/10">
+                    <span className="bg-white/10 text-white px-4 py-1.5 rounded-full text-sm font-medium mb-6 inline-block backdrop-blur-sm border border-white/10 uppercase tracking-widest">
                         Enterprise Solutions
                     </span>
                     <h1 className="text-5xl md:text-7xl font-bold text-white mb-8 tracking-tight">
                         {content.title}
                     </h1>
-                    <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto leading-relaxed font-light">
+                    <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto leading-relaxed font-light mb-12">
                         {content.subtitle}
                     </p>
+
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
+                        <Link
+                            href="/contact"
+                            className="w-full sm:w-auto px-8 py-4 bg-sky-blue hover:bg-royal-blue text-white rounded-full font-bold transition-all shadow-lg shadow-sky-blue/25 hover:-translate-y-1 flex items-center justify-center gap-2"
+                        >
+                            Book a Consultation
+                            <ArrowRight className="w-5 h-5" />
+                        </Link>
+                        <Link
+                            href="https://wa.me/971543097850"
+                            className="w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-full font-bold backdrop-blur-sm transition-all hover:-translate-y-1 flex items-center justify-center gap-2"
+                        >
+                            Speak to an Expert
+                        </Link>
+                    </div>
                 </div>
             </section>
 

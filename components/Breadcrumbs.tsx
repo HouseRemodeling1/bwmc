@@ -8,9 +8,10 @@ export interface BreadcrumbItem {
 interface BreadcrumbsProps {
     items: BreadcrumbItem[];
     className?: string;
+    variant?: 'light' | 'dark';
 }
 
-export default function Breadcrumbs({ items, className = "" }: BreadcrumbsProps) {
+export default function Breadcrumbs({ items, className = "", variant = 'dark' }: BreadcrumbsProps) {
     // Generate schema for breadcrumbs
     const breadcrumbSchema = {
         "@context": "https://schema.org",
@@ -31,6 +32,8 @@ export default function Breadcrumbs({ items, className = "" }: BreadcrumbsProps)
         ]
     };
 
+    const isLight = variant === 'light';
+
     return (
         <>
             {/* Schema markup */}
@@ -41,24 +44,24 @@ export default function Breadcrumbs({ items, className = "" }: BreadcrumbsProps)
 
             {/* Visual breadcrumbs */}
             <nav aria-label="Breadcrumb" className={`mb-6 ${className}`}>
-                <ol className="flex items-center space-x-2 text-sm text-gray-600">
+                <ol className={`flex items-center space-x-2 text-sm ${isLight ? 'text-white/70' : 'text-gray-600'}`}>
                     <li>
                         <Link
                             href="/"
-                            className="hover:text-sky-blue transition-colors"
+                            className={`${isLight ? 'hover:text-white' : 'hover:text-sky-blue'} transition-colors`}
                         >
                             Home
                         </Link>
                     </li>
                     {items.map((item, index) => (
                         <li key={item.href} className="flex items-center space-x-2">
-                            <span className="text-gray-400">/</span>
+                            <span className={isLight ? 'text-white/30' : 'text-gray-400'}>/</span>
                             {index === items.length - 1 ? (
-                                <span className="text-gray-900 font-medium">{item.label}</span>
+                                <span className={`${isLight ? 'text-white font-semibold' : 'text-gray-900 font-medium'}`}>{item.label}</span>
                             ) : (
                                 <Link
                                     href={item.href}
-                                    className="hover:text-sky-blue transition-colors"
+                                    className={`${isLight ? 'hover:text-white' : 'hover:text-sky-blue'} transition-colors`}
                                 >
                                     {item.label}
                                 </Link>
