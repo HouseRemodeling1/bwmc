@@ -31,11 +31,22 @@ export const menuItems = [
         ]
     },
     {
+        title: "Business Setup",
+        subtitle: "Launch Your Business",
+        icon: Briefcase,
+        items: [
+            { name: "UAE Company Setup", slug: "uae-setup" },
+            { name: "Offshore Company Setup", slug: "global-setup" },
+            { name: "E-Commerce License", slug: "ecommerce-license" },
+            { name: "Business Setup Advisory", slug: "business-setup" },
+        ]
+    },
+    {
         title: "Other Services",
         subtitle: "Business Growth",
         icon: Briefcase,
         items: [
-            { name: "Business Setup Services", slug: "business-setup" },
+            { name: "Business Valuation Services", slug: "business-valuation" },
             { name: "Compliance Advisory", slug: "compliance-advisory" },
             { name: "Corporate Finance", slug: "corporate-finance" },
             { name: "Human Resource Services", slug: "hr-services" },
@@ -49,6 +60,7 @@ export const menuItems = [
 export const mainNav = [
     { name: "Accounting & Auditing", href: "#", hasDropdown: true },
     { name: "Taxation", href: "#", hasDropdown: true },
+    { name: "Business Setup", href: "#", hasDropdown: true },
     { name: "Other Services", href: "#", hasDropdown: true },
     { name: "Knowledge Base", href: "/vat-guide", hasDropdown: false },
     { name: "Blog", href: "/blog", hasDropdown: false },

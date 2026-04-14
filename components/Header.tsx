@@ -91,7 +91,7 @@ export default function Header() {
                                                 <ul className="space-y-0.5">
                                                     {menuItems.find(m => m.title === item.name)?.items.map((subItem) => (
                                                         <li key={subItem.slug}>
-                                                            <Link href={`/services/${subItem.slug}`} className="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-colors">
+                                                            <Link href={subItem.slug.startsWith('/') ? subItem.slug : `/services/${subItem.slug}`} className="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-colors">
                                                                 <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -ml-1" />
                                                                 {subItem.name}
                                                             </Link>
@@ -119,7 +119,6 @@ export default function Header() {
                             </>
                         ) : (
                             <div className="flex items-center gap-4">
-                                <Link href="/marketplace" className="text-sm font-bold text-white/80 hover:text-white transition-all">Marketplace</Link>
                                 <Link href="/calculator" className="flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-bold bg-white text-[#1A2B4C] hover:bg-yellow-400 transition-all">
                                     <Calculator className="w-4 h-4" /><span>Cost Calculator</span>
                                 </Link>
@@ -242,7 +241,7 @@ export default function Header() {
                                                             {dropdownData?.items.map((subItem) => (
                                                                 <Link
                                                                     key={subItem.slug}
-                                                                    href={`/services/${subItem.slug}`}
+                                                                    href={subItem.slug.startsWith('/') ? subItem.slug : `/services/${subItem.slug}`}
                                                                     className="flex items-center gap-2 py-2.5 px-3 rounded-lg text-[13px] text-white/60 hover:text-white hover:bg-white/5 transition-all"
                                                                     onClick={() => setMobileMenuOpen(false)}
                                                                 >
@@ -261,13 +260,6 @@ export default function Header() {
 
                             {/* Bottom CTA */}
                             <div className="px-4 pb-8 pt-4 border-t border-white/10 space-y-3">
-                                <Link
-                                    href="/marketplace"
-                                    className="flex items-center justify-center gap-2.5 w-full py-3.5 bg-white/10 hover:bg-white/15 text-white font-semibold text-[15px] rounded-xl transition-all border border-white/10"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                >
-                                    Marketplace
-                                </Link>
                                 <Link
                                     href="/calculator"
                                     className="flex items-center justify-center gap-2.5 w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-[15px] rounded-xl transition-all shadow-lg shadow-blue-900/40"

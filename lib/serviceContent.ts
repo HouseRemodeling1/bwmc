@@ -645,6 +645,35 @@ export const serviceContent: Record<string, any> = {
             { q: "Do you handle social media content?", a: "Yes, we create and manage engaging content tailored to platforms like LinkedIn, Instagram, and Facebook." }
         ]
     },
+    "business-valuation": {
+        category: "other",
+        title: "Business Valuation Services",
+        subtitle: "Independent, Defensible, and Commercially Grounded Valuation Solutions",
+        description: "Whether you are planning a shareholder exit, fundraising round, group restructuring, acquisition, or tax-sensitive transaction, our business valuation services provide the analytical clarity and valuation support you need. We apply a disciplined valuation methodology tailored to the facts and purpose of each assignment, ensuring results that are commercially grounded and defensible.",
+        context: "In the UAE's evolving regulatory and transaction landscape, having a professionally prepared valuation is critical for supporting M&A, shareholder agreements, financial reporting, and tax compliance.",
+        scope: [
+            "M&A and Transaction Valuation",
+            "Shareholder Entry & Exit Valuation",
+            "Tax & Internal Restructuring Valuation",
+            "Financial Reporting (IFRS Fair Value)",
+            "Family Business Succession Valuation",
+            "Dispute & Settlement Valuation",
+            "Purchase Price Allocation (PPA)",
+            "Impairment Testing support"
+        ],
+        methodology: [
+            { phase: "Engagement", desc: "Defining purpose, valuation date, and appropriate standard of value." },
+            { phase: "Analysis", desc: "Detailed financial review, normalization of earnings, and risk assessment." },
+            { phase: "Modeling", desc: "Application of Income (DCF), Market, and Asset-based approaches." },
+            { phase: "Reporting", desc: "Delivery of a structured valuation report with clear rationale and assumptions." }
+        ],
+        faq: [
+            { q: "What is the primary goal of business valuation?", a: "To determine the economic worth of a business interest based on financial performance, market conditions, and future potential." },
+            { q: "When do I need a formal valuation?", a: "Whenever there is a change in ownership, internal restructuring for tax, financial reporting requirements, or legal disputes." },
+            { q: "How long does a valuation typically take?", a: "Depending on complexity, a thorough valuation engagement usually takes 2 to 4 weeks." },
+            { q: "Do you follow international standards?", a: "Yes, we apply globally recognized valuation methodologies adapted for the UAE market context." }
+        ]
+    },
     // Default fallback for other services to ensure pages work immediately
     "default": {
         category: "other",
