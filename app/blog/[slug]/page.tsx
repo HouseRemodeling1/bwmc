@@ -201,7 +201,7 @@ export default async function BlogPost({
 
                 {/* Content Section */}
                 <section className="pb-24 px-6 lg:px-8">
-                    <div className="max-w-[56rem] mx-auto grid lg:grid-cols-[1fr_240px] gap-14">
+                    <div className="max-w-7xl mx-auto grid lg:grid-cols-[1fr_300px] gap-16">
                         <article>
                             <p className="text-lg md:text-2xl font-medium text-navy/70 leading-relaxed mb-12 italic border-l-4 border-sky-blue pl-6 bg-sky-blue/5 py-4 rounded-r-xl">
                                 {blog.excerpt}
