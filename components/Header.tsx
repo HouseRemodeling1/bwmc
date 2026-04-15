@@ -17,8 +17,6 @@ export default function Header() {
 
     const isTransparentPage = pathname === "/" || pathname.startsWith("/services/") || pathname === "/vat-guide";
     const isAdminPage = pathname?.startsWith("/admin");
-
-    if (isAdminPage) return null;
     const isGlobalSetup = pathname === "/global-setup" || pathname === "/uae-setup" || pathname === "/ecommerce-license";
     const isDarkHeader = scrolled || !isTransparentPage || isGlobalSetup;
 
@@ -46,6 +44,8 @@ export default function Header() {
     const toggleMobileExpanded = (name: string) => {
         setMobileExpandedItem(mobileExpandedItem === name ? null : name);
     };
+
+    if (isAdminPage) return null;
 
     return (
         <>
