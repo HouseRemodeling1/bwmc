@@ -50,7 +50,7 @@ export const menuItems = [
             { name: "Compliance Advisory", slug: "compliance-advisory" },
             { name: "Corporate Finance", slug: "corporate-finance" },
             { name: "Human Resource Services", slug: "hr-services" },
-            { name: "Trade Finance Services", slug: "trade-finance" },
+            { name: "Trade Finance Services", slug: "/industries/trade-finance-services-uae" },
             { name: "Trademark Registration", slug: "trademark-registration" },
             { name: "Digital Growth Performance", slug: "digital-growth" },
         ]
