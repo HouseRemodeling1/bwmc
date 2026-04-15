@@ -209,13 +209,13 @@ export default async function BlogPost({
 
                             <div 
                                 className="prose prose-lg prose-slate max-w-none 
-                                prose-headings:text-navy prose-headings:font-black
-                                prose-p:leading-relaxed prose-p:text-gray-700
+                                prose-headings:text-navy prose-headings:font-black prose-headings:mt-16 prose-headings:mb-8
+                                prose-p:leading-[1.8] prose-p:text-gray-700 prose-p:mb-10 prose-p:text-justify
                                 prose-strong:text-navy prose-strong:font-bold
                                 prose-a:text-royal-blue prose-a:no-underline hover:prose-a:underline
-                                prose-ul:text-gray-600 prose-ul:my-6
+                                prose-ul:text-gray-600 prose-ul:my-10 prose-ul:space-y-4
                                 prose-li:my-2
-                                prose-img:rounded-3xl prose-img:shadow-2xl prose-img:my-12"
+                                prose-img:rounded-3xl prose-img:shadow-2xl prose-img:my-16"
                                 dangerouslySetInnerHTML={{ __html: formattedContent }}
                             />
 

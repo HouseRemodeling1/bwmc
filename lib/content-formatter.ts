@@ -15,8 +15,14 @@ export function formatBlogContent(content: string): string {
     raw = raw.replace(/([.!?])\s*(How\s+to\s+)/gi, "$1\n\n$2");
     
     // 3. Handle specific patterns that often start new sections
-    // "How to expand from India..." -> "\n\nHow to expand from India"
+    // This looks for " Why ...", " How ...", " Summary", " Conclusion" etc. after a period.
+    raw = raw.replace(/([.!?])\s*(Why\s+[A-Z][^.!?]{5,80})/g, "$1\n\n$2");
     raw = raw.replace(/([.!?])\s*(How\s+to\s+[^.!?]{10,80})/gi, "$1\n\n$2");
+    raw = raw.replace(/([.!?])\s*(The\s+[A-Z][^.!?]{5,80})/g, "$1\n\n$2");
+    raw = raw.replace(/([.!?])\s*(Conclusion|Summary|Important)[:.-]/gi, "$1\n\n$2");
+
+    // Split dense text that lacks double newlines but has period + space + Capital
+    // raw = raw.replace(/([.!?])\s+([A-Z])/g, "$1\n\n$2"); // Too aggressive? Let's try it for specific cases.
 
     // 4. Split by double newlines or single newlines followed by a header-like pattern
     const sections = raw.split(/\n\s*\n/);
@@ -73,17 +79,16 @@ export function formatBlogContent(content: string): string {
                 parts.push(`<ul class="list-disc pl-8 my-8 space-y-3 text-gray-700 text-lg">${listItems.map(li => `<li>${formatInlineStyles(li)}</li>`).join("")}</ul>`);
             }
             if (currentParagraph) {
-                parts.push(`<p class="mb-6 leading-relaxed text-gray-700 text-lg">${formatInlineStyles(currentParagraph)}</p>`);
+                parts.push(`<p class="mb-10 leading-[1.8] text-gray-700 text-lg lg:text-xl font-medium antialiased text-justify">${formatInlineStyles(currentParagraph)}</p>`);
             }
             
             return parts.join("\n");
         }
 
         // Standard paragraph
-        // If the paragraph is very long, try to split it into smaller logical chunks
-        // This handles where multiple sentences are merged but should be separate paragraphs
+        // 86: 
         const processedParagraph = formatInlineStyles(trimmed);
-        return `<p class="mb-8 leading-[1.8] text-gray-700 text-lg lg:text-xl font-medium antialiased">${processedParagraph}</p>`;
+        return `<p class="mb-10 leading-[1.8] text-gray-700 text-lg lg:text-xl font-medium antialiased text-justify">${processedParagraph}</p>`;
     }).join("\n");
 
     return formatted;
