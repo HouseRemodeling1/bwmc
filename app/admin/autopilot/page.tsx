@@ -17,7 +17,7 @@ type Idea = {
   blogId?: string;
 };
 
-const CATEGORIES = ["All", "Business Setup", "Tax", "VAT", "Audit", "Finance", "Legal", "Technology"];
+const CATEGORIES = ["All", "Business Setup", "Tax", "VAT", "Audit", "Finance Trade", "Finance", "Legal", "Technology"];
 const VOLUMES = { High: "bg-green-100 text-green-700", Medium: "bg-amber-100 text-amber-700", Low: "bg-gray-100 text-gray-600" };
 const DIFFICULTIES = { Easy: "bg-green-100 text-green-700", Medium: "bg-amber-100 text-amber-700", Hard: "bg-red-100 text-red-700" };
 

@@ -186,6 +186,7 @@ export default function EditBlog({ params }: { params: Promise<{ id: string }> }
                                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue focus:border-transparent outline-none"
                                 >
                                     <option>Business</option>
+                                    <option>Finance Trade</option>
                                     <option>Finance</option>
                                     <option>Tax</option>
                                     <option>Audit</option>

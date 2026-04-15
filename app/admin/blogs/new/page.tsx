@@ -123,7 +123,7 @@ export default function NewBlog() {
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
                                 <select value={formData.category} onChange={(e) => set({ category: e.target.value })}
                                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy">
-                                    <option>Business</option><option>Finance</option>
+                                    <option>Business</option><option>Finance Trade</option><option>Finance</option>
                                     <option>Tax</option><option>Audit</option><option>Technology</option>
                                 </select>
                             </div>
