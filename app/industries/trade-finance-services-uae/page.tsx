@@ -12,7 +12,14 @@ import {
   Briefcase, 
   MessageCircle, 
   Phone,
-  Calculator
+  Calculator,
+  ScrollText,
+  Shield,
+  Receipt,
+  FolderCheck,
+  Building2,
+  Workflow,
+  Handshake
 } from 'lucide-react';
 
 export const metadata: Metadata = {
@@ -213,7 +220,7 @@ export default function TradeFinancePage() {
             <div className="relative">
               <div className="absolute -inset-4 bg-sky-blue/10 rounded-[60px] blur-2xl -z-10" />
               <div className="bg-white p-4 rounded-[60px] shadow-2xl border border-slate-100">
-                <img src="https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&q=80&w=800" alt="Trade Finance Dubai" className="w-full rounded-[50px] shadow-inner" />
+                <img src="/images/industries/trade-finance-concept.png" alt="Trade Finance Dubai" className="w-full rounded-[50px] shadow-inner" />
               </div>
             </div>
           </div>
@@ -226,59 +233,64 @@ export default function TradeFinancePage() {
             <p className="text-slate-500 max-w-2xl mx-auto font-medium">Precision-structured instruments to optimize working capital and minimize transaction risk.</p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
-                title: "Letters of Credit (LCs)",
-                icon: FileText,
-                items: ["Sight & Usance LCs", "Back-to-Back LCs", "Transferable LCs", "Revolving LCs"],
-                desc: "Secure international transactions using UCP 600 compliant credit structures."
-              },
-              {
-                title: "Supply Chain Finance",
-                icon: TrendingUp,
-                items: ["Invoice Factoring", "Invoice Discounting", "Reverse Factoring", "SCF Structuring"],
-                desc: "Unlock liquidity from unpaid invoices with advance rates up to 95%."
+                title: "Letters of Credit (LC)",
+                subtitle: "Import & Export",
+                icon: ScrollText,
+                desc: "Expertly structured Sight, Usance, and Transferable LCs to secure your international procurement."
               },
               {
                 title: "Bank Guarantees",
+                subtitle: "Tender, Performance, Advance",
                 icon: ShieldCheck,
-                items: ["Bid & Performance Bonds", "Advance Payment Bonds", "Retention Money", "Customs Guarantees"],
-                desc: "Bank-issued contract security strictly following URDG 758 standards."
+                desc: "Contract security bonds issued under URDG 758 to fulfill government and private tender requirements."
               },
               {
-                title: "Import/Export Financing",
-                icon: Globe,
-                items: ["Pre-Export Finance", "Trust Receipts", "Import Loans", "Export Packing Credit"],
-                desc: "Liquidity bridges aligned perfectly with your specific trade cycles."
+                title: "Standby LCs (SBLC)",
+                subtitle: "Financial Security",
+                icon: Shield,
+                desc: "A secondary payment mechanism that serves as a proof of quality and reliable financial standing."
               },
               {
-                title: "Credit Insurance",
-                icon: Zap,
-                items: ["Whole Turnover Policy", "Single Buyer Policies", "Political Risk Cover", "ECA Support"],
-                desc: "Protect your balance sheet from buyer insolvency or geopolitical shocks."
+                title: "Trust Receipts (TR)",
+                subtitle: "& Bill Discounting",
+                icon: Receipt,
+                desc: "Liquidity solutions allowing you to take possession of goods while deferring bank payment."
               },
               {
-                title: "Structured Finance",
-                icon: Briefcase,
-                items: ["Commodity Trading", "Warehouse Receipts", "Escrow Structuring", "Syndicated Loans"],
-                desc: "Bespoke engineering for high-value, complex multi-jurisdiction trades."
+                title: "Documentary Collections",
+                subtitle: "CAD / DA / DP",
+                icon: FolderCheck,
+                desc: "Secure handling of shipping documents against payment or acceptance (URC 522)."
+              },
+              {
+                title: "Invoice Factoring",
+                subtitle: "& Discounting",
+                icon: FileText,
+                desc: "Accelerate your cash flow by receiving immediate advances against your outstanding receivables."
+              },
+              {
+                title: "Supply Chain Finance",
+                subtitle: "Solutions",
+                icon: Workflow,
+                desc: "Collaborative financing programs that optimize working capital for both buyers and suppliers."
+              },
+              {
+                title: "Bank Liaising",
+                subtitle: "Credit Facilities",
+                icon: Handshake,
+                desc: "Direct representation with UAE banks to negotiate and secure complex credit lines and facilities."
               }
             ].map((sol, i) => (
-              <div key={i} className="bg-white p-10 rounded-[50px] border border-slate-100 shadow-sm hover:shadow-2xl transition-all group border-b-8 border-b-slate-100 hover:border-b-blue-600">
-                <div className="w-16 h-16 rounded-3xl bg-blue-50 flex items-center justify-center mb-8 group-hover:bg-blue-600 transition-colors shadow-sm">
+              <div key={i} className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm hover:shadow-xl transition-all group flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center mb-6 group-hover:bg-[#001B44] transition-colors shadow-sm">
                   <sol.icon className="w-8 h-8 text-blue-600 group-hover:text-white transition-colors" />
                 </div>
-                <h3 className="text-2xl font-black text-[#001B44] mb-4 leading-tight">{sol.title}</h3>
-                <p className="text-sm text-slate-500 mb-8 leading-relaxed font-semibold">{sol.desc}</p>
-                <div className="space-y-4">
-                  {sol.items.map(item => (
-                    <div key={item} className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full bg-blue-600 flex-shrink-0" />
-                      <span className="text-sm font-black text-[#001B44]">{item}</span>
-                    </div>
-                  ))}
-                </div>
+                <h3 className="text-lg font-black text-[#001B44] leading-tight">{sol.title}</h3>
+                <p className="text-xs font-bold text-blue-600 mb-4">{sol.subtitle}</p>
+                <p className="text-sm text-slate-500 leading-relaxed font-semibold">{sol.desc}</p>
               </div>
             ))}
           </div>
