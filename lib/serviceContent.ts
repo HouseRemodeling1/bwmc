@@ -35,8 +35,65 @@ export const serviceContent: Record<string, any> = {
         category: "accounting",
         title: "Audit & Assurance Services",
         subtitle: "Clarity, Confidence, and Compliance for Your Business",
-        description: "In an era of complex regulatory frameworks, financial transparency is not just a legal requirement but a strategic asset. Our Audit & Assurance services go beyond statutory compliance to deliver actionable insights into your business performance. Whether you operate in Dubai, Abu Dhabi, or Free Zones like DMCC, JAFZA, and ADGM, we ensure your financial statements are accurate, defensible, and aligned with global standards.\n\nWe leverage advanced digital audit tools and data analytics to provide a faster, more accurate audit process. Our approach is risk-based, focusing on the areas that matter most to your business continuity and growth.",
-        context: "We are fully compliant with the UAE Commercial Companies Law, IFRS, and Anti-Money Laundering (AML) regulations. As registered auditors with key authorities (including ADGM and DIFC), we help you navigate the requirements of banks, investors, and regulators with absolute confidence. Our industry expertise spans Financial Services, Energy, Real Estate, and Retail.",
+        metaTitle: "Audit & Assurance Services UAE | IFRS & AML Compliant | BWMC",
+        metaDescription: "Professional UAE audit & assurance services: Statutory audits, AML compliance, internal audit & forensic investigations. DMCC, JAFZA, ADGM approved. Get your quote in 24h.",
+        keywords: ["Audit services UAE", "Statutory Audit Dubai", "AML Compliance UAE", "Internal Audit services", "DMCC Approved Auditor", "IFRS Compliance Dubai"],
+        trustBadges: [
+            { label: "DMCC Approved", sub: "Registered Auditor" },
+            { label: "ADGM Registered", sub: "Approved Firm" },
+            { label: "IFRS Certified", sub: "Global Standards" },
+            { label: "AML Compliant", sub: "Ministry of Economy" }
+        ],
+        description: "In an era of complex regulatory frameworks, financial transparency is not just a legal requirement but a strategic asset. Our Audit & Assurance services go beyond statutory compliance to deliver actionable insights into your business performance. Whether you operate in Dubai, Abu Dhabi, or Free Zones like DMCC, JAFZA, and ADGM, we ensure your financial statements are accurate, defensible, and aligned with global standards.",
+        marketContext: {
+            title: "Why Auditing is Non-Negotiable in the UAE (2024-25)",
+            description: "With the full implementation of UAE Corporate Tax (9%) and stricter Anti-Money Laundering (AML) regulations, the Federal Tax Authority (FTA) and Ministry of Economy have significantly increased compliance oversight. An audit is no longer just a 'license renewal' checkbox—it is your primary defense against Tax Audits and regulatory penalties.",
+            stats: [
+                { value: "40+", label: "Free Zones Supported", sub: "DMCC, JAFZA, DAFZA, etc." },
+                { value: "100%", label: "IFRS Compliance", sub: "International Standards" },
+                { value: "24h", label: "Quote Response", sub: "Rapid Consultation" },
+                { value: "Lead", label: "AML Reporting", sub: "goAML Portal Expertise" }
+            ]
+        },
+        detailedItems: [
+            {
+                title: "Statutory Financial Audit",
+                description: "Our core service for Mainland LLCs and Free Zone entities. We provide an independent opinion on your financial statements, ensuring they represent a 'True and Fair' view of your business state.",
+                features: ["Mainland & Free Zone Compliance", "Bank & Investor Readiness", "License Renewal Support"],
+                context: "Crucial for companies with turnover exceeding AED 50M or specific Free Zone mandates."
+            },
+            {
+                title: "AML & KYC Compliance Audit",
+                description: "Mandatory for DNFBPs (Real Estate, Gold Dealers, Accountants). We audit your internal AML framework, ensuring you are protected from the severe fines associated with the UAE's Decree Law No. 20 of 2018.",
+                features: ["goAML Portal Management", "Suspicious Transaction Reporting", "Risk Assessment Framework"],
+                context: "Failing to comply can result in fines from AED 50K to 1M."
+            },
+            {
+                title: "Internal Audit & Risk Advisory",
+                description: "Beyond compliance, we look into your operations. We identify control gaps, operational inefficiencies, and governance weaknesses to protect your assets and streamline workflows.",
+                features: ["Fraud Prevention", "SOP Evaluation", "Cost Optimization"],
+                context: "Ideal for growing SMEs and Large Enterprises seeking operational excellence."
+            },
+            {
+                title: "Forensic Audit & Liquidation",
+                description: "Specialized reports for courts or shareholders. Our forensic audits uncover financial irregularities, while our liquidation reports are mandatory for trade license cancellation.",
+                features: ["Fraud Investigation", "Court-Ready Reports", "Asset Verification"],
+                context: "Available for both Voluntary and Mandatory liquidations."
+            }
+        ],
+        industryExpertise: [
+            { title: "Fintech & Crypto", desc: "VARA and ADGM compliant auditing for the digital asset sector." },
+            { title: "Real Estate & RERA", desc: "Specialized escrow and project audit services for developers." },
+            { title: "Oil, Gas & Energy", desc: "High-value transaction audits and supply chain compliance." },
+            { title: "E-commerce & Retail", desc: "Inventory verification and cross-border VAT reconciliation." }
+        ],
+        whyChooseUs: [
+            { title: "Zero-Error Policy", desc: "Rigorous three-tier review process for every report." },
+            { title: "Approved Jurisdiction", desc: "Accepted by all UAE banks and regulatory bodies." },
+            { title: "Strategic Insights", desc: "We don't just find gaps; we recommend solutions." },
+            { title: "Future-Ready", desc: "Specialists in Corporate Tax and ICV Certification." }
+        ],
+        context: "We are fully compliant with the UAE Commercial Companies Law, IFRS, and Anti-Money Laundering (AML) regulations. As registered auditors with key authorities (including ADGM and DIFC), we help you navigate the requirements of banks, investors, and regulators with absolute confidence.",
         scope: [
             "Statutory Financial Audit (Mainland & Free Zones)",
             "Anti-Money Laundering (AML) Audit & Compliance",
@@ -46,23 +103,21 @@ export const serviceContent: Record<string, any> = {
             "Sales Certification & RERA Audits",
             "Agreed-Upon Procedures (AUP) & Due Diligence",
             "ICV (In-Country Value) Certification Support",
-            "Concurrent Audit & Real-time Transaction Checks",
-            "Customs Audit & Supply Chain Compliance",
-            "Mystery Audit & Service Quality Assessment",
-            "Quarterly Review Reporting for Banks"
+            "Concurrent Audit & Real-time Transaction Checks"
         ],
         methodology: [
-            { phase: "Planning & Risk Assessment", desc: "Deep dive into your business environment to identify key risks and control gaps." },
-            { phase: "Data Analytics & Fieldwork", desc: "Leveraging digital tools for sampling and substantive testing of transactions." },
-            { phase: "Control Evaluation", desc: "Testing the effectiveness of internal controls and governance structures." },
-            { phase: "Review & Quality Assurance", desc: " rigorous internal quality checks aligned with International Standards on Quality Control (ISQC)." },
-            { phase: "Reporting & Insight", desc: "Issuance of independent auditor's report along with a management letter detailing strategic recommendations." }
+            { phase: "Planning & Risk Assessment", desc: "Strategic mapping of your business environment and internal controls." },
+            { phase: "Data Analytics & Fieldwork", desc: "Leveraging digital sampling for high-precision transaction testing." },
+            { phase: "Control Evaluation", desc: "Testing the effectiveness of governance and financial safeguards." },
+            { phase: "Review & Quality Assurance", desc: "Rigorous internal checks aligned with ISQC standards." },
+            { phase: "Reporting & Insight", desc: "Final report issuance with strategic Management Letter recommendations." }
         ],
         faq: [
-            { q: "Do all UAE companies need an audit?", a: "Yes, under the new Corporate Tax law and stricter Free Zone regulations (like DMCC), most entities are required to maintain audited financial statements." },
-            { q: "Are you approved in all key jurisdictions?", a: "We are registered with major jurisdictions including DMCC, JAFZA, DAFZA, and ADGM, ensuring our reports are accepted by all government bodies and banks." },
-            { q: "What is an AML Audit?", a: "It is a mandatory independent review for Designated Non-Financial Businesses and Professions (DNFBPs) to ensure compliance with UAE's anti-money laundering laws." },
-            { q: "How does your digital audit approach help?", a: "Our technology-driven approach reduces manual errors, speeds up the turnaround time, and provides deeper insights into financial trends and anomalies." }
+            { q: "Do all UAE companies need an audit?", a: "Under the new Corporate Tax law and Free Zone regulations (like DMCC), most entities are now required to maintain and sometimes submit audited financial statements to justify their tax position and renew licenses." },
+            { q: "How long does a standard audit take?", a: "A standard statutory audit typically takes 2-4 weeks, depending on the volume of transactions and the readiness of the company's records." },
+            { q: "Are you approved for DMCC and ADGM?", a: "Yes, BWMC is a registered and approved auditing firm for major jurisdictions including DMCC, JAFZA, DAFZA, and ADGM." },
+            { q: "What is an AML Audit?", a: "An AML Audit is a mandatory review for designated businesses (DNFBPs) to ensure they are complying with UAE laws regarding potential money laundering and financing of illicit activities." },
+            { q: "Can an audit help in reducing Corporate Tax?", a: "While an audit verifies records, it can identify legitimate deductible expenses and tax-saving opportunities that might have been missed, ensuring you don't overpay." }
         ]
     },
     "internal-audit": {

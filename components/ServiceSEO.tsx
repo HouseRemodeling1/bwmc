@@ -5,8 +5,10 @@ interface ServiceSEOProps {
         title: string;
         subtitle: string;
         description: string;
+        metaDescription?: string;
         faq: { q: string; a: string }[];
         category: string;
+        detailedItems?: any[];
     };
     slug: string;
 }
@@ -17,7 +19,7 @@ export default function ServiceSEO({ content, slug }: ServiceSEOProps) {
     // Generate Service Schema
     const serviceSchema = generateServiceSchema({
         name: content.title,
-        description: content.description,
+        description: content.metaDescription || content.description,
         provider: "BWMC",
         areaServed: "United Arab Emirates",
         serviceType: content.category,

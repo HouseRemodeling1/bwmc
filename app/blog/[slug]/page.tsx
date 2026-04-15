@@ -148,10 +148,12 @@ export default async function BlogPost({
                         <div className="inline-flex flex-wrap items-center gap-y-4 gap-x-8 p-6 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl text-left">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-royal-blue flex items-center justify-center text-white font-bold text-lg">
-                                    {blog.author[0]}
+                                    {author ? author.name[0] : (blog.author ? blog.author[0] : "B")}
                                 </div>
                                 <div>
-                                    <p className="text-white font-bold text-sm">{blog.author}</p>
+                                    <p className="text-white font-bold text-sm">
+                                        {author ? author.name : (blog.author || "BWMC Team")}
+                                    </p>
                                     <p className="text-white/40 text-xs uppercase tracking-widest leading-none mt-1">Author</p>
                                 </div>
                             </div>

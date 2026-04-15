@@ -60,7 +60,7 @@ export default function NewBlog() {
     const set = (fields: Partial<typeof formData>) => setFormData(prev => ({ ...prev, ...fields }));
 
     return (
-        <div className="min-h-screen bg-gray-50 pt-24">
+        <div className="min-h-screen bg-gray-50">
             <header className="bg-white border-b border-gray-200">
                 <div className="max-w-4xl mx-auto px-6 py-4">
                     <Link href="/admin" className="inline-flex items-center gap-2 text-gray-600 hover:text-royal-blue transition-colors">

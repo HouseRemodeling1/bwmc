@@ -52,18 +52,22 @@ export default function AdminDashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 pt-24">
+        <div className="min-h-screen bg-gray-50">
             {/* Header */}
             <header className="bg-white border-b border-gray-200">
                 <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
                     <h1 className="text-2xl font-bold text-navy">Blog Dashboard</h1>
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-2 text-gray-600 hover:text-red-600 transition-colors"
+                        className="flex items-center gap-2 text-gray-400 hover:text-red-500 transition-colors text-sm font-medium"
                     >
-                        <LogOut className="w-5 h-5" />
+                        <LogOut className="w-4 h-4" />
                         Logout
                     </button>
+                    <div className="h-6 w-px bg-gray-200 mx-4 hidden sm:block" />
+                    <Link href="/" className="text-sm font-medium text-royal-blue hover:underline hidden sm:block">
+                        Back to Website
+                    </Link>
                 </div>
             </header>
 

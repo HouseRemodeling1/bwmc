@@ -16,6 +16,9 @@ export default function Header() {
     const pathname = usePathname();
 
     const isTransparentPage = pathname === "/" || pathname.startsWith("/services/") || pathname === "/vat-guide";
+    const isAdminPage = pathname?.startsWith("/admin");
+
+    if (isAdminPage) return null;
     const isGlobalSetup = pathname === "/global-setup" || pathname === "/uae-setup" || pathname === "/ecommerce-license";
     const isDarkHeader = scrolled || !isTransparentPage || isGlobalSetup;
 
