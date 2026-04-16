@@ -228,7 +228,3 @@ export default function AuthorNewBlog() {
         </div>
     );
 }
-            </main>
-        </div>
-    );
-}

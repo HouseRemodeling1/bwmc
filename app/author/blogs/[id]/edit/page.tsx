@@ -217,7 +217,3 @@ export default function AuthorEditBlog({ params }: { params: Promise<{ id: strin
         </div>
     );
 }
-            </main>
-        </div>
-    );
-}
