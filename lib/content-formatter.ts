@@ -33,38 +33,59 @@ export function formatBlogContent(content: string): string {
     // 1. Normalize and clean the text
     let raw = normalizeText(content);
 
-    // 2. Pre-process text to insert double newlines before "Step X:" if they are missing
-    // This helps split paragraphs that were concatenated as a wall of text.
-    // Example: " ...registration. Step 11: Register..." -> " ...registration.\n\nStep 11: Register..."
-    raw = raw.replace(/([.!?])\s*(Step\s+\d+[:.-])/g, "$1\n\n$2");
+    // 2. Intelligence: Detect "Step X:" or "1. ..." prefixes that should be H3s
+    // Also detect "Conclusion:", "Summary:", "FAQ:"
+    raw = raw.replace(/^(\d+\.|Step\s*\d+[:.-]|Section\s*\d+[:.-])\s*([A-Z].*?)([:.-]|\n|$)/gm, "### $1 $2");
+    
+    // 3. Intelligence: Insert double newlines before common structural markers if missing
+    raw = raw.replace(/([.!?])\s*(Important|Note|Tip|Key Takeaway|Pro Tip|Background)[:.-]/gi, "$1\n\n$2");
 
-    // Split dense text that lacks double newlines but has period + space + Capital
-    // raw = raw.replace(/([.!?])\s+([A-Z])/g, "$1\n\n$2"); // Too aggressive? Let's try it for specific cases.
-
-    // 4. Split by double newlines or single newlines followed by a header-like pattern
+    // 4. Split into sections
     const sections = raw.split(/\n\s*\n/);
     
-    const formatted = sections.map(section => {
+    const formatted = sections.map((section, index) => {
         const trimmed = section.trim();
         if (!trimmed) return "";
 
-        // Header Detection (Starts with #)
+        // Standard Markdown-style Header Detection (Starts with #)
         if (trimmed.startsWith("#")) {
             const level = trimmed.match(/^#+/)?.[0].length || 1;
             const text = trimmed.replace(/^#+\s*/, "");
-            return `<h${level + 1} class="text-navy font-black mt-12 mb-6 leading-tight">${text}</h${level + 1}>`;
+            return `<h${level + 1} class="text-navy font-black mt-16 mb-8 leading-tight">${text}</h${level + 1}>`;
         }
 
-        // Potential Header Detection (Step X:, All Caps, or Short Bold lines)
-        // Detect "Step 11: ...", "Step 12: ...", "Conclusion:", "Important Note:"
-        const isStepHeader = /^Step\s*\d+[:.-]/i.test(trimmed);
-        const isShortBold = trimmed.startsWith("**") && trimmed.endsWith("**") && trimmed.length < 60;
-        const isAllCapsHeader = trimmed.length < 80 && trimmed.toUpperCase() === trimmed && trimmed.length > 5;
-        const isQuestionHeader = trimmed.length < 100 && trimmed.endsWith("?");
+        // Semantic Header Detection (All Caps OR Short Bold OR Question)
+        const isHeaderPattern = 
+            (trimmed.length < 80 && trimmed.toUpperCase() === trimmed && trimmed.length > 5) ||
+            (trimmed.startsWith("**") && trimmed.endsWith("**") && trimmed.length < 100) ||
+            (trimmed.length < 100 && trimmed.endsWith("?"));
 
-        if (isStepHeader || isShortBold || isAllCapsHeader || isQuestionHeader) {
+        if (isHeaderPattern) {
             const cleanText = trimmed.replace(/\*\*/g, "");
-            return `<h3 class="text-navy font-black text-2xl mt-12 mb-6 leading-tight border-l-4 border-royal-blue pl-4">${cleanText}</h3>`;
+            return `<h3 class="text-navy font-black text-2xl mt-14 mb-8 leading-tight border-l-4 border-royal-blue pl-5">${cleanText}</h3>`;
+        }
+
+        // Callout Box Detection (Important, Note, Tip)
+        const lower = trimmed.toLowerCase();
+        if (lower.startsWith("tip:") || lower.startsWith("pro tip:") || lower.startsWith("note:") || lower.startsWith("important:")) {
+            const [label, ...rest] = trimmed.split(":");
+            return `
+                <div class="my-12 p-8 bg-sky-blue/5 border-l-4 border-sky-blue rounded-r-2xl shadow-sm">
+                    <span class="text-xs font-black uppercase tracking-widest text-royal-blue mb-2 block">${label}</span>
+                    <p class="text-gray-700 leading-relaxed m-0 italic font-medium">${formatInlineStyles(rest.join(":").trim())}</p>
+                </div>
+            `;
+        }
+        
+        // Key Takeaways / Summary Detection
+        if (lower.startsWith("key takeaway") || lower.startsWith("summary:") || lower.startsWith("conclusion:")) {
+            return `
+                <div class="my-14 p-10 bg-navy text-white rounded-3xl shadow-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-sky-blue/10 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110" />
+                    <h4 class="text-sky-blue font-black uppercase tracking-widest text-sm mb-4">Quick Summary</h4>
+                    <div class="text-white/90 leading-relaxed prose-invert">${formatInlineStyles(trimmed.replace(/.*?:/i, "").trim())}</div>
+                </div>
+            `;
         }
 
         // List Detection
@@ -72,20 +93,19 @@ export function formatBlogContent(content: string): string {
             const lines = trimmed.split("\n");
             let listItems: string[] = [];
             let currentParagraph = "";
-
             const parts: string[] = [];
             
             lines.forEach(line => {
                 const isListItem = line.trim().match(/^[-*•]\s+/);
                 if (isListItem) {
                     if (currentParagraph) {
-                        parts.push(`<p class="mb-6 leading-relaxed text-gray-700 text-lg">${formatInlineStyles(currentParagraph)}</p>`);
+                        parts.push(`<p class="mb-10 leading-[1.8] text-gray-700 text-lg lg:text-xl font-medium antialiased text-justify">${formatInlineStyles(currentParagraph)}</p>`);
                         currentParagraph = "";
                     }
                     listItems.push(line.trim().replace(/^[-*•]\s+/, ""));
                 } else {
                     if (listItems.length > 0) {
-                        parts.push(`<ul class="list-disc pl-8 my-8 space-y-3 text-gray-700 text-lg">${listItems.map(li => `<li>${formatInlineStyles(li)}</li>`).join("")}</ul>`);
+                        parts.push(`<ul class="list-disc pl-8 my-10 space-y-4 text-gray-700 text-lg lg:text-xl font-medium">${listItems.map(li => `<li>${formatInlineStyles(li)}</li>`).join("")}</ul>`);
                         listItems = [];
                     }
                     currentParagraph += (currentParagraph ? " " : "") + line.trim();
@@ -93,7 +113,7 @@ export function formatBlogContent(content: string): string {
             });
 
             if (listItems.length > 0) {
-                parts.push(`<ul class="list-disc pl-8 my-8 space-y-3 text-gray-700 text-lg">${listItems.map(li => `<li>${formatInlineStyles(li)}</li>`).join("")}</ul>`);
+                parts.push(`<ul class="list-disc pl-8 my-10 space-y-4 text-gray-700 text-lg lg:text-xl font-medium">${listItems.map(li => `<li>${formatInlineStyles(li)}</li>`).join("")}</ul>`);
             }
             if (currentParagraph) {
                 parts.push(`<p class="mb-10 leading-[1.8] text-gray-700 text-lg lg:text-xl font-medium antialiased text-justify">${formatInlineStyles(currentParagraph)}</p>`);
@@ -103,9 +123,7 @@ export function formatBlogContent(content: string): string {
         }
 
         // Standard paragraph
-        // 86: 
-        const processedParagraph = formatInlineStyles(trimmed);
-        return `<p class="mb-10 leading-[1.8] text-gray-700 text-lg lg:text-xl font-medium antialiased text-justify">${processedParagraph}</p>`;
+        return `<p class="mb-10 leading-[1.8] text-gray-700 text-lg lg:text-xl font-medium antialiased text-justify">${formatInlineStyles(trimmed)}</p>`;
     }).join("\n");
 
     return formatted;
