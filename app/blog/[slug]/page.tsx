@@ -200,25 +200,22 @@ export default async function BlogPost({
                 </div>
 
                 {/* Content Section */}
-                <section className="pb-32 px-6 lg:px-8">
-                    <div className="max-w-[1440px] mx-auto grid lg:grid-cols-[1fr_340px] gap-20">
+                <section className="pb-24 px-6 lg:px-8">
+                    <div className="max-w-7xl mx-auto grid lg:grid-cols-[1fr_300px] gap-16">
                         <article className="min-w-0">
-                            <p className="text-xl md:text-3xl font-medium text-navy/80 leading-relaxed mb-16 italic border-l-8 border-sky-blue pl-10 bg-sky-blue/5 py-8 rounded-r-[40px] font-serif">
+                            <p className="text-lg md:text-2xl font-medium text-navy/70 leading-relaxed mb-12 italic border-l-4 border-sky-blue pl-6 bg-sky-blue/5 py-4 rounded-r-xl">
                                 {blog.excerpt}
                             </p>
 
                             <div 
-                                className="prose prose-xl prose-slate max-w-none 
-                                prose-headings:font-black prose-headings:text-navy prose-headings:tracking-tight prose-headings:mt-20 prose-headings:mb-10
-                                prose-h2:text-4xl md:prose-h2:text-5xl
-                                prose-h3:text-3xl
-                                prose-p:leading-[2] prose-p:text-gray-800 prose-p:mb-12 prose-p:text-justify prose-p:font-medium
-                                prose-strong:text-navy prose-strong:font-black prose-strong:bg-sky-blue/10 prose-strong:px-1 prose-strong:rounded-sm
-                                prose-a:text-royal-blue prose-a:font-bold prose-a:no-underline hover:prose-a:underline decoration-2 underline-offset-4
-                                prose-ul:text-zinc-700 prose-ul:my-12 prose-ul:space-y-6
-                                prose-li:text-lg prose-li:font-semibold
-                                prose-img:rounded-[40px] prose-img:shadow-2xl prose-img:my-20 prose-img:border-8 prose-img:border-slate-50
-                                prose-blockquote:border-l-8 prose-blockquote:border-sky-blue prose-blockquote:bg-slate-50 prose-blockquote:py-8 prose-blockquote:px-10 prose-blockquote:rounded-r-3xl prose-blockquote:italic prose-blockquote:text-navy/70 prose-blockquote:font-medium"
+                                className="prose prose-lg prose-slate max-w-none 
+                                prose-headings:text-navy prose-headings:font-black prose-headings:mt-16 prose-headings:mb-8
+                                prose-p:leading-[1.8] prose-p:text-gray-700 prose-p:mb-10 prose-p:text-justify
+                                prose-strong:text-navy prose-strong:font-bold
+                                prose-a:text-royal-blue prose-a:underline prose-a:font-bold hover:prose-a:text-navy transition-colors
+                                prose-ul:text-gray-600 prose-ul:my-10 prose-ul:space-y-4
+                                prose-li:my-2
+                                prose-img:rounded-3xl prose-img:shadow-2xl prose-img:my-16"
                                 dangerouslySetInnerHTML={{ __html: formattedContent }}
                             />
 

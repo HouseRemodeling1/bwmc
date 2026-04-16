@@ -58,7 +58,7 @@ export function formatBlogContent(content: string): string {
         // Potential Header Detection (Step X:, All Caps, or Short Bold lines)
         // Detect "Step 11: ...", "Step 12: ...", "Conclusion:", "Important Note:"
         const isStepHeader = /^Step\s*\d+[:.-]/i.test(trimmed);
-        const isShortBold = trimmed.startsWith("**") && trimmed.endsWith("**") && trimmed.length < 100;
+        const isShortBold = trimmed.startsWith("**") && trimmed.endsWith("**") && trimmed.length < 60;
         const isAllCapsHeader = trimmed.length < 80 && trimmed.toUpperCase() === trimmed && trimmed.length > 5;
         const isQuestionHeader = trimmed.length < 100 && trimmed.endsWith("?");
 
@@ -118,5 +118,5 @@ function formatInlineStyles(text: string): string {
     return text
         .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
         .replace(/__(.*?)__/g, "<strong>$1</strong>")
-        .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-royal-blue hover:underline font-bold">$1</a>');
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-royal-blue hover:underline font-bold cursor-pointer relative z-10">$1</a>');
 }
