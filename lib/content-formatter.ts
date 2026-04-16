@@ -26,11 +26,19 @@ export function normalizeText(text: string): string {
 
 /**
  * Converts raw text or Markdown-like content into structured HTML for the blog.
+ * Now enhanced to detect and preserve existing HTML from the professional editor.
  */
 export function formatBlogContent(content: string): string {
     if (!content) return "";
 
-    // 1. Normalize and clean the text
+    // If it's already HTML (from the new professional editor), return it directly
+    // but ensured it's wrapped in basic cleaning if needed.
+    const isHtml = content.trim().startsWith("<") && content.trim().endsWith(">");
+    if (isHtml) {
+        return content;
+    }
+
+    // 1. Normalize and clean the text (Legacy Markdown Path)
     let raw = normalizeText(content);
 
     // 2. Intelligence: Detect "Step X:" or "1. ..." prefixes that should be H3s

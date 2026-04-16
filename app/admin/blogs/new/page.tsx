@@ -7,7 +7,9 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Save } from "lucide-react";
 import SeoAgent from "@/components/SeoAgent";
 import FileUpload from "@/components/FileUpload";
+import RichTextEditor from "@/components/RichTextEditor";
 import { normalizeText, formatBlogContent } from "@/lib/content-formatter";
+import { BLOG_CATEGORIES } from "@/lib/constants";
 
 export default function NewBlog() {
     const router = useRouter();
@@ -150,24 +152,13 @@ export default function NewBlog() {
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
-                            <div className="bg-slate-50 px-8 py-3 border-b border-slate-200 flex items-center justify-between">
-                                <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Content Editor (Raw HTML/Text)</span>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        const clean = normalizeText(formData.content);
-                                        set({ content: clean });
-                                    }}
-                                    className="text-[10px] font-black bg-royal-blue text-white px-3 py-1 rounded-full hover:bg-navy transition-all uppercase tracking-tighter flex items-center gap-1"
-                                >
-                                    ✨ AI Structure Optimization
-                                </button>
-                            </div>
-                            <textarea value={formData.content}
-                                onChange={(e) => set({ content: e.target.value })}
-                                className="w-full px-8 py-6 border-none focus:ring-0 font-mono text-sm text-navy min-h-[600px] resize-none"
-                                placeholder="Paste your article from ChatGPT, Word, or write here..." required />
+                        <div className="space-y-2">
+                            <label className="block text-xs font-black text-slate-400 uppercase tracking-widest ml-4">Content Editor (WYSIWYG)</label>
+                            <RichTextEditor 
+                                value={formData.content} 
+                                onChange={(val) => set({ content: val })} 
+                                placeholder="Start writing administrative masterpiece..."
+                            />
                         </div>
 
                         <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-8">

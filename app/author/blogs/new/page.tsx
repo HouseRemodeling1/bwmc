@@ -1,19 +1,9 @@
-"use client";
-
-import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { motion } from "framer-motion";
-import { ArrowLeft, Save } from "lucide-react";
-import SeoAgent from "@/components/SeoAgent";
-import FileUpload from "@/components/FileUpload";
-import { BLOG_CATEGORIES } from "@/lib/constants";
-import EditorToolbar from "@/components/EditorToolbar";
+import { useRef } from "react";
+import RichTextEditor from "@/components/RichTextEditor";
 import { formatBlogContent, normalizeText } from "@/lib/content-formatter";
 
 export default function AuthorNewBlog() {
     const router = useRouter();
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [loading, setLoading] = useState(false);
     const [author, setAuthor] = useState<{ id: string; name: string } | null>(null);
     const [formData, setFormData] = useState({
@@ -92,7 +82,7 @@ export default function AuthorNewBlog() {
                         <Link href="/author/dashboard" className="p-2 hover:bg-slate-100 rounded-full transition-colors">
                             <ArrowLeft className="w-6 h-6 text-slate-500" />
                         </Link>
-                        <h1 className="text-xl font-bold text-navy uppercase tracking-tighter">Draft New Article</h1>
+                        <h1 className="text-xl font-bold text-navy uppercase tracking-tighter">New Blog Post</h1>
                         <span className="text-xs bg-sky-blue/10 text-royal-blue px-3 py-1 rounded-full font-black uppercase tracking-widest">
                             Author: {author.name}
                         </span>
@@ -110,7 +100,7 @@ export default function AuthorNewBlog() {
 
             <main className="max-w-[1800px] mx-auto p-8">
                 <div className="grid lg:grid-cols-2 gap-8">
-                    {/* LEFT PANEL: EDITOR */}
+                    {/* LEFT PANEL: LIVE RICH EDITOR */}
                     <div className="space-y-8">
                         <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 space-y-6">
                             <div>
@@ -161,18 +151,13 @@ export default function AuthorNewBlog() {
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
-                            <EditorToolbar 
-                                textareaRef={textareaRef} 
+                        <div className="space-y-2">
+                            <label className="block text-xs font-black text-slate-400 uppercase tracking-widest ml-4">Content Editor (WYSIWYG)</label>
+                            <RichTextEditor 
                                 value={formData.content} 
                                 onChange={(val) => set({ content: val })} 
+                                placeholder="Start writing your masterpiece here..."
                             />
-                            <textarea
-                                ref={textareaRef}
-                                value={formData.content}
-                                onChange={(e) => set({ content: e.target.value })}
-                                className="w-full px-8 py-6 border-none focus:ring-0 font-mono text-sm text-navy min-h-[600px] resize-none"
-                                placeholder="Start writing or paste your content..." required />
                         </div>
 
                         <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-8">
@@ -188,7 +173,7 @@ export default function AuthorNewBlog() {
                         <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden">
                             <div className="bg-navy px-8 py-3 flex items-center justify-between">
                                 <div className="flex items-center gap-4">
-                                    <span className="text-xs font-black text-sky-blue uppercase tracking-widest">Article Preview</span>
+                                    <span className="text-xs font-black text-sky-blue uppercase tracking-widest">Real-time Visualizer</span>
                                     <div className="flex gap-1.5">
                                         <div className="w-2 h-2 rounded-full bg-red-500" />
                                         <div className="w-2 h-2 rounded-full bg-yellow-500" />
@@ -201,9 +186,9 @@ export default function AuthorNewBlog() {
                                         const clean = normalizeText(formData.content);
                                         set({ content: clean });
                                     }}
-                                    className="text-[10px] font-black bg-royal-blue text-white px-3 py-1 rounded-full hover:bg-white hover:text-navy transition-all uppercase tracking-tighter"
+                                    className="text-[10px] font-black bg-royal-blue text-white px-3 py-1 rounded-full hover:bg-teal-400 transition-all uppercase tracking-tighter"
                                 >
-                                    ✨ AI Cleanup
+                                    ✨ Optimize Structure
                                 </button>
                             </div>
                             <div className="h-[calc(100vh-250px)] overflow-y-auto p-12 bg-white">
@@ -223,10 +208,10 @@ export default function AuthorNewBlog() {
 
                                 {!formData.content && (
                                     <div className="flex flex-col items-center justify-center h-[400px] text-slate-300 space-y-4">
-                                        <div className="w-16 h-16 rounded-full border-2 border-dashed border-slate-200 flex items-center justify-center">
+                                        <div className="w-16 h-16 rounded-full border-2 border-dashed border-slate-200 flex items-center justify-center text-slate-200">
                                             <Save className="w-8 h-8" />
                                         </div>
-                                        <p className="font-black uppercase tracking-widest text-xs">Preview Area Loading...</p>
+                                        <p className="font-black uppercase tracking-widest text-[10px]">Visualizer Ready</p>
                                     </div>
                                 )}
                             </div>

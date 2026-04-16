@@ -1,51 +1,89 @@
 "use client";
 
 import React from "react";
+import { type Editor } from "@tiptap/react";
 import { 
     Bold, Italic, List, Heading2, Heading3, 
-    Quote, Link as LinkIcon, Lightbulb, CheckCircle2 
+    Quote, Link as LinkIcon, Lightbulb, Heading1,
+    ListOrdered
 } from "lucide-react";
 
 interface EditorToolbarProps {
-    textareaRef: React.RefObject<HTMLTextAreaElement | null>;
-    value: string;
-    onChange: (newValue: string) => void;
+    editor: Editor | null;
 }
 
-export default function EditorToolbar({ textareaRef, value, onChange }: EditorToolbarProps) {
-    const insertText = (before: string, after: string = "") => {
-        const textarea = textareaRef.current;
-        if (!textarea) return;
-
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        const selectedText = value.substring(start, end);
-        
-        const newValue = 
-            value.substring(0, start) + 
-            before + selectedText + after + 
-            value.substring(end);
-
-        onChange(newValue);
-        
-        // Return focus and set selection
-        setTimeout(() => {
-            textarea.focus();
-            const newPos = start + before.length + selectedText.length + after.length;
-            textarea.setSelectionRange(newPos, newPos);
-        }, 0);
-    };
+export default function EditorToolbar({ editor }: EditorToolbarProps) {
+    if (!editor) return null;
 
     const tools = [
-        { icon: Heading2, label: "H2", action: () => insertText("\n## ", "\n") },
-        { icon: Heading3, label: "H3", action: () => insertText("\n### ", "\n") },
-        { icon: Bold, label: "Bold", action: () => insertText("**", "**") },
-        { icon: Italic, label: "Italic", action: () => insertText("_", "_") },
-        { icon: List, label: "List", action: () => insertText("\n- ", "") },
-        { icon: Quote, label: "Quote", action: () => insertText("\n> ", "\n") },
-        { icon: Lightbulb, label: "Tip", action: () => insertText("\nTip: ", "\n") },
-        { icon: CheckCircle2, label: "Summary", action: () => insertText("\nKey Takeaway: ", "\n") },
-        { icon: LinkIcon, label: "Link", action: () => insertText("[", "](url)") },
+        { 
+            icon: Heading1, 
+            label: "H1", 
+            active: editor.isActive("heading", { level: 1 }),
+            action: () => editor.chain().focus().toggleHeading({ level: 1 }).run() 
+        },
+        { 
+            icon: Heading2, 
+            label: "H2", 
+            active: editor.isActive("heading", { level: 2 }),
+            action: () => editor.chain().focus().toggleHeading({ level: 2 }).run() 
+        },
+        { 
+            icon: Heading3, 
+            label: "H3", 
+            active: editor.isActive("heading", { level: 3 }),
+            action: () => editor.chain().focus().toggleHeading({ level: 3 }).run() 
+        },
+        { 
+            icon: Bold, 
+            label: "Bold", 
+            active: editor.isActive("bold"),
+            action: () => editor.chain().focus().toggleBold().run() 
+        },
+        { 
+            icon: Italic, 
+            label: "Italic", 
+            active: editor.isActive("italic"),
+            action: () => editor.chain().focus().toggleItalic().run() 
+        },
+        { 
+            icon: List, 
+            label: "Bullets", 
+            active: editor.isActive("bulletList"),
+            action: () => editor.chain().focus().toggleBulletList().run() 
+        },
+        { 
+            icon: ListOrdered, 
+            label: "Ordered", 
+            active: editor.isActive("orderedList"),
+            action: () => editor.chain().focus().toggleOrderedList().run() 
+        },
+        { 
+            icon: Quote, 
+            label: "Quote", 
+            active: editor.isActive("blockquote"),
+            action: () => editor.chain().focus().toggleBlockquote().run() 
+        },
+        { 
+            icon: Lightbulb, 
+            label: "Tip", 
+            active: false,
+            action: () => {
+                // Using a blockquote styling for tips in the editor for now
+                editor.chain().focus().toggleBlockquote().run();
+            } 
+        },
+        { 
+            icon: LinkIcon, 
+            label: "Link", 
+            active: editor.isActive("link"),
+            action: () => {
+                const url = window.prompt("Enter URL");
+                if (url) {
+                    editor.chain().focus().setLink({ href: url }).run();
+                }
+            } 
+        },
     ];
 
     return (
@@ -55,7 +93,11 @@ export default function EditorToolbar({ textareaRef, value, onChange }: EditorTo
                     key={idx}
                     type="button"
                     onClick={tool.action}
-                    className="p-2 hover:bg-white hover:text-royal-blue rounded-lg transition-all flex items-center gap-1.5 text-slate-600 font-bold text-xs uppercase tracking-tighter group"
+                    className={`p-2 rounded-lg transition-all flex items-center gap-1.5 font-bold text-xs uppercase tracking-tighter group ${
+                        tool.active 
+                        ? "bg-royal-blue text-white" 
+                        : "hover:bg-white text-slate-600 hover:text-royal-blue"
+                    }`}
                     title={tool.label}
                 >
                     <tool.icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
@@ -64,7 +106,7 @@ export default function EditorToolbar({ textareaRef, value, onChange }: EditorTo
             ))}
             <div className="flex-1" />
             <div className="px-3 py-1 bg-sky-blue/10 rounded-full">
-                <span className="text-[10px] font-black text-royal-blue uppercase tracking-widest">Editor Mode</span>
+                <span className="text-[10px] font-black text-royal-blue uppercase tracking-widest">Live Editor</span>
             </div>
         </div>
     );
