@@ -70,6 +70,35 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
                 .tiptap:focus {
                     outline: none;
                 }
+                /* Professional Visual Fixes for Editor */
+                .tiptap h1 {
+                    font-size: 2.5rem;
+                    font-weight: 900;
+                    margin-top: 2rem;
+                    margin-bottom: 1.5rem;
+                }
+                .tiptap h2 {
+                    font-size: 1.8rem;
+                    font-weight: 800;
+                    margin-top: 1.5rem;
+                    margin-bottom: 1rem;
+                }
+                .tiptap ul {
+                    list-style-type: disc !important;
+                    padding-left: 2rem !important;
+                    margin: 1rem 0 !important;
+                }
+                .tiptap ol {
+                    list-style-type: decimal !important;
+                    padding-left: 2rem !important;
+                    margin: 1rem 0 !important;
+                }
+                .tiptap li {
+                    margin-bottom: 0.5rem;
+                }
+                .tiptap strong {
+                    font-weight: 900;
+                }
             `}</style>
         </div>
     );

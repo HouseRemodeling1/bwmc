@@ -59,21 +59,6 @@ export default function EditorToolbar({ editor }: EditorToolbarProps) {
             action: () => editor.chain().focus().toggleOrderedList().run() 
         },
         { 
-            icon: Quote, 
-            label: "Quote", 
-            active: editor.isActive("blockquote"),
-            action: () => editor.chain().focus().toggleBlockquote().run() 
-        },
-        { 
-            icon: Lightbulb, 
-            label: "Tip", 
-            active: false,
-            action: () => {
-                // Using a blockquote styling for tips in the editor for now
-                editor.chain().focus().toggleBlockquote().run();
-            } 
-        },
-        { 
             icon: LinkIcon, 
             label: "Link", 
             active: editor.isActive("link"),
