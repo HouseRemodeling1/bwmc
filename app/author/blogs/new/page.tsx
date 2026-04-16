@@ -1,16 +1,10 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { motion } from "framer-motion";
-import { ArrowLeft, Save } from "lucide-react";
-import SeoAgent from "@/components/SeoAgent";
-import FileUpload from "@/components/FileUpload";
-import { BLOG_CATEGORIES } from "@/lib/constants";
+import { useRef } from "react";
+import EditorToolbar from "@/components/EditorToolbar";
+import { formatBlogContent, normalizeText } from "@/lib/content-formatter";
 
 export default function AuthorNewBlog() {
     const router = useRouter();
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [loading, setLoading] = useState(false);
     const [author, setAuthor] = useState<{ id: string; name: string } | null>(null);
     const [formData, setFormData] = useState({
@@ -28,6 +22,7 @@ export default function AuthorNewBlog() {
         seoScore: 0,
         readingTime: 0,
     });
+    const [previewHtml, setPreviewHtml] = useState("");
 
     useEffect(() => {
         fetch("/api/author-auth/me")
@@ -37,6 +32,10 @@ export default function AuthorNewBlog() {
                 setAuthor(data.author);
             });
     }, [router]);
+
+    useEffect(() => {
+        setPreviewHtml(formatBlogContent(formData.content));
+    }, [formData.content]);
 
     const set = (fields: Partial<typeof formData>) => setFormData(prev => ({ ...prev, ...fields }));
 
@@ -70,112 +69,165 @@ export default function AuthorNewBlog() {
 
     if (!author) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
                 <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-royal-blue" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 pt-24">
-            <header className="bg-white border-b border-gray-200">
-                <div className="max-w-4xl mx-auto px-6 py-4">
-                    <Link href="/author/dashboard" className="inline-flex items-center gap-2 text-gray-600 hover:text-royal-blue transition-colors">
-                        <ArrowLeft className="w-5 h-5" /> Back to My Posts
-                    </Link>
+        <div className="min-h-screen bg-slate-50">
+            <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
+                <div className="max-w-[1800px] mx-auto px-8 py-4 flex items-center justify-between">
+                    <div className="flex items-center gap-6">
+                        <Link href="/author/dashboard" className="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                            <ArrowLeft className="w-6 h-6 text-slate-500" />
+                        </Link>
+                        <h1 className="text-xl font-bold text-navy uppercase tracking-tighter">Draft New Article</h1>
+                        <span className="text-xs bg-sky-blue/10 text-royal-blue px-3 py-1 rounded-full font-black uppercase tracking-widest">
+                            Author: {author.name}
+                        </span>
+                    </div>
+                    
+                    <div className="flex items-center gap-4">
+                        <button onClick={handleSubmit} disabled={loading}
+                            className="flex items-center gap-2 bg-royal-blue text-white font-bold px-8 py-2 rounded-full hover:bg-navy transition-all disabled:opacity-50 shadow-lg shadow-royal-blue/20">
+                            <Save className="w-4 h-4" />
+                            {loading ? "Publishing..." : "Publish Post"}
+                        </button>
+                    </div>
                 </div>
             </header>
 
-            <main className="max-w-4xl mx-auto px-6 py-8">
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-xl shadow-md p-8">
-                    <h1 className="text-3xl font-bold text-navy mb-2">Write New Post</h1>
-                    <p className="text-gray-500 mb-8">Publishing as <span className="font-semibold text-royal-blue">{author.name}</span></p>
+            <main className="max-w-[1800px] mx-auto p-8">
+                <div className="grid lg:grid-cols-2 gap-8">
+                    {/* LEFT PANEL: EDITOR */}
+                    <div className="space-y-8">
+                        <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 space-y-6">
+                            <div>
+                                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 text-justify">Post Headline</label>
+                                <input type="text" value={formData.title}
+                                    onChange={(e) => handleTitleChange(e.target.value)}
+                                    className="w-full text-3xl font-black text-navy border-none focus:ring-0 p-0 placeholder:text-slate-200"
+                                    placeholder="Click to enter title..." required />
+                            </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
-                            <input type="text" value={formData.title}
-                                onChange={(e) => handleTitleChange(e.target.value)}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy"
-                                placeholder="Enter your post title" required />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                URL Slug <span className="text-gray-400 font-normal">(auto-generated)</span>
-                            </label>
-                            <div className="flex items-center gap-2">
-                                <span className="text-gray-400 text-sm">bwmc.ae/blog/</span>
+                            <div className="flex items-center gap-4 text-sm">
+                                <span className="text-slate-400 uppercase font-black text-[10px] tracking-widest">Permalink:</span>
                                 <input type="text" value={formData.slug}
                                     onChange={(e) => set({ slug: e.target.value })}
-                                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-sm text-navy" />
+                                    className="bg-slate-50 px-3 py-1 rounded border-none text-royal-blue font-medium focus:ring-1 focus:ring-royal-blue" />
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 text-justify">Brief Excerpt</label>
+                                <textarea value={formData.excerpt}
+                                    onChange={(e) => set({ excerpt: e.target.value })}
+                                    className="w-full bg-slate-50 px-4 py-3 rounded-2xl border-none focus:ring-2 focus:ring-royal-blue outline-none text-navy italic"
+                                    placeholder="Write a compelling summary..." rows={2} required />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <FileUpload 
+                                    defaultValue={formData.coverImage}
+                                    onUpload={(url) => set({ coverImage: url })}
+                                />
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 text-justify">Category</label>
+                                        <select value={formData.category} onChange={(e) => set({ category: e.target.value })}
+                                            className="w-full bg-slate-50 px-4 py-3 rounded-xl border-none focus:ring-2 focus:ring-royal-blue outline-none text-navy font-bold">
+                                            {BLOG_CATEGORIES.map(cat => (
+                                                <option key={cat} value={cat}>{cat}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                        <input type="checkbox" id="published" checked={formData.published}
+                                            onChange={(e) => set({ published: e.target.checked })}
+                                            className="w-5 h-5 text-royal-blue border-slate-300 rounded" />
+                                        <label htmlFor="published" className="text-xs font-black text-slate-600 uppercase tracking-wider">Visible to Public</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Excerpt *</label>
-                            <textarea value={formData.excerpt}
-                                onChange={(e) => set({ excerpt: e.target.value })}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none text-navy"
-                                placeholder="A short summary shown on the blog listing page" rows={2} required />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Content *</label>
-                            <textarea value={formData.content}
+                        <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                            <EditorToolbar 
+                                textareaRef={textareaRef} 
+                                value={formData.content} 
+                                onChange={(val) => set({ content: val })} 
+                            />
+                            <textarea
+                                ref={textareaRef}
+                                value={formData.content}
                                 onChange={(e) => set({ content: e.target.value })}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none font-mono text-sm text-navy"
-                                placeholder="Write your full article here... (supports HTML tags like <h2>, <p>, <strong>, <ul>)"
-                                rows={18} required />
-                            <p className="text-xs text-gray-400 mt-1">
-                                Tip: Use HTML tags like &lt;h2&gt;, &lt;p&gt;, &lt;strong&gt;, &lt;ul&gt;&lt;li&gt; for formatting.
-                            </p>
+                                className="w-full px-8 py-6 border-none focus:ring-0 font-mono text-sm text-navy min-h-[600px] resize-none"
+                                placeholder="Start writing or paste your content..." required />
                         </div>
 
-                        <FileUpload 
-                            defaultValue={formData.coverImage}
-                            onUpload={(url) => set({ coverImage: url })}
-                        />
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                            <select value={formData.category} onChange={(e) => set({ category: e.target.value })}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none">
-                                {BLOG_CATEGORIES.map(cat => (
-                                    <option key={cat} value={cat}>{cat}</option>
-                                ))}
-                            </select>
-                        </div>
-
-                        {/* AI SEO Agent */}
-                        <div>
+                        <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-8">
                             <SeoAgent
                                 formData={{ title: formData.title, excerpt: formData.excerpt, content: formData.content, category: formData.category, slug: formData.slug }}
                                 onApply={(fields) => set(fields as any)}
                             />
                         </div>
+                    </div>
 
-                        <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-                            <input type="checkbox" id="published" checked={formData.published}
-                                onChange={(e) => set({ published: e.target.checked })}
-                                className="w-5 h-5 text-royal-blue border-gray-300 rounded focus:ring-royal-blue" />
-                            <div>
-                                <label htmlFor="published" className="text-sm font-semibold text-gray-700">Publish immediately</label>
-                                <p className="text-xs text-gray-400">{formData.published ? "Will be visible on the blog" : "Will be saved as a draft"}</p>
+                    {/* RIGHT PANEL: LIVE PREVIEW */}
+                    <div className="sticky top-[100px] h-fit">
+                        <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden">
+                            <div className="bg-navy px-8 py-3 flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <span className="text-xs font-black text-sky-blue uppercase tracking-widest">Article Preview</span>
+                                    <div className="flex gap-1.5">
+                                        <div className="w-2 h-2 rounded-full bg-red-500" />
+                                        <div className="w-2 h-2 rounded-full bg-yellow-500" />
+                                        <div className="w-2 h-2 rounded-full bg-green-500" />
+                                    </div>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const clean = normalizeText(formData.content);
+                                        set({ content: clean });
+                                    }}
+                                    className="text-[10px] font-black bg-royal-blue text-white px-3 py-1 rounded-full hover:bg-white hover:text-navy transition-all uppercase tracking-tighter"
+                                >
+                                    ✨ AI Cleanup
+                                </button>
+                            </div>
+                            <div className="h-[calc(100vh-250px)] overflow-y-auto p-12 bg-white">
+                                {formData.title && (
+                                    <h1 className="text-4xl font-black text-navy mb-10 leading-tight uppercase tracking-tight">{formData.title}</h1>
+                                )}
+                                
+                                <article 
+                                    className="prose prose-lg prose-slate max-w-none 
+                                    prose-headings:text-navy prose-headings:font-black
+                                    prose-p:leading-[1.8] prose-p:text-gray-700 prose-p:text-justify prose-p:mb-8 prose-p:text-lg
+                                    prose-strong:text-navy prose-strong:font-bold
+                                    prose-img:rounded-3xl prose-img:shadow-xl
+                                    prose-ul:text-gray-700 prose-ul:space-y-3"
+                                    dangerouslySetInnerHTML={{ __html: previewHtml }}
+                                />
+
+                                {!formData.content && (
+                                    <div className="flex flex-col items-center justify-center h-[400px] text-slate-300 space-y-4">
+                                        <div className="w-16 h-16 rounded-full border-2 border-dashed border-slate-200 flex items-center justify-center">
+                                            <Save className="w-8 h-8" />
+                                        </div>
+                                        <p className="font-black uppercase tracking-widest text-xs">Preview Area Loading...</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
-
-                        <div className="flex gap-4 pt-2">
-                            <button type="submit" disabled={loading}
-                                className="flex items-center gap-2 bg-gradient-to-r from-royal-blue to-sky-blue text-white font-semibold px-8 py-3 rounded-lg hover:shadow-lg transition-all disabled:opacity-50">
-                                <Save className="w-5 h-5" />
-                                {loading ? "Publishing..." : formData.published ? "Publish Post" : "Save Draft"}
-                            </button>
-                            <Link href="/author/dashboard"
-                                className="px-8 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all">Cancel</Link>
-                        </div>
-                    </form>
-                </motion.div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    );
+}
             </main>
         </div>
     );
