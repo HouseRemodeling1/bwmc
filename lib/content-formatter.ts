@@ -130,11 +130,18 @@ export function formatBlogContent(content: string): string {
 }
 
 /**
- * Helper to handle bold, links, and other inline styles
+ * Helper to handle bold, italic, links, and other inline styles
  */
 function formatInlineStyles(text: string): string {
+    if (!text) return "";
+    
     return text
-        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-        .replace(/__(.*?)__/g, "<strong>$1</strong>")
+        // Bold: handles **bold** and __bold__, including multi-line
+        .replace(/\*\*((?:.|\n)*?)\*\*/g, "<strong>$1</strong>")
+        .replace(/__(?:.|\n)*?__/g, "<strong>$1</strong>")
+        // Italic: handles *italic* and _italic_, including multi-line
+        .replace(/_((?:.|\n)*?)_/g, "<em>$1</em>")
+        .replace(/\*((?:.|\n)*?)\*/g, "<em>$1</em>")
+        // Links: [text](url)
         .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-royal-blue hover:underline font-bold cursor-pointer relative z-10">$1</a>');
 }
