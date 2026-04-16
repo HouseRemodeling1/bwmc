@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Save } from "lucide-react";
 import SeoAgent from "@/components/SeoAgent";
 import FileUpload from "@/components/FileUpload";
+import { normalizeText } from "@/lib/content-formatter";
 
 export default function EditBlog({ params }: { params: Promise<{ id: string }> }) {
     const { id } = React.use(params);
@@ -145,9 +146,19 @@ export default function EditBlog({ params }: { params: Promise<{ id: string }> }
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Content *
-                            </label>
+                            <div className="flex items-center justify-between mb-2">
+                                <label className="block text-sm font-medium text-gray-700">Content *</label>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const clean = normalizeText(formData.content);
+                                        setFormData(prev => ({ ...prev, content: clean }));
+                                    }}
+                                    className="text-xs font-bold text-royal-blue hover:text-navy transition-colors flex items-center gap-1"
+                                >
+                                    ✨ Clean & Format Content
+                                </button>
+                            </div>
                             <textarea
                                 value={formData.content}
                                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
@@ -155,6 +166,7 @@ export default function EditBlog({ params }: { params: Promise<{ id: string }> }
                                 rows={15}
                                 required
                             />
+                            <p className="text-xs text-gray-500 mt-1">Tip: Paste your article and click "Clean & Format" to fix alignment and bullet points.</p>
                         </div>
 
                         <div>

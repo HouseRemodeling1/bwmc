@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Save } from "lucide-react";
 import SeoAgent from "@/components/SeoAgent";
 import FileUpload from "@/components/FileUpload";
+import { normalizeText } from "@/lib/content-formatter";
 
 export default function NewBlog() {
     const router = useRouter();
@@ -105,12 +106,24 @@ export default function NewBlog() {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Content *</label>
+                            <div className="flex items-center justify-between mb-2">
+                                <label className="block text-sm font-medium text-gray-700">Content *</label>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const clean = normalizeText(formData.content);
+                                        set({ content: clean });
+                                    }}
+                                    className="text-xs font-bold text-royal-blue hover:text-navy transition-colors flex items-center gap-1"
+                                >
+                                    ✨ Clean & Format Content
+                                </button>
+                            </div>
                             <textarea value={formData.content}
                                 onChange={(e) => set({ content: e.target.value })}
                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-royal-blue outline-none font-mono text-sm text-navy"
                                 placeholder="Write your blog content here... (supports HTML)" rows={15} required />
-                            <p className="text-xs text-gray-500 mt-1">Tip: You can use HTML tags like &lt;p&gt;, &lt;h2&gt;, &lt;strong&gt;, &lt;ul&gt;, etc.</p>
+                            <p className="text-xs text-gray-500 mt-1">Tip: Paste your article and click "Clean & Format" to fix alignment and bullet points.</p>
                         </div>
 
                         <FileUpload 

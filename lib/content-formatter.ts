@@ -1,25 +1,42 @@
 /**
+ * Normalizes messy text from Word, ChatGPT, or PDFs.
+ * Handles smart quotes, non-standard bullets, and weird whitespace.
+ */
+export function normalizeText(text: string): string {
+    if (!text) return "";
+    
+    return text
+        // Normalize line endings
+        .replace(/\r\n/g, "\n")
+        // Replace non-breaking spaces
+        .replace(/\u00A0/g, " ")
+        // Replace smart quotes
+        .replace(/[“”]/g, '"')
+        .replace(/[‘’]/g, "'")
+        // Replace long dashes (em dash, en dash) with standard dash
+        .replace(/[—–]/g, "-")
+        // Replace various bullet points with standard markdown dash
+        .replace(/[•⁃‣○●]/g, "-")
+        // Add double newlines before common headings that are stuck to previous text
+        .replace(/([.!?])\s*(Why|How|The|Conclusion|Summary|Important)[:.-]/gi, "$1\n\n$2")
+        // Clean up multiple spaces
+        .replace(/ {2,}/g, " ")
+        .trim();
+}
+
+/**
  * Converts raw text or Markdown-like content into structured HTML for the blog.
- * Handles paragraphs, bold text, and detected headers with improved intelligence.
  */
 export function formatBlogContent(content: string): string {
     if (!content) return "";
 
-    // 1. Normalize line endings
-    let raw = content.replace(/\r\n/g, "\n").trim();
+    // 1. Normalize and clean the text
+    let raw = normalizeText(content);
 
     // 2. Pre-process text to insert double newlines before "Step X:" if they are missing
     // This helps split paragraphs that were concatenated as a wall of text.
     // Example: " ...registration. Step 11: Register..." -> " ...registration.\n\nStep 11: Register..."
     raw = raw.replace(/([.!?])\s*(Step\s+\d+[:.-])/g, "$1\n\n$2");
-    raw = raw.replace(/([.!?])\s*(How\s+to\s+)/gi, "$1\n\n$2");
-    
-    // 3. Handle specific patterns that often start new sections
-    // This looks for " Why ...", " How ...", " Summary", " Conclusion" etc. after a period.
-    raw = raw.replace(/([.!?])\s*(Why\s+[A-Z][^.!?]{5,80})/g, "$1\n\n$2");
-    raw = raw.replace(/([.!?])\s*(How\s+to\s+[^.!?]{10,80})/gi, "$1\n\n$2");
-    raw = raw.replace(/([.!?])\s*(The\s+[A-Z][^.!?]{5,80})/g, "$1\n\n$2");
-    raw = raw.replace(/([.!?])\s*(Conclusion|Summary|Important)[:.-]/gi, "$1\n\n$2");
 
     // Split dense text that lacks double newlines but has period + space + Capital
     // raw = raw.replace(/([.!?])\s+([A-Z])/g, "$1\n\n$2"); // Too aggressive? Let's try it for specific cases.
