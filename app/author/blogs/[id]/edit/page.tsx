@@ -1,4 +1,13 @@
-import { useRef } from "react";
+"use client";
+
+import React, { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { ArrowLeft, Save } from "lucide-react";
+import SeoAgent from "@/components/SeoAgent";
+import FileUpload from "@/components/FileUpload";
+import { BLOG_CATEGORIES } from "@/lib/constants";
 import EditorToolbar from "@/components/EditorToolbar";
 import { formatBlogContent, normalizeText } from "@/lib/content-formatter";
 
