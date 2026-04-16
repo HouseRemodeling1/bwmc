@@ -38,8 +38,11 @@ export default function AuthorEditBlog({ params }: { params: Promise<{ id: strin
             .then(r => r?.json())
             .then(blog => {
                 if (!blog) return;
-                setFormData(blog);
-                setPreviewHtml(formatBlogContent(blog.content));
+                
+                // Convert Markdown to HTML for the visual editor if needed
+                const initialContent = formatBlogContent(blog.content);
+                setFormData({ ...blog, content: initialContent });
+                setPreviewHtml(initialContent);
                 setLoading(false);
             });
     }, [id, router]);
@@ -81,7 +84,7 @@ export default function AuthorEditBlog({ params }: { params: Promise<{ id: strin
 
     return (
         <div className="min-h-screen bg-slate-50">
-            <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
+            <header className="bg-white border-b border-slate-200 sticky top-0 z-[500]">
                 <div className="max-w-[1800px] mx-auto px-8 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-6">
                         <Link href="/author/dashboard" className="p-2 hover:bg-slate-100 rounded-full transition-colors">

@@ -9,9 +9,10 @@ import { MapPin, Phone, Mail, Clock, ArrowRight } from "lucide-react";
 export default function Footer() {
     const pathname = usePathname();
     const isLandingPage = pathname === "/global-setup" || pathname === "/uae-setup" || pathname === "/ecommerce-license";
+    const isAuthorPage = pathname?.startsWith("/author");
     const isAdminPage = pathname?.startsWith("/admin");
 
-    if (isAdminPage) return null;
+    if (isAdminPage || isAuthorPage) return null;
 
     return (
         <footer className={`${isLandingPage ? "bg-[#001B44]" : "bg-[#111] pt-16"} text-white`}>
