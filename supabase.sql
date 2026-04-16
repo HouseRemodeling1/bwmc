@@ -114,8 +114,8 @@ alter table blogs
 insert into authors (id, name, username, password_hash, role) values
 (gen_random_uuid()::text, 'Mohammad Fazil', 'fazil', '7466986615b3c58e727e44a04629f6de35c444bb272e616ccfedd2919d8731d7', 'Writer'),
 (gen_random_uuid()::text, 'Nancy', 'nancy', '7466986615b3c58e727e44a04629f6de35c444bb272e616ccfedd2919d8731d7', 'Writer'),
-(gen_random_uuid()::text, 'Auf', 'auf', '7466986615b3c58e727e44a04629f6de35c444bb272e616ccfedd2919d8731d7', 'Writer'),
-(gen_random_uuid()::text, 'Barkha', 'barkha', '7466986615b3c58e727e44a04629f6de35c444bb272e616ccfedd2919d8731d7', 'Writer')
+(gen_random_uuid()::text, 'Abdul Rahman Auf', 'auf', '7466986615b3c58e727e44a04629f6de35c444bb272e616ccfedd2919d8731d7', 'Writer'),
+(gen_random_uuid()::text, 'Barkha Singh', 'barkha', '7466986615b3c58e727e44a04629f6de35c444bb272e616ccfedd2919d8731d7', 'Writer')
 on conflict (username) do nothing;
 
 -- 6. SEO Autopilot Tables (Keyword Ideas + Writing Styles)

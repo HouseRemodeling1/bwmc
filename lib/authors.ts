@@ -25,6 +25,22 @@ function headers() {
   };
 }
 
+/**
+ * Helper to ensure names are always displayed as full names
+ */
+export function transformAuthor(author: Author): Author {
+  const nameMap: Record<string, string> = {
+    "Auf": "Abdul Rahman Auf",
+    "Barkha": "Barkha Singh",
+    "Nancy": "Nancy",
+  };
+
+  if (nameMap[author.name]) {
+    return { ...author, name: nameMap[author.name] };
+  }
+  return author;
+}
+
 export async function getAuthors(): Promise<Author[]> {
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/authors?select=id,name,bio,avatar,role,username,linkedin,twitter,instagram,website,createdAt&order=createdAt.desc`, {
@@ -32,7 +48,8 @@ export async function getAuthors(): Promise<Author[]> {
       cache: "no-store",
     });
     if (!res.ok) throw new Error(`Failed to fetch authors: ${await res.text()}`);
-    return res.json();
+    const data: Author[] = await res.json();
+    return data.map(transformAuthor);
   } catch (error) {
     console.error("getAuthors error:", error);
     return [];
@@ -47,7 +64,7 @@ export async function getAuthorById(id: string): Promise<Author | null> {
     });
     if (!res.ok) return null;
     const data = await res.json();
-    return data[0] ?? null;
+    return data[0] ? transformAuthor(data[0]) : null;
   } catch (error) {
     console.error(`getAuthorById(${id}) error:`, error);
     return null;
@@ -62,7 +79,7 @@ export async function saveAuthor(author: Partial<Author> & { id?: string }): Pro
   });
   if (!res.ok) throw new Error(`Failed to save author: ${await res.text()}`);
   const data = await res.json();
-  return data[0];
+  return data[0] ? transformAuthor(data[0]) : data[0];
 }
 
 export async function deleteAuthor(id: string): Promise<void> {
@@ -82,7 +99,7 @@ export async function getAuthorByUsername(username: string): Promise<Author | nu
     );
     if (!res.ok) return null;
     const data = await res.json();
-    return data[0] ?? null;
+    return data[0] ? transformAuthor(data[0]) : null;
   } catch (error) {
     console.error(`getAuthorByUsername(${username}) error:`, error);
     return null;
