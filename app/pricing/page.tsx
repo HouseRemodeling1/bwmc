@@ -73,20 +73,23 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
       {/* Hero */}
-      <div className="bg-slate-900 text-white py-24 px-4 text-center relative overflow-hidden">
+      <div className="bg-[#1A2B4C] text-white py-24 px-4 text-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/30 to-transparent pointer-events-none" />
         <div className="max-w-3xl mx-auto relative z-10">
-          <Badge className="mb-4 bg-primary/20 text-primary border-primary/30 py-1 px-4 font-black">TRANSPARENT PRICING</Badge>
-          <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight">Choose the Best Plan <br /> <span className="text-primary">for Your Growth</span></h1>
-          <p className="text-slate-400 text-lg font-medium">Whether you are selling a business, raising capital, or looking for deals - we have a plan for you.</p>
+          <Badge className="mb-4 bg-yellow-400/20 text-yellow-300 border-yellow-400/30 py-1 px-4 font-black">TRANSPARENT PRICING</Badge>
+          <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight">
+            Choose the Best Plan <br /> <span className="text-yellow-400">for Your Growth</span>
+          </h1>
+          <p className="text-slate-300 text-lg font-medium max-w-xl mx-auto">Whether you are selling a business, raising capital, or looking for deals — we have a plan for you.</p>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 -mt-10 relative z-20 space-y-24">
         {/* Buy/Sell Business Plans */}
         <section>
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-black text-slate-800 mb-2">Buy/Sell Business</h2>
-            <p className="text-slate-500 font-bold">One-time payments for listing visibility</p>
+          <div className="text-center mb-12 pt-8">
+            <h2 className="text-3xl font-black text-slate-900 mb-2">Buy/Sell Business</h2>
+            <p className="text-slate-500 font-semibold">One-time payments for listing visibility</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
