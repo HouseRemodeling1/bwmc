@@ -50,7 +50,7 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
     }, [value, editor]);
 
     return (
-        <div className="w-full bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-inner group transition-all focus-within:ring-2 focus-within:ring-royal-blue/20">
+        <div className="w-full bg-white rounded-3xl border border-slate-200 shadow-inner group transition-all focus-within:ring-2 focus-within:ring-royal-blue/20">
             <EditorToolbar editor={editor} />
             <div className="editor-container">
                 <EditorContent editor={editor} />
