@@ -70,7 +70,7 @@ export default function MarketplacePage() {
           <div className="flex flex-wrap justify-center gap-4">
             {user && (
               <Link href="/business/my-listings">
-                <Button size="lg" variant="outline" className="border-slate-700 text-white hover:bg-slate-800 px-8 h-12 rounded-full font-bold">
+                <Button size="lg" variant="outline" className="border-white text-slate-900 bg-white hover:bg-yellow-400 hover:border-yellow-400 px-8 h-12 rounded-full font-bold">
                   <LayoutDashboard className="mr-2 h-5 w-5" /> My Listings
                 </Button>
               </Link>

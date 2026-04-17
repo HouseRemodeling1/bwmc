@@ -64,7 +64,7 @@ export default function Header() {
 
                     {/* Desktop Navigation */}
                     {!isGlobalSetup && (
-                        <nav className="hidden lg:flex items-center gap-8 whitespace-nowrap flex-1 justify-center">
+                        <nav className="hidden lg:flex items-center gap-6 whitespace-nowrap flex-1 justify-center pl-8">
                             {mainNav.map((item) => (
                                 <div
                                     key={item.name}
@@ -110,8 +110,8 @@ export default function Header() {
                         </nav>
                     )}
 
-                    {/* Desktop CTA */}
-                    <div className={`hidden lg:flex items-center gap-4`}>
+                    {/* Desktop CTA — separated from nav */}
+                    <div className={`hidden lg:flex items-center gap-3 pl-6 border-l border-white/20`}>
                         {isGlobalSetup ? (
                             <>
                                 <a href="https://wa.me/971543097850" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-semibold bg-[#25D366] text-white hover:bg-[#128C7E] transition-all">
