@@ -27,7 +27,7 @@ export function BusinessCard({ business }: BusinessCardProps) {
         <div className="relative h-48 w-full">
           <Image
             src={business.images?.[0] || '/placeholder-business.jpg'}
-            alt={business.business_name}
+            alt={`${business.industry} Business in ${business.location}`}
             fill
             className="object-cover"
           />
@@ -45,7 +45,7 @@ export function BusinessCard({ business }: BusinessCardProps) {
         <CardContent className="p-5">
           <div className="flex justify-between items-start mb-2">
             <h3 className="font-bold text-lg text-slate-800 line-clamp-1">
-              {business.business_name}
+              {business.industry} Business in {business.location}
             </h3>
           </div>
           

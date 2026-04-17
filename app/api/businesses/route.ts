@@ -41,8 +41,9 @@ export async function POST(request: Request) {
   
   const body = await request.json()
   
-  // Generate slug from business name
-  const slug = body.business_name
+  // Generate slug from industry and location to hide business name
+  const slugBase = `${body.industry || 'business'}-${body.location || 'uae'}`;
+  const slug = slugBase
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '') + '-' + Math.random().toString(36).substring(2, 7);

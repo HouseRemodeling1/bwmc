@@ -50,7 +50,8 @@ export default function MarketplacePage() {
   }
 
   const filteredBusinesses = businesses.filter(b => 
-    b.business_name.toLowerCase().includes(search.toLowerCase()) ||
+    b.industry.toLowerCase().includes(search.toLowerCase()) ||
+    b.location.toLowerCase().includes(search.toLowerCase()) ||
     b.description.toLowerCase().includes(search.toLowerCase())
   )
 

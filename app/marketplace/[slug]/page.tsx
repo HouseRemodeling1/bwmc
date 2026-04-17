@@ -24,6 +24,7 @@ import {
 import Link from 'next/link'
 import { Business } from '@/types/business'
 import { OwnerControls } from '@/components/marketplace/OwnerControls'
+import { ContactSellerModal } from '@/components/marketplace/ContactSellerModal'
 
 export default async function BusinessDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -78,7 +79,7 @@ export default async function BusinessDetailPage({ params }: { params: Promise<{
             <div className="relative h-[400px] rounded-3xl overflow-hidden shadow-2xl bg-slate-200">
               <Image 
                 src={business.images?.[0] || '/placeholder-business.jpg'} 
-                alt={business.business_name}
+                alt={`${business.industry} Business in ${business.location}`}
                 fill
                 className="object-cover"
               />
@@ -104,7 +105,7 @@ export default async function BusinessDetailPage({ params }: { params: Promise<{
                   <MapPin className="w-4 h-4" /> {business.location}, {business.emirates}
                 </div>
               </div>
-              <h1 className="text-4xl font-black text-slate-900 mb-4 tracking-tight">{business.business_name}</h1>
+              <h1 className="text-4xl font-black text-slate-900 mb-4 tracking-tight">{business.industry} Business in {business.location}</h1>
               <p className="text-slate-500 text-lg leading-relaxed">{business.description.substring(0, 300)}...</p>
             </div>
 
@@ -207,9 +208,7 @@ export default async function BusinessDetailPage({ params }: { params: Promise<{
                   </div>
                 </div>
 
-                <Button className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black text-lg shadow-lg shadow-primary/20 mb-4">
-                  <MessageSquare className="mr-2 h-5 w-5" /> Contact Seller
-                </Button>
+                <ContactSellerModal businessId={business.id} businessTitle={`${business.industry} Business in ${business.location}`} />
                 
                 <p className="text-center text-slate-400 text-[10px] font-bold uppercase tracking-widest">
                   Secure Inquiry System with NDA
