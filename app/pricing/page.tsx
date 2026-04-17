@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Check, ShieldCheck, Zap, Rocket, Star, Globe } from "lucide-react"
+import Link from "next/link"
 
 export default function PricingPage() {
   const businessPlans = [
@@ -13,6 +14,7 @@ export default function PricingPage() {
       features: ["3 Photos", "Standard Placement", "Basic Analytics"],
       icon: <Globe className="w-6 h-6 text-slate-400" />,
       buttonText: "List Free",
+      href: "/business/sell",
       popular: false
     },
     {
@@ -22,6 +24,7 @@ export default function PricingPage() {
       features: ["Unlimited Photos", "Top of Category", "Verified Badge", "Detailed Analytics"],
       icon: <Zap className="w-6 h-6 text-orange-500" />,
       buttonText: "Go Featured",
+      href: "/contact",
       popular: true
     },
     {
@@ -31,6 +34,7 @@ export default function PricingPage() {
       features: ["Top + Homepage", "Verified Badge", "Advanced Leads", "Buyer Email Blast"],
       icon: <Star className="w-6 h-6 text-primary" />,
       buttonText: "Go Premium",
+      href: "/contact",
       popular: false
     }
   ]
@@ -40,20 +44,23 @@ export default function PricingPage() {
       name: "Free",
       price: "0",
       features: ["Basic Profile", "Public Listing"],
-      icon: <Rocket className="w-5 h-5 text-slate-400" />
+      icon: <Rocket className="w-5 h-5 text-slate-400" />,
+      href: "/startups"
     },
     {
       name: "Verified",
       price: "1,000",
       features: ["Enhanced Profile", "Pitch Deck Upload", "Verified Badge", "Basic Analytics"],
       icon: <ShieldCheck className="w-5 h-5 text-green-500" />,
-      popular: true
+      popular: true,
+      href: "/contact"
     },
     {
       name: "Premium",
       price: "2,500",
       features: ["Full Profile", "Pitch Deck + Video", "30 Days Featured", "5 Investor Intros"],
-      icon: <Star className="w-5 h-5 text-primary" />
+      icon: <Star className="w-5 h-5 text-primary" />,
+      href: "/contact"
     }
   ]
 
@@ -105,9 +112,11 @@ export default function PricingPage() {
                     ))}
                   </ul>
                   
-                  <Button className={`w-full h-14 rounded-2xl font-black text-lg ${plan.popular ? "bg-primary text-white hover:bg-primary/90" : "bg-slate-900 text-white hover:bg-slate-950"}`}>
-                    {plan.buttonText}
-                  </Button>
+                  <Link href={plan.href}>
+                    <Button className={`w-full h-14 rounded-2xl font-black text-lg ${plan.popular ? "bg-primary text-white hover:bg-primary/90" : "bg-slate-900 text-white hover:bg-slate-950"}`}>
+                      {plan.buttonText}
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
             ))}
@@ -143,9 +152,11 @@ export default function PricingPage() {
                     ))}
                   </ul>
                   
-                  <Button variant="outline" className={`w-full rounded-2xl h-12 font-bold ${plan.popular ? "border-primary text-primary" : "border-slate-200 text-slate-500"}`}>
-                    Select {plan.name}
-                  </Button>
+                  <Link href={plan.href}>
+                    <Button variant="outline" className={`w-full rounded-2xl h-12 font-bold ${plan.popular ? "border-primary text-primary" : "border-slate-200 text-slate-500"}`}>
+                      Select {plan.name}
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
             ))}
