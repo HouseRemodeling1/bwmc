@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Plus, FileText, LogOut, Users, Zap } from "lucide-react";
+import { Plus, FileText, LogOut, Users, Zap, Briefcase } from "lucide-react";
 
 interface Blog {
     id: string;
@@ -85,6 +85,13 @@ export default function AdminDashboard() {
                         >
                             <Zap className="w-5 h-5 text-sky-blue" />
                             SEO Autopilot
+                        </Link>
+                        <Link
+                            href="/marketplace/my-listings"
+                            className="flex items-center gap-2 border border-royal-blue text-royal-blue font-semibold px-5 py-3 rounded-lg hover:bg-royal-blue hover:text-white transition-all"
+                        >
+                            <Briefcase className="w-5 h-5" />
+                            My Listings
                         </Link>
                         <Link
                             href="/admin/authors"

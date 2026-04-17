@@ -44,7 +44,7 @@ function LoginForm() {
     
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -52,7 +52,15 @@ function LoginForm() {
           },
         })
         if (error) throw error
-        alert("Check your email for the confirmation link!")
+        
+        if (data?.session) {
+          // If email confirmation is disabled in Supabase, they are logged in immediately
+          router.push(next)
+          router.refresh()
+        } else {
+          // If email confirmation is enabled, they need to check their email
+          alert("Check your email for the confirmation link!")
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,

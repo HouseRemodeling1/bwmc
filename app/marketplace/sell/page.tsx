@@ -75,7 +75,7 @@ export default async function SellBusinessPage() {
 
             <div className="bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-3xl rounded-full -mr-16 -mt-16" />
-              <h4 className="font-black text-xl mb-4 text-primary relative z-10">Need Valuation?</h4>
+              <h4 className="font-black text-xl mb-4 text-sky-400 relative z-10">Need Valuation?</h4>
               <p className="text-slate-400 text-sm mb-6 relative z-10 leading-relaxed">
                 Not sure how much to ask? Our consultants can provide a professional valuation of your business.
               </p>
