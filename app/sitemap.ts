@@ -33,7 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         '/financial-health-check',
         '/global-setup',
         '/investors',
-        '/marketplace',
+        '/business',
         '/pricing',
         '/projects',
         '/services',

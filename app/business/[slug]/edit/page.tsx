@@ -1,7 +1,7 @@
-// app/marketplace/[slug]/edit/page.tsx
+// app/business/[slug]/edit/page.tsx
 import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
-import { EditBusinessForm } from '@/components/marketplace/EditBusinessForm'
+import { EditBusinessForm } from '@/components/business/EditBusinessForm'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
@@ -13,7 +13,7 @@ export default async function EditListingPage({ params }: { params: Promise<{ sl
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect(`/login?next=/marketplace/${slug}/edit`)
+    redirect(`/login?next=/business/${slug}/edit`)
   }
 
   const { data: business, error } = await supabase
@@ -26,7 +26,7 @@ export default async function EditListingPage({ params }: { params: Promise<{ sl
 
   // Only the owner can edit
   if (business.user_id !== user.id) {
-    redirect(`/marketplace/${slug}`)
+    redirect(`/business/${slug}`)
   }
 
   return (
@@ -35,7 +35,7 @@ export default async function EditListingPage({ params }: { params: Promise<{ sl
       <div className="bg-slate-900 text-white pt-28 pb-12 px-4">
         <div className="max-w-3xl mx-auto">
           <Link
-            href={`/marketplace/${slug}`}
+            href={`/business/${slug}`}
             className="inline-flex items-center gap-1.5 text-slate-400 hover:text-white text-sm mb-5 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" /> Back to Listing

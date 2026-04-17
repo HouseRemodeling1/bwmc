@@ -1,4 +1,4 @@
-// components/marketplace/BusinessCard.tsx
+// components/business/BusinessCard.tsx
 import Image from 'next/image'
 import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
@@ -22,7 +22,7 @@ export function BusinessCard({ business }: BusinessCardProps) {
   }
 
   return (
-    <Link href={`/marketplace/${business.slug}`}>
+    <Link href={`/business/${business.slug}`}>
       <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 border-none bg-white/80 backdrop-blur-sm shadow-md hover:-translate-y-1">
         <div className="relative h-48 w-full">
           <Image

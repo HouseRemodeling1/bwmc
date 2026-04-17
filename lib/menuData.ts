@@ -71,6 +71,7 @@ export const mainNav = [
     { name: "Taxation", href: "#", hasDropdown: true },
     { name: "Business Setup", href: "#", hasDropdown: true },
     { name: "Other Services", href: "#", hasDropdown: true },
+    { name: "Buy/Sell Business", href: "/business", hasDropdown: false },
     { name: "Knowledge Base", href: "#", hasDropdown: true },
     { name: "Contact Us", href: "/contact", hasDropdown: false },
 ];

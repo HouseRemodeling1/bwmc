@@ -1,4 +1,4 @@
-// app/marketplace/[slug]/page.tsx
+// app/business/[slug]/page.tsx
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 export const dynamic = 'force-dynamic'
@@ -23,8 +23,8 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { Business } from '@/types/business'
-import { OwnerControls } from '@/components/marketplace/OwnerControls'
-import { ContactSellerModal } from '@/components/marketplace/ContactSellerModal'
+import { OwnerControls } from '@/components/business/OwnerControls'
+import { ContactSellerModal } from '@/components/business/ContactSellerModal'
 
 export default async function BusinessDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -55,8 +55,8 @@ export default async function BusinessDetailPage({ params }: { params: Promise<{
       {/* Header / Breadcrumbs */}
       <div className="bg-white border-b border-slate-200 py-4">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
-          <Link href="/marketplace" className="text-slate-500 hover:text-primary flex items-center gap-2 text-sm font-medium transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Back to Marketplace
+          <Link href="/business" className="text-slate-500 hover:text-primary flex items-center gap-2 text-sm font-medium transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Back to Buy/Sell Business
           </Link>
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" className="text-slate-500">

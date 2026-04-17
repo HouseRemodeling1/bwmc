@@ -54,7 +54,7 @@ export function EditBusinessForm({ business }: { business: Business }) {
         throw new Error(err.error || 'Update failed')
       }
 
-      router.push(`/marketplace/${business.slug}`)
+      router.push(`/business/${business.slug}`)
       router.refresh()
     } catch (error: any) {
       alert(error.message || 'Something went wrong. Please try again.')
@@ -173,7 +173,7 @@ export function EditBusinessForm({ business }: { business: Business }) {
 
       {/* Actions */}
       <div className="flex items-center justify-between">
-        <Link href={`/marketplace/${business.slug}`}>
+        <Link href={`/business/${business.slug}`}>
           <Button type="button" variant="ghost" className="gap-2 text-slate-500">
             <ArrowLeft className="w-4 h-4" /> Cancel
           </Button>

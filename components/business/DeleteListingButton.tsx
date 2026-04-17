@@ -20,7 +20,7 @@ export function DeleteListingButton({ id }: { id: string }) {
     try {
       const res = await fetch(`/api/businesses/${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed')
-      router.push('/marketplace/my-listings')
+      router.push('/business/my-listings')
       router.refresh()
     } catch {
       alert('Failed to delete listing. Please try again.')

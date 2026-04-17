@@ -161,7 +161,7 @@ export default async function InvestorDashboard() {
                       <Heart className="w-8 h-8 text-slate-300" />
                    </div>
                    <h3 className="text-lg font-bold text-slate-800 mb-2">No saved startups yet</h3>
-                   <p className="text-slate-500 mb-6 text-sm">Start browsing the marketplace to build your portfolio.</p>
+                   <p className="text-slate-500 mb-6 text-sm">Start browsing businesses for sale to build your portfolio.</p>
                    <Link href="/startups">
                       <Button className="rounded-xl font-bold bg-slate-900">Explore Startups</Button>
                    </Link>

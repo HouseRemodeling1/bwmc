@@ -1,9 +1,9 @@
-// app/marketplace/my-listings/page.tsx
+// app/business/my-listings/page.tsx
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { DeleteListingButton } from '@/components/marketplace/DeleteListingButton'
+import { DeleteListingButton } from '@/components/business/DeleteListingButton'
 import { Plus, Eye, Edit, Building2, TrendingUp, ArrowLeft } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
@@ -22,7 +22,7 @@ export default async function MyListingsPage() {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect('/login?next=/marketplace/my-listings')
+    redirect('/login?next=/business/my-listings')
   }
 
   const { data: listings } = await supabase
@@ -40,8 +40,8 @@ export default async function MyListingsPage() {
       <div className="bg-slate-900 text-white pt-28 pb-16 px-4 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,#1d4ed8/15%,transparent_60%)]" />
         <div className="max-w-5xl mx-auto relative z-10">
-          <Link href="/marketplace" className="inline-flex items-center gap-1.5 text-slate-400 hover:text-white text-sm mb-6 transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Back to Marketplace
+          <Link href="/business" className="inline-flex items-center gap-1.5 text-slate-400 hover:text-white text-sm mb-6 transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Back to Buy/Sell Business
           </Link>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div>
@@ -49,7 +49,7 @@ export default async function MyListingsPage() {
               <h1 className="text-4xl font-black tracking-tight">My Listings</h1>
               <p className="text-slate-400 mt-2 text-sm">{user.email}</p>
             </div>
-            <Link href="/marketplace/sell">
+            <Link href="/business/sell">
               <Button className="bg-primary hover:bg-primary/90 text-white font-bold gap-2 px-6 h-12 rounded-xl shadow-lg shadow-primary/30">
                 <Plus className="w-4 h-4" /> New Listing
               </Button>
@@ -118,12 +118,12 @@ export default async function MyListingsPage() {
 
                 {/* Actions */}
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <Link href={`/marketplace/${listing.slug}`}>
+                  <Link href={`/business/${listing.slug}`}>
                     <Button variant="outline" size="sm" className="gap-1.5 text-slate-600 border-slate-200 hover:border-primary hover:text-primary rounded-lg">
                       <Eye className="w-4 h-4" /> View
                     </Button>
                   </Link>
-                  <Link href={`/marketplace/${listing.slug}/edit`}>
+                  <Link href={`/business/${listing.slug}/edit`}>
                     <Button variant="outline" size="sm" className="gap-1.5 text-slate-600 border-slate-200 hover:border-blue-400 hover:text-blue-600 rounded-lg">
                       <Edit className="w-4 h-4" /> Edit
                     </Button>
@@ -138,7 +138,7 @@ export default async function MyListingsPage() {
             <Building2 className="w-16 h-16 text-slate-200 mx-auto mb-5" />
             <h3 className="text-2xl font-black text-slate-700 mb-2">No listings yet</h3>
             <p className="text-slate-400 mb-8">Create your first listing to start attracting buyers from across the UAE.</p>
-            <Link href="/marketplace/sell">
+            <Link href="/business/sell">
               <Button className="bg-primary text-white font-bold gap-2 px-8 h-12 rounded-xl shadow-lg shadow-primary/20">
                 <Plus className="w-4 h-4" /> Create a Listing
               </Button>

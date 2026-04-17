@@ -87,7 +87,7 @@ export default function AdminDashboard() {
                             SEO Autopilot
                         </Link>
                         <Link
-                            href="/marketplace/my-listings"
+                            href="/business/my-listings"
                             className="flex items-center gap-2 border border-royal-blue text-royal-blue font-semibold px-5 py-3 rounded-lg hover:bg-royal-blue hover:text-white transition-all"
                         >
                             <Briefcase className="w-5 h-5" />

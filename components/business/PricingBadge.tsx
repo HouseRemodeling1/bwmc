@@ -1,4 +1,4 @@
-// components/marketplace/PricingBadge.tsx
+// components/business/PricingBadge.tsx
 import { Badge } from "@/components/ui/badge"
 import { ListingType } from "@/types/business"
 import { Star, Zap, Shield } from "lucide-react"

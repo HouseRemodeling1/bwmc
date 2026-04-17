@@ -69,10 +69,10 @@ export default function PricingPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 -mt-10 relative z-20 space-y-24">
-        {/* Business Marketplace Plans */}
+        {/* Buy/Sell Business Plans */}
         <section>
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-black text-slate-800 mb-2">Business Marketplace</h2>
+            <h2 className="text-3xl font-black text-slate-800 mb-2">Buy/Sell Business</h2>
             <p className="text-slate-500 font-bold">One-time payments for listing visibility</p>
           </div>
           

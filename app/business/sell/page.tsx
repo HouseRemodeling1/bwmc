@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
-import { BusinessForm } from "@/components/marketplace/BusinessForm"
+import { BusinessForm } from "@/components/business/BusinessForm"
 import { Badge } from "@/components/ui/badge"
 import { ShieldCheck, Zap, Globe } from "lucide-react"
 
@@ -9,7 +9,7 @@ export default async function SellBusinessPage() {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect("/login?next=/marketplace/sell")
+    redirect("/login?next=/business/sell")
   }
 
   return (
@@ -23,7 +23,7 @@ export default async function SellBusinessPage() {
             List Your Business <br /> <span className="text-primary">to Thousands of Buyers</span>
           </h1>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-            Our marketplace connects you with verified local and international investors looking to acquire businesses in the UAE.
+            Our platform connects you with verified local and international investors looking to acquire businesses in the UAE.
           </p>
         </div>
       </div>

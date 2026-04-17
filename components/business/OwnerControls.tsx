@@ -36,7 +36,7 @@ export function OwnerControls({ businessId, slug }: { businessId: string; slug: 
     try {
       const res = await fetch(`/api/businesses/${businessId}`, { method: 'DELETE' })
       if (!res.ok) throw new Error()
-      router.push('/marketplace/my-listings')
+      router.push('/business/my-listings')
     } catch {
       alert('Failed to delete. Please try again.')
     } finally {
@@ -52,7 +52,7 @@ export function OwnerControls({ businessId, slug }: { businessId: string; slug: 
         <p className="text-xs font-black text-amber-700 uppercase tracking-widest">Owner Controls</p>
       </div>
       <div className="flex flex-wrap gap-2">
-        <Link href={`/marketplace/${slug}/edit`}>
+        <Link href={`/business/${slug}/edit`}>
           <Button size="sm" className="bg-slate-800 hover:bg-slate-700 text-white gap-2 rounded-lg">
             <Edit className="w-4 h-4" /> Edit Listing
           </Button>
@@ -73,7 +73,7 @@ export function OwnerControls({ businessId, slug }: { businessId: string; slug: 
           Mark as Sold
         </Button>
 
-        <Link href="/marketplace/my-listings">
+        <Link href="/business/my-listings">
           <Button size="sm" variant="outline" className="border-slate-200 text-slate-600 hover:border-primary hover:text-primary gap-2 rounded-lg">
             My Listings
           </Button>

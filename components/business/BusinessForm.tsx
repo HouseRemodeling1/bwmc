@@ -1,4 +1,4 @@
-// components/marketplace/BusinessForm.tsx
+// components/business/BusinessForm.tsx
 "use client"
 
 import { useState } from "react"
@@ -84,7 +84,7 @@ export function BusinessForm() {
       }
       
       const data = await res.json()
-      router.push(`/marketplace/${data.slug}?success=true`)
+      router.push(`/business/${data.slug}?success=true`)
     } catch (error: any) {
       console.error(error)
       alert(error.message || "Something went wrong. Please try again.")
