@@ -15,7 +15,8 @@ export default function PricingPage() {
       icon: <Globe className="w-6 h-6 text-slate-400" />,
       buttonText: "List Free",
       href: "/business/sell",
-      popular: false
+      popular: false,
+      comingSoon: false
     },
     {
       name: "Featured",
@@ -25,7 +26,8 @@ export default function PricingPage() {
       icon: <Zap className="w-6 h-6 text-orange-500" />,
       buttonText: "Go Featured",
       href: "/contact",
-      popular: true
+      popular: true,
+      comingSoon: true
     },
     {
       name: "Premium",
@@ -35,7 +37,8 @@ export default function PricingPage() {
       icon: <Star className="w-6 h-6 text-primary" />,
       buttonText: "Go Premium",
       href: "/contact",
-      popular: false
+      popular: false,
+      comingSoon: true
     }
   ]
 
@@ -45,7 +48,8 @@ export default function PricingPage() {
       price: "0",
       features: ["Basic Profile", "Public Listing"],
       icon: <Rocket className="w-5 h-5 text-slate-400" />,
-      href: "/startups"
+      href: "/startups",
+      comingSoon: false
     },
     {
       name: "Verified",
@@ -53,14 +57,16 @@ export default function PricingPage() {
       features: ["Enhanced Profile", "Pitch Deck Upload", "Verified Badge", "Basic Analytics"],
       icon: <ShieldCheck className="w-5 h-5 text-green-500" />,
       popular: true,
-      href: "/contact"
+      href: "/contact",
+      comingSoon: true
     },
     {
       name: "Premium",
       price: "2,500",
       features: ["Full Profile", "Pitch Deck + Video", "30 Days Featured", "5 Investor Intros"],
       icon: <Star className="w-5 h-5 text-primary" />,
-      href: "/contact"
+      href: "/contact",
+      comingSoon: true
     }
   ]
 
@@ -85,7 +91,13 @@ export default function PricingPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {businessPlans.map((plan) => (
-              <Card key={plan.name} className={`border-none shadow-2xl rounded-[3rem] overflow-hidden ${plan.popular ? "ring-2 ring-primary scale-105" : ""}`}>
+              <Card key={plan.name} className={`border-none shadow-2xl rounded-[3rem] overflow-hidden relative ${plan.popular ? "ring-2 ring-primary scale-105" : ""} ${plan.comingSoon ? "opacity-80" : ""}`}>
+                {/* Coming Soon overlay badge */}
+                {plan.comingSoon && (
+                  <div className="absolute top-4 right-4 z-10 bg-amber-400 text-amber-900 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-md">
+                    🚀 Coming Soon
+                  </div>
+                )}
                 {plan.popular && (
                   <div className="bg-primary text-white text-center py-2 text-xs font-black uppercase tracking-widest">
                     Most Popular
@@ -112,11 +124,17 @@ export default function PricingPage() {
                     ))}
                   </ul>
                   
-                  <Link href={plan.href}>
-                    <Button className={`w-full h-14 rounded-2xl font-black text-lg ${plan.popular ? "bg-primary text-white hover:bg-primary/90" : "bg-slate-900 text-white hover:bg-slate-950"}`}>
-                      {plan.buttonText}
-                    </Button>
-                  </Link>
+                  {plan.comingSoon ? (
+                    <div className="w-full h-14 rounded-2xl font-black text-lg bg-slate-100 text-slate-400 flex items-center justify-center gap-2 cursor-not-allowed select-none border border-dashed border-slate-300">
+                      <span>🔒</span> Coming Soon
+                    </div>
+                  ) : (
+                    <Link href={plan.href}>
+                      <Button className="w-full h-14 rounded-2xl font-black text-lg bg-slate-900 text-white hover:bg-slate-950">
+                        {plan.buttonText}
+                      </Button>
+                    </Link>
+                  )}
                 </CardContent>
               </Card>
             ))}
@@ -132,7 +150,12 @@ export default function PricingPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {startupPlans.map((plan) => (
-              <Card key={plan.name} className={`border-none shadow-xl rounded-[2.5rem] bg-white`}>
+              <Card key={plan.name} className={`border-none shadow-xl rounded-[2.5rem] bg-white relative ${plan.comingSoon ? 'opacity-80' : ''}`}>
+                {plan.comingSoon && (
+                  <div className="absolute top-3 right-3 z-10 bg-amber-400 text-amber-900 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-md">
+                    🚀 Coming Soon
+                  </div>
+                )}
                 <CardContent className="p-8">
                   <div className="flex items-center gap-4 mb-6">
                     <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center">
@@ -152,11 +175,17 @@ export default function PricingPage() {
                     ))}
                   </ul>
                   
-                  <Link href={plan.href}>
-                    <Button variant="outline" className={`w-full rounded-2xl h-12 font-bold ${plan.popular ? "border-primary text-primary" : "border-slate-200 text-slate-500"}`}>
-                      Select {plan.name}
-                    </Button>
-                  </Link>
+                  {plan.comingSoon ? (
+                    <div className="w-full h-12 rounded-2xl font-bold text-sm bg-slate-100 text-slate-400 flex items-center justify-center gap-2 cursor-not-allowed select-none border border-dashed border-slate-300">
+                      <span>🔒</span> Coming Soon
+                    </div>
+                  ) : (
+                    <Link href={plan.href}>
+                      <Button variant="outline" className={`w-full rounded-2xl h-12 font-bold ${plan.popular ? 'border-primary text-primary' : 'border-slate-200 text-slate-500'}`}>
+                        Select {plan.name}
+                      </Button>
+                    </Link>
+                  )}
                 </CardContent>
               </Card>
             ))}
