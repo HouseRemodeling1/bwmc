@@ -203,16 +203,20 @@ export default function AuthorEditBlog({ params }: { params: Promise<{ id: strin
                             </div>
                             <div className="h-[calc(100vh-250px)] overflow-y-auto p-12 bg-white">
                                 {formData.title && (
-                                    <h1 className="text-4xl font-black text-navy mb-10 leading-tight uppercase tracking-tight">{formData.title}</h1>
+                                    <h1 className="text-4xl font-black text-navy mb-8 leading-tight uppercase tracking-tight">{formData.title}</h1>
                                 )}
-                                
-                                <article 
-                                    className="prose prose-lg prose-slate max-w-none 
-                                    prose-headings:text-navy prose-headings:font-black
-                                    prose-p:leading-[1.8] prose-p:text-gray-700 prose-p:text-justify prose-p:mb-8 prose-p:text-lg
+                                {formData.excerpt && (
+                                    <p className="text-lg font-medium text-navy/70 leading-relaxed mb-10 italic border-l-4 border-sky-blue pl-6 bg-sky-blue/5 py-4 rounded-r-xl">{formData.excerpt}</p>
+                                )}
+                                <article
+                                    className="prose prose-lg prose-slate max-w-none
+                                    prose-headings:text-navy prose-headings:font-black prose-headings:mt-16 prose-headings:mb-8
+                                    prose-p:leading-[1.8] prose-p:text-gray-700 prose-p:mb-10 prose-p:text-justify
                                     prose-strong:text-navy prose-strong:font-bold
-                                    prose-img:rounded-3xl prose-img:shadow-xl
-                                    prose-ul:text-gray-700 prose-ul:space-y-3"
+                                    prose-a:text-royal-blue prose-a:underline prose-a:font-bold
+                                    prose-ul:text-gray-600 prose-ul:my-10 prose-ul:space-y-4
+                                    prose-li:my-2
+                                    prose-img:rounded-3xl prose-img:shadow-2xl prose-img:my-16"
                                     dangerouslySetInnerHTML={{ __html: previewHtml }}
                                 />
                             </div>
