@@ -260,7 +260,7 @@ h6 {
 .blog-content li p {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
-  display: inline-block;
+  display: inline;
 }
 
 .blog-content h2 {
