@@ -188,7 +188,7 @@ export default function NewBlog() {
                                     <p className="text-lg font-medium text-navy/70 leading-relaxed mb-10 italic border-l-4 border-sky-blue pl-6 bg-sky-blue/5 py-4 rounded-r-xl">{formData.excerpt}</p>
                                 )}
                                 <div 
-                                    className="prose prose-lg prose-slate max-w-none
+                                    className="blog-content prose prose-lg prose-slate max-w-none
                                     prose-headings:text-navy prose-headings:font-black prose-headings:mt-16 prose-headings:mb-8
                                     prose-p:leading-[1.8] prose-p:text-gray-700 prose-p:mb-10 prose-p:text-justify
                                     prose-strong:text-navy prose-strong:font-bold
