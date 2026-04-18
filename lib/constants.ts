@@ -83,5 +83,6 @@ export const BLOG_CATEGORIES = [
   "Accounting",
   "Success Stories",
   "Business Setup",
+  "Trade Finance",
 ] as const;
 

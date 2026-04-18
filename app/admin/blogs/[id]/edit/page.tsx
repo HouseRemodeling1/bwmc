@@ -156,8 +156,9 @@ export default function EditBlog({ params }: { params: Promise<{ id: string }> }
                                         <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Category</label>
                                         <select value={formData.category} onChange={(e) => set({ category: e.target.value })}
                                             className="w-full bg-slate-50 px-4 py-3 rounded-xl border-none focus:ring-2 focus:ring-royal-blue outline-none text-navy font-medium">
-                                            <option>Business</option><option>Finance Trade</option><option>Finance</option>
-                                            <option>Tax</option><option>Audit</option><option>Technology</option>
+                                            {BLOG_CATEGORIES.map(cat => (
+                                                <option key={cat} value={cat}>{cat}</option>
+                                            ))}
                                         </select>
                                     </div>
                                     <div>
