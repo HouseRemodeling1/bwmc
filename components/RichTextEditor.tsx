@@ -18,7 +18,9 @@ const GlobalAttributes = Extension.create({
     addGlobalAttributes() {
         return [
             {
-                types: ['heading', 'paragraph', 'bulletList', 'orderedList', 'listItem', 'blockquote', 'table', 'tableRow', 'tableCell', 'image', 'link', 'text'],
+                // NOTE: 'text' node type cannot have attributes in Tiptap. 
+                // We apply styles to block nodes and marks instead.
+                types: ['heading', 'paragraph', 'bulletList', 'orderedList', 'listItem', 'blockquote', 'table', 'tableRow', 'tableCell', 'image', 'link'],
                 attributes: {
                     style: {
                         default: null,
@@ -55,6 +57,7 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
         extensions: [
             StarterKit.configure({
                 heading: { levels: [1, 2, 3] },
+                blockquote: false, // Disable to use custom Blockquote extension below
             }),
             Link.configure({
                 openOnClick: false,
