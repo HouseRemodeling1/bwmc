@@ -4,6 +4,7 @@ import React from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
+import Blockquote from "@tiptap/extension-blockquote";
 import Underline from "@tiptap/extension-underline";
 import EditorToolbar from "./EditorToolbar";
 
@@ -22,6 +23,7 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
                 heading: {
                     levels: [1, 2, 3],
                 },
+                blockquote: false, // Use the separate extension for better control if needed, but StarterKit has it
             }),
             Link.configure({
                 openOnClick: false,
@@ -30,6 +32,11 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
                 },
             }),
             Underline,
+            Blockquote.configure({
+                HTMLAttributes: {
+                    class: "border-l-4 border-sky-blue bg-sky-blue/5 py-4 pl-6 rounded-r-xl italic my-8",
+                },
+            }),
         ],
         content: value,
         onUpdate: ({ editor }) => {
@@ -37,7 +44,7 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
         },
         editorProps: {
             attributes: {
-                class: "prose prose-slate max-w-none focus:outline-none min-h-[500px] px-8 py-6 text-navy",
+                class: "blog-content prose prose-lg prose-slate max-w-none focus:outline-none min-h-[600px] px-12 py-10 text-navy bg-white selection:bg-sky-blue/30",
             },
         },
         immediatelyRender: false,
@@ -51,18 +58,25 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
     }, [value, editor]);
 
     return (
-        <div className="w-full bg-white rounded-3xl border border-slate-200 shadow-inner group transition-all focus-within:ring-2 focus-within:ring-royal-blue/20">
+        <div className="w-full bg-white rounded-3xl border border-slate-200 shadow-2xl group transition-all focus-within:ring-4 focus-within:ring-royal-blue/10 overflow-hidden">
             <EditorToolbar editor={editor} showSource={showSource} onToggleSource={() => setShowSource(!showSource)} />
-            <div className="editor-container">
+            <div className="editor-container bg-white relative">
                 {showSource ? (
-                    <textarea
-                        value={value}
-                        onChange={(e) => onChange(e.target.value)}
-                        className="w-full min-h-[500px] p-8 font-mono text-sm bg-slate-900 text-sky-blue rounded-b-3xl focus:outline-none focus:ring-0 resize-none"
-                        spellCheck={false}
-                    />
+                    <div className="relative group/code">
+                        <div className="absolute top-4 right-4 px-3 py-1 bg-slate-800 text-slate-400 text-[10px] font-mono rounded-md border border-slate-700 z-10 pointer-events-none">
+                            HTML SOURCE
+                        </div>
+                        <textarea
+                            value={value}
+                            onChange={(e) => onChange(e.target.value)}
+                            className="w-full min-h-[600px] p-12 font-mono text-sm bg-[#0d1117] text-[#c9d1d9] leading-relaxed focus:outline-none focus:ring-0 resize-none selection:bg-royal-blue/50"
+                            spellCheck={false}
+                        />
+                    </div>
                 ) : (
-                    <EditorContent editor={editor} />
+                    <div className="bg-white">
+                        <EditorContent editor={editor} />
+                    </div>
                 )}
             </div>
             
@@ -70,44 +84,70 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
                 .tiptap p.is-editor-empty:first-child::before {
                     content: attr(data-placeholder);
                     float: left;
-                    color: #adb5bd;
+                    color: #94a3b8;
                     pointer-events: none;
                     height: 0;
+                    font-style: italic;
                 }
                 .tiptap {
-                    min-height: 500px;
+                    min-height: 600px;
                 }
                 .tiptap:focus {
                     outline: none;
                 }
-                /* Professional Visual Fixes for Editor */
+                
+                /* Tiptap-specific styles to ensure they match the site exactly */
                 .tiptap h1 {
-                    font-size: 2.5rem;
-                    font-weight: 900;
-                    margin-top: 2rem;
-                    margin-bottom: 1.5rem;
+                    font-size: 3rem !important;
+                    font-weight: 900 !important;
+                    color: #0F172A !important;
+                    margin-top: 3rem !important;
+                    margin-bottom: 2rem !important;
+                    text-transform: uppercase !important;
+                    letter-spacing: -0.05em !important;
                 }
                 .tiptap h2 {
-                    font-size: 1.8rem;
-                    font-weight: 800;
-                    margin-top: 1.5rem;
-                    margin-bottom: 1rem;
+                    font-size: 2rem !important;
+                    font-weight: 900 !important;
+                    color: #0F172A !important;
+                    margin-top: 2.5rem !important;
+                    margin-bottom: 1.5rem !important;
+                }
+                .tiptap h3 {
+                    font-size: 1.5rem !important;
+                    font-weight: 800 !important;
+                    color: #0F172A !important;
+                    margin-top: 2rem !important;
+                    margin-bottom: 1rem !important;
+                }
+                .tiptap p {
+                    margin-bottom: 1.5rem !important;
+                    line-height: 1.8 !important;
+                    color: #334155 !important;
+                    font-size: 1.125rem !important;
                 }
                 .tiptap ul {
                     list-style-type: disc !important;
                     padding-left: 2rem !important;
-                    margin: 1rem 0 !important;
+                    margin: 1.5rem 0 !important;
                 }
                 .tiptap ol {
                     list-style-type: decimal !important;
                     padding-left: 2rem !important;
-                    margin: 1rem 0 !important;
+                    margin: 1.5rem 0 !important;
                 }
-                .tiptap li {
-                    margin-bottom: 0.5rem;
+                .tiptap blockquote {
+                    border-left: 6px solid #1E40AF !important;
+                    background: #f8fafc !important;
+                    padding: 2rem !important;
+                    border-radius: 0 1rem 1rem 0 !important;
+                    font-style: italic !important;
+                    font-size: 1.25rem !important;
+                    color: #1e293b !important;
                 }
                 .tiptap strong {
-                    font-weight: 900;
+                    font-weight: 900 !important;
+                    color: #0F172A !important;
                 }
             `}</style>
         </div>

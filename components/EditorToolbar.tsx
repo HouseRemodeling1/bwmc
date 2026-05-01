@@ -5,7 +5,7 @@ import { type Editor } from "@tiptap/react";
 import { 
     Bold, Italic, List, Heading2, Heading3, 
     Quote, Link as LinkIcon, Lightbulb, Heading1,
-    ListOrdered, Code
+    ListOrdered, Code, Eraser
 } from "lucide-react";
 
 interface EditorToolbarProps {
@@ -70,6 +70,18 @@ export default function EditorToolbar({ editor, showSource, onToggleSource }: Ed
                     editor.chain().focus().setLink({ href: url }).run();
                 }
             } 
+        },
+        { 
+            icon: Quote, 
+            label: "Quote", 
+            active: editor.isActive("blockquote"),
+            action: () => editor.chain().focus().toggleBlockquote().run() 
+        },
+        { 
+            icon: Eraser, 
+            label: "Clear", 
+            active: false,
+            action: () => editor.chain().focus().unsetAllMarks().clearNodes().run() 
         },
         {
             icon: Code,
