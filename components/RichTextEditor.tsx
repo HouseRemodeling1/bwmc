@@ -20,7 +20,7 @@ const GlobalAttributes = Extension.create({
             {
                 // NOTE: 'text' node type cannot have attributes in Tiptap. 
                 // We apply styles to block nodes and marks instead.
-                types: ['heading', 'paragraph', 'bulletList', 'orderedList', 'listItem', 'blockquote', 'table', 'tableRow', 'tableCell', 'image', 'link'],
+                types: ['heading', 'paragraph', 'bulletList', 'orderedList', 'listItem', 'blockquote', 'table', 'tableRow', 'tableCell'],
                 attributes: {
                     style: {
                         default: null,
@@ -52,6 +52,11 @@ interface RichTextEditorProps {
 
 export default function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
     const [showSource, setShowSource] = React.useState(false);
+    const [mounted, setMounted] = React.useState(false);
+
+    React.useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const editor = useEditor({
         extensions: [
@@ -85,7 +90,7 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
                 class: "blog-content prose prose-lg prose-slate max-w-none focus:outline-none min-h-[600px] px-12 py-10 text-navy bg-white selection:bg-sky-blue/30",
             },
         },
-        immediatelyRender: true,
+        immediatelyRender: false,
     });
 
     // Sync external value with editor content
@@ -95,6 +100,20 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
             editor.commands.setContent(value, { emitUpdate: false });
         }
     }, [value, editor]);
+
+    if (!mounted) {
+        return (
+            <div className="w-full bg-white rounded-3xl border border-slate-200 shadow-2xl overflow-hidden min-h-[700px] animate-pulse">
+                <div className="h-16 bg-slate-50 border-b border-slate-100" />
+                <div className="p-12 space-y-4">
+                    <div className="h-8 bg-slate-50 w-3/4 rounded" />
+                    <div className="h-4 bg-slate-50 w-full rounded" />
+                    <div className="h-4 bg-slate-50 w-full rounded" />
+                    <div className="h-4 bg-slate-50 w-2/3 rounded" />
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="w-full bg-white rounded-3xl border border-slate-200 shadow-2xl group transition-all focus-within:ring-4 focus-within:ring-royal-blue/10 overflow-hidden min-h-[700px]">
