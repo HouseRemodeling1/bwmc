@@ -88,8 +88,8 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
     // Sync external value with editor content
     React.useEffect(() => {
         if (editor && value !== editor.getHTML()) {
-            // We use a slight delay or check to prevent cursor jumping
-            editor.commands.setContent(value, false);
+            // We prevent update emission to avoid feedback loops
+            editor.commands.setContent(value, { emitUpdate: false });
         }
     }, [value, editor]);
 
