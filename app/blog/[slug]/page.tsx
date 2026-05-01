@@ -12,6 +12,7 @@ import AuthorCard from "@/components/AuthorCard";
 import { getAuthorById } from "@/lib/authors";
 import { formatBlogContent } from "@/lib/content-formatter";
 import ShareButtons from "@/components/blog/ShareButtons";
+import { serviceContent } from "@/lib/serviceContent";
 
 async function getBlog(slug: string): Promise<Blog | undefined> {
     try {
@@ -75,18 +76,15 @@ export default async function BlogPost({
         category: rp.category,
     }));
 
-    const serviceMap: { [key: string]: { title: string; description: string } } = {
-        "business-setup": { title: "Business Setup", description: "Expert company formation in UAE" },
-        accounting: { title: "Accounting Services", description: "Professional bookkeeping & audits" },
-        taxation: { title: "Tax Compliance", description: "VAT & Corporate Tax advisory" },
-    };
-
-    const services = (blog.relatedServices || []).map(s => ({
-        title: serviceMap[s]?.title || s,
-        href: `/services/${s}`,
-        description: serviceMap[s]?.description || "Expert business advice",
-        category: "Service",
-    }));
+    const services = (blog.relatedServices || []).map(slug => {
+        const content = serviceContent[slug];
+        return {
+            title: content?.title || slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+            href: `/services/${slug}`,
+            description: content?.subtitle || "Expert business advice and consultancy",
+            category: "Service",
+        };
+    });
 
     const allRelatedContent = [...services, ...posts];
     const readingTime = blog.readingTime ? `${blog.readingTime} min read` : estimateReadingTime(blog.content);

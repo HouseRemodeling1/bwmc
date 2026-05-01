@@ -5,14 +5,16 @@ import { type Editor } from "@tiptap/react";
 import { 
     Bold, Italic, List, Heading2, Heading3, 
     Quote, Link as LinkIcon, Lightbulb, Heading1,
-    ListOrdered
+    ListOrdered, Code
 } from "lucide-react";
 
 interface EditorToolbarProps {
     editor: Editor | null;
+    showSource: boolean;
+    onToggleSource: () => void;
 }
 
-export default function EditorToolbar({ editor }: EditorToolbarProps) {
+export default function EditorToolbar({ editor, showSource, onToggleSource }: EditorToolbarProps) {
     if (!editor) return null;
 
     const tools = [
@@ -69,11 +71,19 @@ export default function EditorToolbar({ editor }: EditorToolbarProps) {
                 }
             } 
         },
+        {
+            icon: Code,
+            label: showSource ? "Visual" : "HTML",
+            active: showSource,
+            action: onToggleSource
+        }
     ];
+
+    const filteredTools = showSource ? [tools[tools.length - 1]] : tools;
 
     return (
         <div className="flex flex-wrap items-center gap-1 p-2 bg-white border-b border-slate-200 sticky top-[73px] z-20 shadow-sm rounded-t-3xl">
-            {tools.map((tool, idx) => (
+            {filteredTools.map((tool, idx) => (
                 <button
                     key={idx}
                     type="button"

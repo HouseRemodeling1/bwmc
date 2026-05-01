@@ -31,14 +31,16 @@ export function normalizeText(text: string): string {
 export function formatBlogContent(content: string): string {
     if (!content) return "";
 
-    // If it's already HTML (from the new professional editor), return it directly
-    // but ensured it's wrapped in basic cleaning if needed.
-    const isHtml = content.trim().startsWith("<") && content.trim().endsWith(">");
+    // 1. Detect if content is already structured HTML from Tiptap or manual entry
+    // Improved detection: Check if it contains any common HTML block tags
+    const htmlTags = /<(p|div|h[1-6]|ul|ol|li|blockquote|table|pre|img|iframe|section|article|header|footer|aside)/i;
+    const isHtml = htmlTags.test(content);
+    
     if (isHtml) {
         return content;
     }
 
-    // 1. Normalize and clean the text (Legacy Markdown Path)
+    // 2. Normalize and clean the text (Legacy Markdown Path)
     let raw = normalizeText(content);
 
     // 2. Intelligence: Detect "Step X:" or "1. ..." prefixes that should be H3s

@@ -14,6 +14,8 @@ interface RichTextEditorProps {
 }
 
 export default function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
+    const [showSource, setShowSource] = React.useState(false);
+
     const editor = useEditor({
         extensions: [
             StarterKit.configure({
@@ -42,7 +44,6 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
     });
 
     // Update content if value changes from outside (e.g. AI Optimization)
-    // We use a ref-like check to avoid feedback loops
     React.useEffect(() => {
         if (editor && value !== editor.getHTML()) {
             editor.commands.setContent(value);
@@ -51,9 +52,18 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
 
     return (
         <div className="w-full bg-white rounded-3xl border border-slate-200 shadow-inner group transition-all focus-within:ring-2 focus-within:ring-royal-blue/20">
-            <EditorToolbar editor={editor} />
+            <EditorToolbar editor={editor} showSource={showSource} onToggleSource={() => setShowSource(!showSource)} />
             <div className="editor-container">
-                <EditorContent editor={editor} />
+                {showSource ? (
+                    <textarea
+                        value={value}
+                        onChange={(e) => onChange(e.target.value)}
+                        className="w-full min-h-[500px] p-8 font-mono text-sm bg-slate-900 text-sky-blue rounded-b-3xl focus:outline-none focus:ring-0 resize-none"
+                        spellCheck={false}
+                    />
+                ) : (
+                    <EditorContent editor={editor} />
+                )}
             </div>
             
             <style jsx global>{`
