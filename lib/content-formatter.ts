@@ -32,9 +32,10 @@ export function formatBlogContent(content: string): string {
     if (!content) return "";
 
     // 1. Detect if content is already structured HTML from Tiptap or manual entry
-    // Improved detection: Check if it contains any common HTML block tags
-    const htmlTags = /<(p|div|h[1-6]|ul|ol|li|blockquote|table|pre|img|iframe|section|article|header|footer|aside)/i;
-    const isHtml = htmlTags.test(content);
+    // Improved detection: Check if it contains any common HTML tags or inline styles
+    const htmlTags = /<(p|div|h[1-6]|ul|ol|li|blockquote|table|pre|img|iframe|section|article|header|footer|aside|span|strong|em|b|i|a|style)/i;
+    const hasStyleAttr = /style=["'].*?["']/i;
+    const isHtml = htmlTags.test(content) || hasStyleAttr.test(content);
     
     if (isHtml) {
         return content;
