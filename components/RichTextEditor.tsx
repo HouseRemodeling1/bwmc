@@ -127,7 +127,7 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
                         <textarea
                             value={value}
                             onChange={(e) => onChange(e.target.value)}
-                            className="w-full min-h-[600px] p-12 font-mono text-sm bg-[#0d1117] text-[#c9d1d9] leading-relaxed focus:outline-none focus:ring-0 resize-none selection:bg-royal-blue/50"
+                            className="w-full min-h-[600px] p-12 font-mono text-sm bg-[#0d1117] text-white leading-relaxed focus:outline-none focus:ring-0 resize-none selection:bg-royal-blue/50"
                             spellCheck={false}
                         />
                     </div>
