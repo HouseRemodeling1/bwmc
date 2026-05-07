@@ -15,7 +15,7 @@ export default function Header() {
     const [scrolled, setScrolled] = useState(false);
     const pathname = usePathname();
 
-    const isTransparentPage = pathname === "/" || pathname.startsWith("/services/") || pathname === "/vat-guide";
+    const isTransparentPage = pathname === "/" || pathname.startsWith("/services") || pathname === "/vat-guide";
     const isAdminPage = pathname?.startsWith("/admin");
     const isAuthorPage = pathname?.startsWith("/author");
     const isGlobalSetup = pathname === "/global-setup" || pathname === "/uae-setup" || pathname === "/ecommerce-license";

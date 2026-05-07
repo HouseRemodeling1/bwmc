@@ -29,72 +29,73 @@ export default function AccountingLayout({ content, slug }: LayoutProps) {
             {/* Inject SEO Schemas */}
             <ServiceSEO content={content} slug={slug} />
 
-            {/* Header */}
-            <div className="bg-white border-b border-gray-200 sticky top-20 z-40">
-                <div className="max-w-7xl mx-auto px-6 py-4">
-                    <Breadcrumbs
-                        items={[
-                            { label: "Services", href: "/services" },
-                            { label: content.title, href: `/services/${slug}` }
-                        ]}
-                    />
-                </div>
-            </div>
-
-            {/* Hero */}
-            <section className="bg-navy py-16 px-6 relative overflow-hidden">
+            {/* Hero Section */}
+            <section className="bg-navy pt-32 pb-16 px-6 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-1/2 h-full bg-white/5 skew-x-12 transform origin-top-right scale-150 pointer-events-none" />
-                <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12 relative z-10">
-                    <div className="flex-1 space-y-8">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white text-sm border border-white/10">
-                            <ShieldCheck className="w-4 h-4" />
-                            <span>Professional Grade</span>
-                        </div>
-                        <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight">
-                            {content.title}
-                        </h1>
-                        <p className="text-lg text-white/80 max-w-xl">
-                            {content.subtitle}
-                        </p>
-
-                        {/* Trust Badges */}
-                        {content.trustBadges && (
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-                                {content.trustBadges.map((badge: any, i: number) => (
-                                    <div key={i} className="flex flex-col p-3 bg-white/5 border border-white/10 rounded-lg backdrop-blur-sm">
-                                        <span className="text-white font-bold text-xs">{badge.label}</span>
-                                        <span className="text-white/60 text-[10px]">{badge.sub}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                        
-                        <div className="flex flex-wrap gap-4 pt-4">
-                            <Link href="/contact" className="bg-white text-navy px-6 py-3 rounded-full font-bold hover:bg-slate-100 transition-colors flex items-center gap-2">
-                                Book a Consultation
-                                <ArrowRight className="w-4 h-4" />
-                            </Link>
-                            <Link href="tel:+971561625698" className="bg-transparent border border-white/30 text-white px-6 py-3 rounded-full font-bold hover:bg-white/10 transition-colors">
-                                Talk to an Expert
-                            </Link>
-                        </div>
-                        
-                        <div className="flex items-center gap-2 text-white/60 text-sm">
-                            <div className="flex -space-x-2">
-                                {[1,2,3,4].map(i => (
-                                    <div key={i} className="w-6 h-6 rounded-full border-2 border-navy bg-slate-300 overflow-hidden">
-                                        <div className="w-full h-full bg-royal-blue/20" />
-                                    </div>
-                                ))}
-                            </div>
-                            <span>Trusted by 500+ UAE Businesses</span>
-                        </div>
+                
+                <div className="max-w-7xl mx-auto relative z-10">
+                    <div className="mb-8">
+                        <Breadcrumbs
+                            items={[
+                                { label: "Services", href: "/services" },
+                                { label: content.title, href: `/services/${slug}` }
+                            ]}
+                            variant="light"
+                        />
                     </div>
-                    {/* Floating Card */}
-                    <div className="hidden lg:block w-full md:w-1/3 bg-white rounded-lg p-8 shadow-xl">
-                        <h3 className="text-navy font-bold text-xl mb-4">Fast Track Inquiry</h3>
-                        <p className="text-gray-600 mb-6 text-sm">Get an expert audit consultation within 24 hours.</p>
-                        <ContactForm />
+
+                    <div className="flex flex-col md:flex-row items-center gap-12">
+                        <div className="flex-1 space-y-8">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white text-sm border border-white/10">
+                                <ShieldCheck className="w-4 h-4" />
+                                <span>Professional Grade</span>
+                            </div>
+                            <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight">
+                                {content.title}
+                            </h1>
+                            <p className="text-lg text-white/80 max-w-xl">
+                                {content.subtitle}
+                            </p>
+
+                            {/* Trust Badges */}
+                            {content.trustBadges && (
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                                    {content.trustBadges.map((badge: any, i: number) => (
+                                        <div key={i} className="flex flex-col p-3 bg-white/5 border border-white/10 rounded-lg backdrop-blur-sm">
+                                            <span className="text-white font-bold text-xs">{badge.label}</span>
+                                            <span className="text-white/60 text-[10px]">{badge.sub}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                            
+                            <div className="flex flex-wrap gap-4 pt-4">
+                                <Link href="/contact" className="bg-white text-navy px-6 py-3 rounded-full font-bold hover:bg-slate-100 transition-colors flex items-center gap-2">
+                                    Book a Consultation
+                                    <ArrowRight className="w-4 h-4" />
+                                </Link>
+                                <Link href="tel:+971561625698" className="bg-transparent border border-white/30 text-white px-6 py-3 rounded-full font-bold hover:bg-white/10 transition-colors">
+                                    Talk to an Expert
+                                </Link>
+                            </div>
+                            
+                            <div className="flex items-center gap-2 text-white/60 text-sm">
+                                <div className="flex -space-x-2">
+                                    {[1,2,3,4].map(i => (
+                                        <div key={i} className="w-6 h-6 rounded-full border-2 border-navy bg-slate-300 overflow-hidden">
+                                            <div className="w-full h-full bg-royal-blue/20" />
+                                        </div>
+                                    ))}
+                                </div>
+                                <span>Trusted by 500+ UAE Businesses</span>
+                            </div>
+                        </div>
+                        {/* Floating Card */}
+                        <div className="hidden lg:block w-full md:w-1/3 bg-white rounded-lg p-8 shadow-xl">
+                            <h3 className="text-navy font-bold text-xl mb-4">Fast Track Inquiry</h3>
+                            <p className="text-gray-600 mb-6 text-sm">Get an expert audit consultation within 24 hours.</p>
+                            <ContactForm />
+                        </div>
                     </div>
                 </div>
             </section>
