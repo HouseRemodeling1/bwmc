@@ -51,7 +51,7 @@ export default function Hero() {
               rel="noopener noreferrer"
               className="group bg-royal-blue hover:bg-sky-blue text-white px-8 py-4 rounded-[4px] text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-2xl inline-flex items-center gap-2 min-w-[200px] justify-center"
             >
-              Open Zoho Books
+              Book an appointment
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
