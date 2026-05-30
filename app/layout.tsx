@@ -192,6 +192,29 @@ export default function RootLayout({
           src="https://salesiq.zohopublic.com/widget?wc=siq5edf502fe7af711e3753b6a51dc39d9e21840148c09ecebfbfb95adbc5b79a4256a469d8de632f5cc6703bfc35f241f70e3106a1edcc76319169a20719409f6d"
           strategy="afterInteractive"
         />
+        <Script
+          id="zoho-bookings-embed"
+          src="https://bookings.nimbuspop.com/assets/embed.js"
+          strategy="afterInteractive"
+        />
+        <Script id="zoho-bookings-button" strategy="afterInteractive">
+          {`
+            (function initZohoBookingsButton() {
+              if (!window.Bookings || !window.Bookings.buttonModal) {
+                window.setTimeout(initZohoBookingsButton, 250);
+                return;
+              }
+
+              window.Bookings.buttonModal({
+                url: "https://mahesh-bwmc.zohobookings.com/portal-embed#/bridgewatermanagementconsultanciescollc",
+                text: "Book now",
+                color: "#5646A5",
+                textColor: "#ffffff",
+                position: "bottom-right"
+              });
+            })();
+          `}
+        </Script>
       </body>
     </html>
   );
