@@ -46,7 +46,7 @@ export default function Hero() {
             className="pt-8 flex flex-col sm:flex-row items-center justify-center gap-4"
           >
             <Link
-              href="https://www.zoho.com/books/"
+              href="https://www.zoho.com/bookings/"
               target="_blank"
               rel="noopener noreferrer"
               className="group bg-royal-blue hover:bg-sky-blue text-white px-8 py-4 rounded-[4px] text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-2xl inline-flex items-center gap-2 min-w-[200px] justify-center"
