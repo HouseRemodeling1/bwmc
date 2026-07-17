@@ -22,7 +22,6 @@ function LoginForm() {
   
   const router = useRouter()
   const searchParams = useSearchParams()
-  const supabase = createClient()
   
   const next = searchParams.get("next") || "/"
   const urlError = searchParams.get("error")
@@ -43,6 +42,11 @@ function LoginForm() {
     setError(null)
     
     try {
+      const supabase = createClient()
+      if (!supabase) {
+        throw new Error("Authentication is not configured yet.")
+      }
+
       if (isSignUp) {
         const { data, error } = await supabase.auth.signUp({
           email,

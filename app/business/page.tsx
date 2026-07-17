@@ -20,14 +20,15 @@ export default function MarketplacePage() {
   const [selectedLocation, setSelectedLocation] = useState("All")
   const [user, setUser] = useState<any>(null)
 
-  const supabase = createClient()
-
   useEffect(() => {
     fetchBusinesses()
     checkUser()
   }, [])
 
   const checkUser = async () => {
+    const supabase = createClient()
+    if (!supabase) return
+
     const { data: { user } } = await supabase.auth.getUser()
     setUser(user)
   }
