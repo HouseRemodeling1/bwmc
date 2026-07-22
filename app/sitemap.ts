@@ -50,15 +50,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
     // Dynamic service pages from menuData
-    // Normalize slug: strip leading slashes and avoid duplicate "services" segments
+    // Skip entries that duplicate an existing static route (e.g. "/vat-guide", "/blog")
     const servicePages: MetadataRoute.Sitemap = menuItems.flatMap(category =>
         category.items
             .map(service => {
-                const cleanSlug = service.slug.replace(/^\/+/, ''); // remove leading slashes
+                const cleanSlug = service.slug.replace(/^\/+/, ''); // remove leading slash
 
-                // Skip malformed/duplicate entries that don't belong under /services/
-                if (cleanSlug.includes('/')) {
-                    console.warn(`Sitemap: skipping malformed service slug "${service.slug}" — should not contain "/"`);
+                // If this slug (as a top-level route) already exists in staticRoutes, skip it
+                if (staticRoutes.includes(`/${cleanSlug}`)) {
                     return null;
                 }
 
