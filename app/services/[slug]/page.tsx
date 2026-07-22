@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     if (!content) return {};
 
-    const url = `https://bwmc.ae/services/${slug}`;
+    const url = `https://www.bwmc.ae/services/${slug}`;
 
     return {
         title: content.metaTitle || `${content.title} | BWMC`,
