@@ -103,6 +103,7 @@ export const metadata: Metadata = {
     ],
     // yandex: "your-yandex-verification-code",
   },
+};
 
 import Script from "next/script";
 import { cn } from "@/lib/utils";
