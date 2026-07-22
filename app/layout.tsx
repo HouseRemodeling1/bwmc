@@ -97,10 +97,12 @@ export const metadata: Metadata = {
 
   // Verification (add your actual codes when available)
   verification: {
-    google: "JS0X-aIC8ykQydhj0i2HNvl9pBT2rWTLiHL2GD1bPCE",
+    google: [
+      "JS0X-aIC8ykQydhj0i2HNvl9pBT2rWTLiHL2GD1bPCE",
+      "lXiw1EL5llxD5ZunKZ_QoDGRZPS91Zr4dzbUBRsd_9E",
+    ],
     // yandex: "your-yandex-verification-code",
   },
-};
 
 import Script from "next/script";
 import { cn } from "@/lib/utils";
