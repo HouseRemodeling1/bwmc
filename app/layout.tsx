@@ -145,8 +145,8 @@ export default function RootLayout({
   const websiteSchema = generateWebSiteSchema(SITE_URL);
 
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)}>
-      <head>
+<html lang="en" className={cn("font-sans", geist.variable)} suppressHydrationWarning>
+  <head>
         {/* Organization Schema */}
         <script
           type="application/ld+json"
