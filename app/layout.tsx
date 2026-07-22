@@ -23,7 +23,7 @@ const merriweather = Merriweather({
   weight: ["300", "400", "700", "900"],
 });
 
-const SITE_URL = "https://bwmc.ae";
+const SITE_URL = "https://www.bwmc.ae";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -48,6 +48,10 @@ export const metadata: Metadata = {
   authors: [{ name: "BWMC Team" }],
   creator: "BWMC",
   publisher: "BWMC",
+
+  alternates: {
+    canonical: "/",
+  },
 
   // Open Graph
   openGraph: {
