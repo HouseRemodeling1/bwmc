@@ -171,6 +171,7 @@ export default function RootLayout({
       </head>
       <body
         className={`${montserrat.variable} ${inter.variable} ${merriweather.variable} antialiased selection:bg-sky-blue selection:text-white`}
+        suppressHydrationWarning
       >
         {/* Google Tag Manager (noscript) */}
         <noscript>
@@ -186,7 +187,7 @@ export default function RootLayout({
         <Header />
         {children}
         <Footer />
-        <Script id="zoho-salesiq-init" strategy="afterInteractive">
+        <Script id="zoho-salesiq-init" strategy="lazyOnload">
           {`
             window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}};
           `}
@@ -194,14 +195,14 @@ export default function RootLayout({
         <Script
           id="zsiqscript"
           src="https://salesiq.zohopublic.com/widget?wc=siq5edf502fe7af711e3753b6a51dc39d9e21840148c09ecebfbfb95adbc5b79a4256a469d8de632f5cc6703bfc35f241f70e3106a1edcc76319169a20719409f6d"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
         <Script
           id="zoho-bookings-embed"
           src="https://bookings.nimbuspop.com/assets/embed.js"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="zoho-bookings-button" strategy="afterInteractive">
+        <Script id="zoho-bookings-button" strategy="lazyOnload">
           {`
             (function initZohoBookingsButton() {
               if (!window.Bookings || !window.Bookings.buttonModal) {
