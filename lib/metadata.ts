@@ -19,7 +19,7 @@ interface PageMetadataProps {
 }
 
 const SITE_NAME = "BWMC";
-const SITE_URL = "https://bwmc.ae";
+const SITE_URL = "https://www.bwmc.ae";
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.jpg`;
 const TWITTER_HANDLE = "@bwmc";
 
