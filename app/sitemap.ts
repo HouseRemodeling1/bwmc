@@ -3,9 +3,9 @@ import { getBlogs } from '@/lib/blogs'
 import { menuItems } from '@/lib/menuData'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = 'https://bwmc.ae'
+    const baseUrl = 'https://www.bwmc.ae'
     let blogPages: MetadataRoute.Sitemap = []
-    
+
     try {
         const blogs = await getBlogs()
         blogPages = blogs
@@ -50,13 +50,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
     // Dynamic service pages from menuData
-    const servicePages: MetadataRoute.Sitemap = menuItems.flatMap(category => 
-        category.items.map(service => ({
-            url: `${baseUrl}/services/${service.slug}`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.8,
-        }))
+    // Normalize slug: strip leading slashes and avoid duplicate "services" segments
+    const servicePages: MetadataRoute.Sitemap = menuItems.flatMap(category =>
+        category.items
+            .map(service => {
+                const cleanSlug = service.slug.replace(/^\/+/, ''); // remove leading slashes
+
+                // Skip malformed/duplicate entries that don't belong under /services/
+                if (cleanSlug.includes('/')) {
+                    console.warn(`Sitemap: skipping malformed service slug "${service.slug}" — should not contain "/"`);
+                    return null;
+                }
+
+                return {
+                    url: `${baseUrl}/services/${cleanSlug}`,
+                    lastModified: new Date(),
+                    changeFrequency: 'monthly' as const,
+                    priority: 0.8,
+                };
+            })
+            .filter((entry): entry is NonNullable<typeof entry> => entry !== null)
     );
 
     const legalPages: MetadataRoute.Sitemap = [
