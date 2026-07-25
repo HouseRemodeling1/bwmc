@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next'
 import { getBlogs } from '@/lib/blogs'
 import { menuItems } from '@/lib/menuData'
+export const revalidate = 3600
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://www.bwmc.ae'
