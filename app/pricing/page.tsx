@@ -4,6 +4,16 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Check, ShieldCheck, Zap, Rocket, Star, Globe } from "lucide-react"
 import Link from "next/link"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Pricing | BWMC",
+  description:
+    "Transparent pricing for Buy/Sell Business listings and Startup Platform plans. Choose the best plan for your growth in the UAE.",
+  alternates: {
+    canonical: "https://www.bwmc.ae/pricing",
+  },
+}
 
 export default function PricingPage() {
   const businessPlans = [
