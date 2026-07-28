@@ -45,31 +45,16 @@ interface GoogleReview {
     name: string;
     relativePublishTimeDescription: string;
     rating: number;
-    text: {
-        text: string;
-        languageCode: string;
-    };
-    originalText: {
-        text: string;
-        languageCode: string;
-    };
-    authorAttribution: {
-        displayName: string;
-        uri: string;
-        photoUri: string;
-    };
+    text: { text: string; languageCode: string };
+    originalText: { text: string; languageCode: string };
+    authorAttribution: { displayName: string; uri: string; photoUri: string };
     publishTime: string;
 }
 
 function ReviewerAvatar({ imageSrc, name }: { imageSrc?: string; name: string }) {
     const [hasError, setHasError] = useState(!imageSrc);
 
-    const initials = name
-        .split(" ")
-        .map((part) => part[0])
-        .join("")
-        .slice(0, 2)
-        .toUpperCase();
+    const initials = name.split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase();
 
     if (hasError || !imageSrc) {
         return (
@@ -81,14 +66,7 @@ function ReviewerAvatar({ imageSrc, name }: { imageSrc?: string; name: string })
 
     return (
         <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-            <Image
-                src={imageSrc}
-                alt={name}
-                fill
-                className="object-cover"
-                unoptimized={imageSrc.startsWith("http")}
-                onError={() => setHasError(true)}
-            />
+            <Image src={imageSrc} alt={name} fill className="object-cover" unoptimized={imageSrc.startsWith("http")} onError={() => setHasError(true)} />
         </div>
     );
 }
@@ -129,24 +107,11 @@ export default function ClientTrust() {
     return (
         <section className="bg-white py-24">
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                    className="text-center mb-16">
-                    <h2 className="text-4xl md:text-5xl font-bold text-navy mb-8">
-                        Trusted & Certified
-                    </h2>
+                <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-16">
+                    <h2 className="text-4xl md:text-5xl font-bold text-navy mb-8">Trusted & Certified</h2>
                     <div className="flex flex-wrap justify-center gap-8 mb-16">
                         {trustLogos.map((logo, index) => (
-                            <motion.div
-                                key={index}
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.4, delay: index * 0.1 }}
-                                className="flex flex-col items-center gap-2">
+                            <motion.div key={index} initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: index * 0.1 }} className="flex flex-col items-center gap-2">
                                 <div className="w-20 h-20 bg-gradient-to-br from-royal-blue to-sky-blue rounded-[4px] flex items-center justify-center text-white font-bold text-lg shadow-lg">
                                     {logo.badge}
                                 </div>
@@ -156,12 +121,7 @@ export default function ClientTrust() {
                     </div>
                 </motion.div>
 
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                    className="mb-12 text-center">
+                <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="mb-12 text-center">
                     <div className="inline-flex items-center gap-2 mb-4 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-100">
                         <svg viewBox="0 0 48 48" className="w-5 h-5">
                             <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
@@ -180,25 +140,15 @@ export default function ClientTrust() {
                             </div>
                         </div>
                     </div>
-
-                    <h3 className="text-3xl font-bold text-navy mb-4">
-                        What Our Clients Say
-                    </h3>
+                    <h3 className="text-3xl font-bold text-navy mb-4">What Our Clients Say</h3>
                 </motion.div>
 
                 <div className="grid md:grid-cols-3 gap-8">
                     {testimonials.map((testimonial, index) => (
-                        <motion.div
-                            key={index}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6, delay: index * 0.15 }}
-                            className="bg-white rounded-lg p-6 shadow-md border border-gray-100 h-full flex flex-col">
+                        <motion.div key={index} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: index * 0.15 }} className="bg-white rounded-lg p-6 shadow-md border border-gray-100 h-full flex flex-col">
                             <div className="flex items-start justify-between mb-4">
                                 <div className="flex items-center gap-3">
                                     <ReviewerAvatar imageSrc={testimonial.imageSrc} name={testimonial.name} />
-
                                     <div>
                                         <div className="font-bold text-sm text-[#202124]">{testimonial.name}</div>
                                         {testimonial.isLocalGuide ? (
@@ -214,14 +164,12 @@ export default function ClientTrust() {
                                         )}
                                     </div>
                                 </div>
-
                                 <div className="text-gray-400">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
                                         <path fillRule="evenodd" d="M10.5 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm0 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm0 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" clipRule="evenodd" />
                                     </svg>
                                 </div>
                             </div>
-
                             <div className="flex items-center gap-2 mb-3">
                                 <div className="flex">
                                     {[...Array(5)].map((_, i) => (
@@ -230,20 +178,13 @@ export default function ClientTrust() {
                                 </div>
                                 <span className="text-xs text-[#70757a]">{testimonial.timeAgo}</span>
                             </div>
-
-                            <p className="text-[#202124] text-sm leading-relaxed line-clamp-6">
-                                {testimonial.content}
-                            </p>
+                            <p className="text-[#202124] text-sm leading-relaxed line-clamp-6">{testimonial.content}</p>
                         </motion.div>
                     ))}
                 </div>
 
                 <div className="mt-12 text-center">
-                    
-                        href="https://search.google.com/local/reviews?placeid=ChIJ45KMeQBDXz4RxAHzXOyswLM"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center text-royal-blue hover:text-sky-blue font-medium transition-colors text-sm">
+                    <a href="https://search.google.com/local/reviews?placeid=ChIJ45KMeQBDXz4RxAHzXOyswLM" target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-royal-blue hover:text-sky-blue font-medium transition-colors text-sm">
                         View all reviews on Google
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -254,3 +195,4 @@ export default function ClientTrust() {
         </section>
     );
 }
+
