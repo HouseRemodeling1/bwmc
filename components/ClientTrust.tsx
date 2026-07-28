@@ -5,7 +5,6 @@ import { Star } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-// Fallback data in case API fails or loading
 const initialTestimonials = [
     {
         name: "Fawad Ali",
@@ -135,8 +134,7 @@ export default function ClientTrust() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
-                    className="text-center mb-16"
-                >
+                    className="text-center mb-16">
                     <h2 className="text-4xl md:text-5xl font-bold text-navy mb-8">
                         Trusted & Certified
                     </h2>
@@ -148,8 +146,7 @@ export default function ClientTrust() {
                                 whileInView={{ opacity: 1, scale: 1 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.4, delay: index * 0.1 }}
-                                className="flex flex-col items-center gap-2"
-                            >
+                                className="flex flex-col items-center gap-2">
                                 <div className="w-20 h-20 bg-gradient-to-br from-royal-blue to-sky-blue rounded-[4px] flex items-center justify-center text-white font-bold text-lg shadow-lg">
                                     {logo.badge}
                                 </div>
@@ -164,8 +161,7 @@ export default function ClientTrust() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
-                    className="mb-12 text-center"
-                >
+                    className="mb-12 text-center">
                     <div className="inline-flex items-center gap-2 mb-4 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-100">
                         <svg viewBox="0 0 48 48" className="w-5 h-5">
                             <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
@@ -198,8 +194,7 @@ export default function ClientTrust() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6, delay: index * 0.15 }}
-                            className="bg-white rounded-lg p-6 shadow-md border border-gray-100 h-full flex flex-col"
-                        >
+                            className="bg-white rounded-lg p-6 shadow-md border border-gray-100 h-full flex flex-col">
                             <div className="flex items-start justify-between mb-4">
                                 <div className="flex items-center gap-3">
                                     <ReviewerAvatar imageSrc={testimonial.imageSrc} name={testimonial.name} />
@@ -248,8 +243,7 @@ export default function ClientTrust() {
                         href="https://search.google.com/local/reviews?placeid=ChIJ45KMeQBDXz4RxAHzXOyswLM"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center text-royal-blue hover:text-sky-blue font-medium transition-colors text-sm"
-                    >
+                        className="inline-flex items-center text-royal-blue hover:text-sky-blue font-medium transition-colors text-sm">
                         View all reviews on Google
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
