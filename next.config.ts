@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
@@ -42,6 +41,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/investors',
+        destination: '/',
+        permanent: true,
+      },
+    ];
+  },
 };
-
 export default nextConfig;
