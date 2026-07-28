@@ -69,7 +69,7 @@ export default function StartupsClient() {
                   </Button>
                 </Link>
                 <Link href="/investors/profile">
-                  <Button size="lg" variant="outline" className="rounded-full border-slate-700 text-white hover:bg-slate-800 px-8 h-14 font-black">
+                  <Button size="lg" variant="outline" className="rounded-full border-2 border-white/30 bg-transparent text-white hover:bg-slate-800 hover:border-white/30 px-8 h-14 font-black">
                     Join as Investor
                   </Button>
                 </Link>
