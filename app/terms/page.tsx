@@ -1,5 +1,15 @@
 import { ArrowRight, ChevronRight, FileText, Scale, AlertCircle, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Terms and Conditions | BWMC",
+    description:
+        "Read the terms and conditions governing your use of Bridge Water Management Consultancies' website and services.",
+    alternates: {
+        canonical: "https://www.bwmc.ae/terms",
+    },
+};
 
 export default function TermsAndConditions() {
     return (
