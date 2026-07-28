@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import FinancialHealthClient from "./FinancialHealthClient";
-
 export const metadata: Metadata = {
     title: "Free Financial Health Check | BWMC",
     description:
@@ -12,14 +11,16 @@ export const metadata: Metadata = {
         "free financial report dubai",
         "SME financial health UAE",
     ],
+    alternates: {
+        canonical: "https://www.bwmc.ae/financial-health-check",
+    },
     openGraph: {
         title: "Free Financial Health Check — Know Where Your Business Stands",
         description:
             "Upload your financials and get a full AI health report in 30 seconds. No signup. No jargon. Free.",
-        url: "https://bwmc.ae/financial-health-check",
+        url: "https://www.bwmc.ae/financial-health-check",
     },
 };
-
 export default function FinancialHealthCheckPage() {
     return <FinancialHealthClient />;
 }
