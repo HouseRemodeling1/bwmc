@@ -1,5 +1,3 @@
-"use client";
-
 import Hero from "@/components/global-setup/Hero";
 import StatsStrip from "@/components/global-setup/StatsStrip";
 import BenefitsGrid from "@/components/global-setup/BenefitsGrid";
@@ -12,45 +10,42 @@ import InternationalForm from "@/components/global-setup/InternationalForm";
 import FloatingWhatsApp from "@/components/global-setup/FloatingWhatsApp";
 import Header from "@/components/Header";
 import Script from "next/script";
+import type { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Global Business Setup | BWMC",
+  description:
+    "Expand your business globally with BWMC's international setup services. Expert guidance for company formation, compliance, and market entry.",
+  alternates: {
+    canonical: "https://www.bwmc.ae/global-setup",
+  },
+};
 
 export default function GlobalSetupPage() {
   return (
-
     <div className="min-h-screen bg-gray-50 font-sans">
       {/* We reuse the main header for credibility, or we could pass a 'minimal' prop if supported */}
       <Header />
-
       <main>
         <Hero />
-
         {/* Stats Strip */}
         <StatsStrip />
-
         {/* Benefits Section */}
         <BenefitsGrid />
-
         {/* Founder Message */}
         <FounderMessage />
-
         {/* Expert CTA */}
         <ExpertCTA />
-
         {/* Process Section */}
         <ProcessSteps />
-
         {/* Guarantees Grid */}
         <GuaranteesGrid />
-
         {/* Trust & Testimonials */}
         <ClientTrust />
-
         {/* Lead Capture Form */}
         <InternationalForm />
       </main>
-
       <FloatingWhatsApp />
-
       {/* Google Ads Conversion Tracking */}
       <Script id="google-ads-conversion" strategy="afterInteractive">
         {`
@@ -71,7 +66,6 @@ export default function GlobalSetupPage() {
           }
         `}
       </Script>
-
     </div>
   );
 }
