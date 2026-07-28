@@ -1,5 +1,3 @@
-"use client";
-
 import Hero from "@/components/corporate-tax-filing/Hero";
 import StatsStrip from "@/components/corporate-tax-filing/StatsStrip";
 import BenefitsGrid from "@/components/corporate-tax-filing/BenefitsGrid";
@@ -12,45 +10,35 @@ import TaxFilingForm from "@/components/corporate-tax-filing/InternationalForm";
 import FloatingWhatsApp from "@/components/corporate-tax-filing/FloatingWhatsApp";
 import Header from "@/components/Header";
 import Script from "next/script";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "BWMC | Business Setup, Accounting & Tax Services in UAE",
+  description:
+    "Expert business setup, accounting, auditing, and tax compliance services in Dubai & UAE. Your strategic partner for financial clarity and growth.",
+  alternates: {
+    canonical: "https://www.bwmc.ae/corporate-tax-filing",
+  },
+};
 
 export default function CorporateTaxFilingPage() {
-    return (
-        <div className="min-h-screen bg-gray-50 font-sans">
-            <Header />
-
-            <main>
-                <Hero />
-
-                {/* Stats Strip */}
-                <StatsStrip />
-
-                {/* Benefits Section */}
-                <BenefitsGrid />
-
-                {/* Founder Message */}
-                <FounderMessage />
-
-                {/* Expert CTA */}
-                <ExpertCTA />
-
-                {/* Process Section */}
-                <ProcessSteps />
-
-                {/* Guarantees Grid */}
-                <GuaranteesGrid />
-
-                {/* Trust & Testimonials - Reusing global component */}
-                <ClientTrust />
-
-                {/* Lead Capture Form */}
-                <TaxFilingForm />
-            </main>
-
-            <FloatingWhatsApp />
-
-            {/* Google Ads Conversion Tracking - Kept same as global setup for now, update ID if needed */}
-            <Script id="google-ads-conversion" strategy="afterInteractive">
-                {`
+  return (
+    <div className="min-h-screen bg-gray-50 font-sans">
+      <Header />
+      <main>
+        <Hero />
+        <StatsStrip />
+        <BenefitsGrid />
+        <FounderMessage />
+        <ExpertCTA />
+        <ProcessSteps />
+        <GuaranteesGrid />
+        <ClientTrust />
+        <TaxFilingForm />
+      </main>
+      <FloatingWhatsApp />
+      <Script id="google-ads-conversion" strategy="afterInteractive">
+        {`
           window.dataLayer = window.dataLayer || [];
           window.gtag = function(){window.dataLayer.push(arguments);}
           
@@ -67,8 +55,7 @@ export default function CorporateTaxFilingPage() {
             return false;
           }
         `}
-            </Script>
-
-        </div>
-    );
+      </Script>
+    </div>
+  );
 }
