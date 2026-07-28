@@ -62,6 +62,40 @@ interface GoogleReview {
     publishTime: string;
 }
 
+// Renders the reviewer's photo, and falls back to a colored initials avatar
+// if the image is missing or fails to load — never shows a broken image.
+function ReviewerAvatar({ imageSrc, name }: { imageSrc?: string; name: string }) {
+    const [hasError, setHasError] = useState(!imageSrc);
+
+    const initials = name
+        .split(" ")
+        .map((part) => part[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase();
+
+    if (hasError || !imageSrc) {
+        return (
+            <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-royal-blue flex items-center justify-center text-white text-sm font-bold">
+                {initials}
+            </div>
+        );
+    }
+
+    return (
+        <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+            <Image
+                src={imageSrc}
+                alt={name}
+                fill
+                className="object-cover"
+                unoptimized={imageSrc.startsWith("http")}
+                onError={() => setHasError(true)}
+            />
+        </div>
+    );
+}
+
 export default function ClientTrust() {
     const [testimonials, setTestimonials] = useState(initialTestimonials);
     const [loading, setLoading] = useState(true);
@@ -177,16 +211,8 @@ export default function ClientTrust() {
                             {/* Header: User Info */}
                             <div className="flex items-start justify-between mb-4">
                                 <div className="flex items-center gap-3">
-                                    {/* User Image */}
-                                    <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                                        <Image
-                                            src={testimonial.imageSrc}
-                                            alt={testimonial.name}
-                                            fill
-                                            className="object-cover"
-                                            unoptimized={testimonial.imageSrc.startsWith('http')} // Optimization off for external Google photos
-                                        />
-                                    </div>
+                                    {/* User Image with fallback */}
+                                    <ReviewerAvatar imageSrc={testimonial.imageSrc} name={testimonial.name} />
 
                                     {/* Name & Local Guide Badge */}
                                     <div>
@@ -234,7 +260,7 @@ export default function ClientTrust() {
 
                 {/* View All Reviews Link - Moved to Bottom */}
                 <div className="mt-12 text-center">
-                    <a
+                    
                         href="https://search.google.com/local/reviews?placeid=ChIJ45KMeQBDXz4RxAHzXOyswLM"
                         target="_blank"
                         rel="noopener noreferrer"
