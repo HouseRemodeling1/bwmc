@@ -62,8 +62,6 @@ interface GoogleReview {
     publishTime: string;
 }
 
-// Renders the reviewer's photo, and falls back to a colored initials avatar
-// if the image is missing or fails to load — never shows a broken image.
 function ReviewerAvatar({ imageSrc, name }: { imageSrc?: string; name: string }) {
     const [hasError, setHasError] = useState(!imageSrc);
 
@@ -103,25 +101,24 @@ export default function ClientTrust() {
     useEffect(() => {
         async function fetchReviews() {
             try {
-                const res = await fetch('/api/reviews');
-                if (!res.ok) throw new Error('Failed to fetch reviews');
+                const res = await fetch("/api/reviews");
+                if (!res.ok) throw new Error("Failed to fetch reviews");
                 const data = await res.json();
 
                 if (data.reviews && data.reviews.length > 0) {
                     const formattedReviews = data.reviews.slice(0, 3).map((review: GoogleReview) => ({
                         name: review.authorAttribution.displayName,
-                        role: "Client", // Default role as Google doesn't provide this detail
+                        role: "Client",
                         content: review.originalText?.text || review.text?.text,
                         rating: review.rating,
                         imageSrc: review.authorAttribution.photoUri,
                         timeAgo: review.relativePublishTimeDescription,
-                        isLocalGuide: false // Google API v1 doesn't explicitly flag Local Guide in standard response easily
+                        isLocalGuide: false
                     }));
                     setTestimonials(formattedReviews);
                 }
             } catch (error) {
                 console.error("Error loading Google Reviews:", error);
-                // Keep initial testimonials on error
             } finally {
                 setLoading(false);
             }
@@ -133,7 +130,6 @@ export default function ClientTrust() {
     return (
         <section className="bg-white py-24">
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
-                {/* Trust Badges */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -163,7 +159,6 @@ export default function ClientTrust() {
                     </div>
                 </motion.div>
 
-                {/* Testimonials */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -172,7 +167,6 @@ export default function ClientTrust() {
                     className="mb-12 text-center"
                 >
                     <div className="inline-flex items-center gap-2 mb-4 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-100">
-                        {/* Google G Logo */}
                         <svg viewBox="0 0 48 48" className="w-5 h-5">
                             <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
                             <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
@@ -194,8 +188,6 @@ export default function ClientTrust() {
                     <h3 className="text-3xl font-bold text-navy mb-4">
                         What Our Clients Say
                     </h3>
-
-
                 </motion.div>
 
                 <div className="grid md:grid-cols-3 gap-8">
@@ -208,13 +200,10 @@ export default function ClientTrust() {
                             transition={{ duration: 0.6, delay: index * 0.15 }}
                             className="bg-white rounded-lg p-6 shadow-md border border-gray-100 h-full flex flex-col"
                         >
-                            {/* Header: User Info */}
                             <div className="flex items-start justify-between mb-4">
                                 <div className="flex items-center gap-3">
-                                    {/* User Image with fallback */}
                                     <ReviewerAvatar imageSrc={testimonial.imageSrc} name={testimonial.name} />
 
-                                    {/* Name & Local Guide Badge */}
                                     <div>
                                         <div className="font-bold text-sm text-[#202124]">{testimonial.name}</div>
                                         {testimonial.isLocalGuide ? (
@@ -225,14 +214,12 @@ export default function ClientTrust() {
                                             </div>
                                         ) : (
                                             <div className="text-xs text-[#70757a]">
-                                                {testimonial.role === "Local Guide" ? "Local Guide" :
-                                                    "Client"}
+                                                {testimonial.role === "Local Guide" ? "Local Guide" : "Client"}
                                             </div>
                                         )}
                                     </div>
                                 </div>
 
-                                {/* Three Dots Menu Icon (Visual) */}
                                 <div className="text-gray-400">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
                                         <path fillRule="evenodd" d="M10.5 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm0 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm0 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" clipRule="evenodd" />
@@ -240,7 +227,6 @@ export default function ClientTrust() {
                                 </div>
                             </div>
 
-                            {/* Stars & Time */}
                             <div className="flex items-center gap-2 mb-3">
                                 <div className="flex">
                                     {[...Array(5)].map((_, i) => (
@@ -250,7 +236,6 @@ export default function ClientTrust() {
                                 <span className="text-xs text-[#70757a]">{testimonial.timeAgo}</span>
                             </div>
 
-                            {/* Content */}
                             <p className="text-[#202124] text-sm leading-relaxed line-clamp-6">
                                 {testimonial.content}
                             </p>
@@ -258,7 +243,6 @@ export default function ClientTrust() {
                     ))}
                 </div>
 
-                {/* View All Reviews Link - Moved to Bottom */}
                 <div className="mt-12 text-center">
                     
                         href="https://search.google.com/local/reviews?placeid=ChIJ45KMeQBDXz4RxAHzXOyswLM"
