@@ -1,10 +1,14 @@
 import { vatGuideData } from "@/lib/vatGuideData";
 import { ArrowRight, BookOpen, Search } from "lucide-react";
 import Link from "next/link";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
     title: "VAT Knowledge Base | Everything You Need to Know About VAT",
-    description: "A comprehensive resource for understanding the Value Added Tax (VAT) in UAE. Guides, articles, and compliance tips."
+    description: "A comprehensive resource for understanding the Value Added Tax (VAT) in UAE. Guides, articles, and compliance tips.",
+    alternates: {
+        canonical: "https://www.bwmc.ae/vat-guide",
+    },
 };
 
 export default function VatGuidePage() {
