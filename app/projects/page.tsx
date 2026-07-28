@@ -1,12 +1,13 @@
 import ProjectHero from "@/components/projects/Hero";
 import ProjectGrid from "@/components/projects/ProjectGrid";
 import { Metadata } from "next";
-
 export const metadata: Metadata = {
   title: "BWMC Portfolio | Business Showcase & Case Studies",
   description: "Explore BWMC's diverse portfolio of web development, SaaS, and digital transformation projects across the UAE and beyond.",
+  alternates: {
+    canonical: "https://www.bwmc.ae/projects",
+  },
 };
-
 export default function ProjectsPage() {
   return (
     <main className="min-h-screen bg-slate-950">
