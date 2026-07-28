@@ -1,5 +1,3 @@
-"use client";
-
 import Header from "@/components/Header";
 import FloatingWhatsApp from "@/components/global-setup/FloatingWhatsApp";
 import Hero from "@/components/ecommerce-license/Hero";
@@ -13,12 +11,21 @@ import Pricing from "@/components/ecommerce-license/Pricing";
 import FAQ from "@/components/ecommerce-license/FAQ";
 import FinalCTA from "@/components/ecommerce-license/FinalCTA";
 import Script from "next/script";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "E-commerce License UAE | BWMC",
+  description:
+    "Get your e-commerce trade license in the UAE. Fast setup, full compliance, and expert guidance for online businesses.",
+  alternates: {
+    canonical: "https://www.bwmc.ae/ecommerce-license",
+  },
+};
 
 export default function EcommerceLicensePage() {
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
       <Header />
-
       <main>
         <Hero />
         <StatsStrip />
@@ -31,9 +38,7 @@ export default function EcommerceLicensePage() {
         <FAQ />
         <FinalCTA />
       </main>
-
       <FloatingWhatsApp />
-
       {/* Google Ads Conversion Tracking */}
       <Script id="google-ads-conversion" strategy="afterInteractive">
         {`
