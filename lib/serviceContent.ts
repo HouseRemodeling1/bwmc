@@ -530,6 +530,8 @@ export const serviceContent: Record<string, any> = {
         category: "other",
         title: "Compliance Advisory",
         subtitle: "Navigating the Regulatory Landscape",
+        metaTitle: "Compliance Advisory Services in UAE | BWMC",
+        metaDescription: "Stay compliant with ESR, UBO & ABC regulations. Our compliance advisory experts protect your business from fines. Book a consultation today.",
         description: "The UAE's regulatory environment is evolving rapidly with new laws on Economic Substance (ESR), Ultimate Beneficial Ownership (UBO), and Consumer Protection. Our Compliance Advisory services help businesses stay ahead of these changes. We conduct gap analyses, draft internal policies, and provide ongoing monitoring to ensure your operations remain within the legal framework.",
         context: "Non-compliance can lead to severe fines, license suspension, or reputational damage. From data protection (GDPR/PDPL) to specific industry regulations (DHA, KHDA, Central Bank), we act as your regulatory compass.",
         scope: [
