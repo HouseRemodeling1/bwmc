@@ -26,16 +26,14 @@ export default function Hero() {
         >
           {/* Main Headline */}
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
-            UAE’s Trusted Experts in <br />
-            <span className="text-sky-blue">Financial Management</span> <br />
-            and Business Setup
+            Your Trusted Partner for Business Setup in  <br />
+            <span className="text-sky-blue">Dubai & Expert </span> <br />
+            Financial Advisor Services
           </h1>
 
           {/* Sub-headline */}
           <p className="text-xl md:text-2xl text-white max-w-3xl mx-auto leading-relaxed">
-            Whether you’re launching a new venture or optimizing an established business,
-            BWMC delivers tailored financial services, expert business setup support,
-            and scalable ERP solutions all under one roof.
+            Whether you’re launching a new venture or optimizing an established business, BWMC delivers tailored financial advisor services, expert business setup in Dubai & UAE and scalable ERP solutions all under one roof.
           </p>
 
           {/* Buttons */}
