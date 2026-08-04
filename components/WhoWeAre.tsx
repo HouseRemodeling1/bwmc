@@ -23,23 +23,23 @@ export default function WhoWeAre() {
                         </div>
 
                         <h2 className="text-4xl md:text-5xl font-bold text-navy mb-8 leading-tight">
-                            Trusted Financial Experts <span className="text-royal-blue">in the UAE</span>
+                            Trusted & Popular Financial <span className="text-royal-blue">Advisor Dubai, UAE
+</span>
                         </h2>
 
                         <div className="space-y-6 text-lg text-black leading-relaxed mb-8">
                             <p>
-                                BWMC helps you launch, grow, or streamline your business with expert financial services.
-                                We provide business setup support and scalable ERP solutions - everything you need, in one place.
+                                BWMC helps you launch, grow, or streamline your business with expert financial advisor Dubai. We provide support for business setup Dubai and scalable ERP solutions - everything you need, in one place.
                             </p>
                             <p>
-                                As your strategic partner, we move beyond traditional consultancy to offer proactive
-                                guidance that anticipates challenges and identifies opportunities in the UAE's
-                                rapidly evolving regulatory landscape.
+                                As your strategic partner, we move beyond traditional financial consultancy service to offer proactive guidance that anticipates challenges and identifies opportunities in the UAE's rapidly evolving regulatory landscape.
                             </p>
                         </div>
 
                         <div className="grid sm:grid-cols-2 gap-4 mb-10">
-                            {["Tailored Financial Strategies", "End-to-End Business Setup", "Comprehensive Tax Compliance", "Custom ERP Implementations"].map((item, i) => (
+                            {["Tailored Financial Strategies", "End-to-End Business Setup in Dubai
+", "Comprehensive taxation services Dubai Compliance
+", "Custom ERP Implementations"].map((item, i) => (
                                 <div key={i} className="flex items-center gap-3">
                                     <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
                                         <BadgeCheck className="w-4 h-4 text-green-600" />
