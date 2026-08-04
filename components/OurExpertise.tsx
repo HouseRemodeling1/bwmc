@@ -5,7 +5,7 @@ import { CheckCircle2, Building2, Calculator, Scale, Users2, FileBarChart } from
 
 const expertiseItems = [
     {
-        title: "Business Setup & Company Formation",
+        title: "Company Formation & Business Setup Dubai",
         icon: Building2
     },
     {
@@ -42,7 +42,7 @@ export default function OurExpertise() {
                             Our Expertise
                         </h2>
                         <p className="text-xl text-navy/70 leading-relaxed mb-8">
-                            We specialize in end-to-end business solutions designed to help companies start strong and stay compliant. From business formation to day-to-day financial management, our team ensures accuracy, transparency, and peace of mind at every stage.
+We specialize in end-to-end Business Setup Dubai solutions designed to help companies start strong and stay compliant. From business formation to day-to-day financial advisor in Dubai, our team ensures accuracy, transparency, and peace of mind at every stage.
                         </p>
 
                         <div className="space-y-4">
