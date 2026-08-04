@@ -28,11 +28,11 @@ const SITE_URL = "https://www.bwmc.ae";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "BWMC | Business Setup, Accounting & Tax Services in UAE",
+    default: "Business Setup in Dubai | Financial, Accounting & Tax Service",
     template: "%s | BWMC",
   },
   description:
-    "Expert business setup, accounting, auditing, and tax compliance services in Dubai & UAE. Your strategic partner for financial clarity and growth.",
+    "Get expert business setup in Dubai & UAE with trusted financial advisors, accounting, tax, and taxation consultancy services for sustainable business growth.",
   keywords: [
     "UAE business setup",
     "Dubai accounting services",
@@ -59,9 +59,9 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: SITE_URL,
     siteName: "BWMC",
-    title: "BWMC | Business Setup, Accounting & Tax Services in UAE",
+    title: "Business Setup in Dubai | Financial, Accounting & Tax Service",
     description:
-      "Expert business setup, accounting, auditing, and tax compliance services in Dubai & UAE.",
+      "Get expert business setup in Dubai & UAE with trusted financial advisors, accounting, tax, and taxation consultancy services for sustainable business growth.",
     images: [
       {
         url: `${SITE_URL}/og-image.jpg`,
@@ -75,9 +75,9 @@ export const metadata: Metadata = {
   // Twitter Card
   twitter: {
     card: "summary_large_image",
-    title: "BWMC | Business Setup, Accounting & Tax Services in UAE",
+    title: "Business Setup in Dubai | Financial, Accounting & Tax Service",
     description:
-      "Expert business setup, accounting, auditing, and tax compliance services in Dubai & UAE.",
+      "Get expert business setup in Dubai & UAE with trusted financial advisors, accounting, tax, and taxation consultancy services for sustainable business growth.",
     images: [`${SITE_URL}/og-image.jpg`],
     creator: "@bwmc",
   },
