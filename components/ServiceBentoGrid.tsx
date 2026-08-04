@@ -24,7 +24,7 @@ const services = [
     {
         title: "Taxation",
         icon: FileText,
-        description: "Expert tax advisory and compliance solutions",
+        description: "Expert taxation services advisory and compliance solutions",
         subServices: [
             "Corporate Tax Advisory",
             "Excise Tax Service",
@@ -70,7 +70,7 @@ export default function ServiceBentoGrid() {
                         Our Service Pillars
                     </h2>
                     <p className="text-xl text-white max-w-3xl mx-auto">
-                        Three core pillars supporting your business success in the UAE
+Three core pillars supporting your business success in the UAE
                     </p>
                 </motion.div>
 
