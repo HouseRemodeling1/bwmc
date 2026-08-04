@@ -116,11 +116,11 @@ export function generateMetadata(props: PageMetadataProps): Metadata {
  * Homepage metadata
  */
 export const homeMetadata = generateMetadata({
-    title: "BWMC | Business Setup, Accounting & Tax Services in UAE",
+    title: "Business Setup in Dubai | Financial, Accounting & Tax Service",
     description:
-        "Expert business setup, accounting, auditing, and tax compliance services in Dubai & UAE. Your strategic partner for financial clarity and growth.",
+        "Get expert business setup in Dubai & UAE with trusted financial advisors, accounting, tax, and taxation consultancy services for sustainable business growth.",
     keywords: [
-        "UAE business setup",
+        "Business Setup in Dubai",
         "Dubai accounting services",
         "VAT UAE",
         "Corporate tax UAE",
