@@ -31,8 +31,7 @@ export default function Footer() {
                                 </p>
 
                                 <Link href="mailto:sales@bwmc.com" className="block hover:text-white transition-colors">
-                                    sales@bwmc.com
-                                </Link>
+ sales@bwmc.ae                                </Link>
 
                                 <Link href="https://www.google.com/maps/place/Bridgewater+Management+Consultancies+Co.+L.L.C/@25.1950293,55.2633005,17z/data=!3m1!4b1!4m6!3m5!1s0x3e5f69046059c16b:0x597f744e8ec53f58!8m2!3d25.1950293!4d55.2633005!16s%2Fg%2F11vjn1q_k8?entry=ttu" target="_blank" className="border border-white/20 rounded-[4px] px-6 py-3 flex items-center gap-2 hover:bg-white hover:text-black transition-all w-fit text-white">
                                     <MapPin className="w-4 h-4" />
