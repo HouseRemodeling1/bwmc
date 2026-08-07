@@ -5,9 +5,11 @@ import { FileText, CheckCircle, BarChart, Settings, Shield, Globe } from "lucide
 export const serviceContent: Record<string, any> = {
     "accounting-bookkeeping": {
         category: "accounting",
-        title: "Accounting & Bookkeeping Services in UAE | BWMC",
-        subtitle: "Bookkeeping and Accounting Services for Every Stage of Your Business",
-        description: "Professional accounting and bookkeeping services in UAE, from bank reconciliation to VAT filing. Book a free consultation with our experts today.",
+      title: "Professional Accounting & Bookkeeping Services",
+    subtitle: "Bookkeeping and Accounting Services for Every Stage of Your Business",
+    metaTitle: "Accounting & Bookkeeping Services in UAE",
+    metaDescription: "Professional accounting and bookkeeping services in UAE, from bank reconciliation to VAT filing. Book a free consultation with our experts today.",
+    description: "We provide comprehensive accounting and bookkeeping solutions designed to streamline your financial operations. Whether you are a startup needing basic bookkeeping or an established business requiring full financial management, our team delivers accurate, IFRS-compliant records that keep you audit-ready and VAT-compliant year round.",
         context: "In the UAE's evolving regulatory landscape, accurate bookkeeping is not just about compliance - it's about survival and growth. From VAT filing to Corporate Tax readiness, our services ensure you are always audit-ready and penalty-free.",
         scope: [
             "Financial Statement Preparation (P&L, Balance Sheet)",
