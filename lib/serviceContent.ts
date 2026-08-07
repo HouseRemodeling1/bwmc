@@ -35,8 +35,8 @@ export const serviceContent: Record<string, any> = {
         category: "accounting",
         title: "Audit & Assurance Services",
         subtitle: "Clarity, Confidence, and Compliance for Your Business",
-        metaTitle: "Audit & Assurance Services UAE | IFRS & AML Compliant | BWMC",
-        metaDescription: "Professional UAE audit & assurance services: Statutory audits, AML compliance, internal audit & forensic investigations. DMCC, JAFZA, ADGM approved. Get your quote in 24h.",
+        metaTitle: "Audit & Assurance Services in UAE | DMCC, ADGM Approved",
+        metaDescription: "DMCC & ADGM approved audit and assurance services in UAE. Statutory, AML & forensic audits. Book a consultation with our experts today.",
         keywords: ["Audit services UAE", "Statutory Audit Dubai", "AML Compliance UAE", "Internal Audit services", "DMCC Approved Auditor", "IFRS Compliance Dubai"],
         trustBadges: [
             { label: "DMCC Approved", sub: "Registered Auditor" },
