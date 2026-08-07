@@ -136,9 +136,9 @@ export const homeMetadata = generateMetadata({
  * Services page metadata
  */
 export const servicesMetadata = generateMetadata({
-    title: "Our Services | Business Setup, Accounting, Audit & Tax | BWMC",
+    title: "Financial & Business Consultancy Services in UAE",
     description:
-        "Comprehensive business services in UAE: Company formation, accounting, statutory audits, VAT, corporate tax, and trademark registration.",
+        "Explore accounting, tax, audit & business setup services in UAE. FTA-approved experts. Book a free consultation to find the right fit.",
     keywords: [
         "business services Dubai",
         "company formation UAE",
