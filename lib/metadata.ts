@@ -172,9 +172,9 @@ export const blogMetadata = generateMetadata({
  * About page metadata
  */
 export const aboutMetadata = generateMetadata({
-    title: "About BWMC | Leading Business Consultancy in UAE",
+    title: "About BWMC | Business Consultancy in UAE",
     description:
-        "Trusted business consultancy in UAE. Specializing in financial compliance, tax advisory, and strategic business solutions.",
+        "Learn how BWMC, a trusted business consultancy in UAE, delivers accounting, auditing & tax solutions for startups and SMEs. Read our story.",
     keywords: [
         "about BWMC",
         "business consultancy UAE",
