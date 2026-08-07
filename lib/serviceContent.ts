@@ -300,6 +300,8 @@ export const serviceContent: Record<string, any> = {
         category: "taxation",
         title: "Corporate Tax Advisory",
         subtitle: "Strategic Planning for the New Tax Era",
+        metaTitle: "Corporate Tax Advisory Services in UAE | BWMC",
+    metaDescription: "Expert Corporate Tax advisory in UAE — registration, Free Zone exemptions & Transfer Pricing. Book a consultation with our tax specialists today.",
         description: "The introduction of Corporate Tax in the UAE marks a significant shift in the business landscape. We provide comprehensive advisory services to help businesses navigate this new regime, ensuring full compliance while optimizing tax efficiency. From analyzing the impact on your bottom line to restructuring operations for tax benefits, our experts guide you through every step of the Corporate Tax lifecycle.",
         context: "Effective from June 2023, Corporate Tax applies to net profits of businesses. Navigating the exemptions for Free Zone entities, Small Business Relief, and the complexities of Transfer Pricing requires expert guidance to avoid penalties and maximize legitimate tax savings.",
         scope: [
