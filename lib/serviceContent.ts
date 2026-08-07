@@ -651,7 +651,7 @@ export const serviceContent: Record<string, any> = {
        title: "Trademark Registration in UAE",
     subtitle: "Protect Your Brand Identity & IP Assets",
     metaTitle: "Trademark Registration in UAE | Protect Your Brand",
-    metaDescription: "Register your trademark in UAE.Full support from search to certification with the Ministry of Economy. Book a consultation today.",
+    metaDescription: "Register your trademark in UAE. Full support from search to certification with the Ministry of Economy. Book a consultation today.",
         description: "Your brand is one of your most valuable assets. Registering your trademark in the UAE grants you legal ownership and protection against counterfeiting or abuse. We manage the entire registration process with the Ministry of Economy, from validity search to final certification, ensuring your intellectual property is secure.",
         context: "The UAE follows strict protocols for IP protection. Registration is valid for 10 years and renewable. Without registration, you have limited legal recourse if a competitor copies your logo or brand name. We ensure your application adheres to the 'Nice Classification' of goods and services.",
         scope: [
