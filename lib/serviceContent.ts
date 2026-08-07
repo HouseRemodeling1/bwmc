@@ -503,6 +503,8 @@ export const serviceContent: Record<string, any> = {
         category: "other",
         title: "Business Setup Services",
         subtitle: "Launch Your Business in the UAE with Confidence",
+        metaTitle: "Business Setup Services in UAE | Mainland & Free Zone",
+    metaDescription: "Launch your UAE business with expert setup services covering Mainland, Free Zone & Offshore. Book a free consultation with our specialists today.",
         description: "Setting up a business in the UAE requires navigating a choice of jurisdictions: Mainland, Free Zone, or Offshore. Each offering distinct advantages in terms of ownership, scope of activity, and tax benefits. We provide end-to-end support, from selecting the right legal structure to obtaining trade licenses and visa processing, ensuring a seamless entry into the market.",
         context: "The UAE offers over 40 Free Zones and a competitive Mainland environment. Recent changes allow 100% foreign ownership in many mainland sectors. Choosing the wrong jurisdiction can limit your business scope or increase costs. We analyze your business model to recommend the most optimal path.",
         scope: [
