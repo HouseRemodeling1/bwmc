@@ -13,9 +13,9 @@ import Script from "next/script";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "BWMC | Business Setup, Accounting & Tax Services in UAE",
+  title: "Corporate Tax Advisory Services in UAE | BWMC",
   description:
-    "Expert business setup, accounting, auditing, and tax compliance services in Dubai & UAE. Your strategic partner for financial clarity and growth.",
+    "Expert Corporate Tax advisory in UAE — registration, Free Zone exemptions & Transfer Pricing. Book a consultation with our tax specialists today.",
   alternates: {
     canonical: "https://www.bwmc.ae/corporate-tax-filing",
   },
